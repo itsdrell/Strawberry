@@ -7,10 +7,58 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Math\Vector2.hpp" />
+    <ClInclude Include="Internal\WindowsCommon.hpp" />
+    <ClInclude Include="Core\Platform\Window.hpp" />
+    <ClInclude Include="Core\General\EngineCommon.hpp" />
+    <ClInclude Include="Renderer\external\gl\glcorearb.h" />
+    <ClInclude Include="Renderer\external\gl\glext.h" />
+    <ClInclude Include="Renderer\external\gl\wglext.h" />
+    <ClInclude Include="Renderer\Renderer.hpp" />
+    <ClInclude Include="Renderer\RenderTypes.hpp" />
+    <ClInclude Include="Math\Vectors\Vector2.hpp" />
+    <ClInclude Include="Math\Vectors\Vector3.hpp" />
+    <ClInclude Include="Core\General\Rgba.hpp" />
+    <ClInclude Include="Renderer\Pipeline\VertexLayout.hpp" />
+    <ClInclude Include="Renderer\GLFunctions.hpp" />
+    <ClInclude Include="Math\Geometry\AABB2.hpp" />
+    <ClInclude Include="Core\Tools\ErrorWarningAssert.hpp" />
+    <ClInclude Include="Core\Utils\StringUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Math\Vector2.cpp">
+    <ClCompile Include="Core\Platform\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\General\EngineCommon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vectors\Vector2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vectors\Vector3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\General\Rgba.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\RenderTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\GLFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Geometry\AABB2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Tools\ErrorWarningAssert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Pipeline\VertexLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Utils\StringUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

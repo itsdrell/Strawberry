@@ -24,6 +24,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Engine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <ProjectName>Strawberry</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -159,10 +160,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Math\Vector2.hpp" />
+    <ClInclude Include="Core\General\EngineCommon.hpp" />
+    <ClInclude Include="Core\General\Rgba.hpp" />
+    <ClInclude Include="Core\Platform\Window.hpp" />
+    <ClInclude Include="Core\Tools\ErrorWarningAssert.hpp" />
+    <ClInclude Include="Core\Utils\StringUtils.hpp" />
+    <ClInclude Include="Internal\WindowsCommon.hpp" />
+    <ClInclude Include="Math\Geometry\AABB2.hpp" />
+    <ClInclude Include="Math\Vectors\Vector2.hpp" />
+    <ClInclude Include="Math\Vectors\Vector3.hpp" />
+    <ClInclude Include="Renderer\external\gl\glcorearb.h" />
+    <ClInclude Include="Renderer\external\gl\glext.h" />
+    <ClInclude Include="Renderer\external\gl\wglext.h" />
+    <ClInclude Include="Renderer\GLFunctions.hpp" />
+    <ClInclude Include="Renderer\Pipeline\VertexLayout.hpp" />
+    <ClInclude Include="Renderer\Renderer.hpp" />
+    <ClInclude Include="Renderer\RenderTypes.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Core\General\EngineCommon.cpp" />
+    <ClCompile Include="Core\General\Rgba.cpp" />
+    <ClCompile Include="Core\Platform\Window.cpp" />
+    <ClCompile Include="Core\Tools\ErrorWarningAssert.cpp" />
+    <ClCompile Include="Core\Utils\StringUtils.cpp" />
+    <ClCompile Include="Math\Geometry\AABB2.cpp" />
+    <ClCompile Include="Math\Vectors\Vector2.cpp" />
+    <ClCompile Include="Math\Vectors\Vector3.cpp" />
+    <ClCompile Include="Renderer\GLFunctions.cpp" />
+    <ClCompile Include="Renderer\Pipeline\VertexLayout.cpp" />
+    <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Renderer\RenderTypes.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
