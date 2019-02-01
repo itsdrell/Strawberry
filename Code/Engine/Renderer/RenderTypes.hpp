@@ -1,9 +1,8 @@
 #pragma once
-#include "Engine/Math/Vectors/Vector3.hpp"
-#include "Engine/Math/Vectors/Vector2.hpp"
 #include "Engine/Core/General/Rgba.hpp"
 #include "Engine/Renderer/Pipeline/VertexLayout.hpp"
 #include "Engine/Renderer/GLFunctions.hpp"
+#include "Engine/Math/Matrices/Matrix44.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -188,9 +187,9 @@ struct TimeDataT
 //-----------------------------------------------------------------------------------------------
 struct CameraMatrixT
 {
-	//Matrix44 view;
-	//Matrix44 projection;
-	//Matrix44 viewProjection;
+	Matrix44 view;
+	Matrix44 projection;
+	Matrix44 viewProjection;
 	//
 	//Matrix44 inverseView; // camera matrix
 	//Matrix44 inverseProjection;
@@ -207,7 +206,7 @@ struct CameraMatrixT
 //-----------------------------------------------------------------------------------------------
 struct ModelT
 {
-	//Matrix44 model;
+	Matrix44 model;
 };
 #define MODEL_BUFFER_BINDING (3)
 

@@ -1,4 +1,6 @@
 #pragma once
+#include "Engine/Math/Vectors/Vector2.hpp"
+#include "Engine/Math/Vectors/Vector3.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -23,17 +25,31 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class Matrix44
 {
 public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	Matrix44();
+	explicit Matrix44( const float* sixteenValuesBasisMajor ); // float[16] array in order Ix, Iy...
 
 public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
-};
+	void SetIdentity();
+	void Append( const Matrix44& matrixToAppend ); // a.k.a. Concatenate (right-multiply)
+	void Translate2D( const Vector2& translation );
 
+public:
+	static Matrix44 MakeOrtho2D( const Vector2& mins, const Vector2& maxs );
+	static Matrix44 MakeTranslation2D( const Vector2& translation );	
+	static Matrix44 MakeOrtho3D( const Vector3& mins, const Vector3& maxs );
+
+private:
+	// Column Major (squirrels way)
+	// Ix	Jx	Kx	Tx
+	// Iy	Jy	Ky	Ty
+	// Iz	Jz	Kz	Tz
+	// Iw	Jw	Kw	Tw
+
+	float	Ix, Iy, Iz, Iw,   Jx, Jy, Jz, Jw,   Kx, Ky, Kz, Kw,   Tx, Ty, Tz, Tw; // i, j, k and translation
+};
 
 //====================================================================================
 // Standalone C Functions
@@ -46,5 +62,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [1/31/2019]
 //====================================================================================

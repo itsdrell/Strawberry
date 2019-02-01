@@ -1,4 +1,6 @@
 #pragma once
+#include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Renderer/RenderTypes.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -23,22 +25,26 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class ShaderProgram
 {
 public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	ShaderProgram();
+	ShaderProgram(const String& name, const char* fs, const char* vs, Strings defines);
+
 
 public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
+	GLuint		m_programHandle; // OpenGL handle for this program, default 0
+	String		m_name;
 };
-
 
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-
+static GLuint LoadShaderFromLiteral(const char*  shaderSource, GLenum type, Strings defines);
+static GLuint CreateAndLinkProgram( GLint vs, GLint fs );
+static void LogProgramError(GLuint program_id);
+static void LogShaderError(GLuint shader_id, const char* filename, uint defineOffset);
+static void FormatAndPrintShaderErrors(std::string log, std::string path, uint defineOffset);
 
 //====================================================================================
 // Externs
@@ -46,5 +52,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [1/31/2019]
 //====================================================================================

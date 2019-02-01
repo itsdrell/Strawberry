@@ -3,7 +3,7 @@
 //====================================================================================
 // Forward Declare
 //====================================================================================
-
+class Texture;
 
 //====================================================================================
 // Type Defs + Defines
@@ -23,17 +23,31 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class FrameBuffer
 {
 public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	FrameBuffer(); 
+	~FrameBuffer();
+
+	// should just update members
+	// finalize does the actual binding
+	void SetColorTarget( Texture* color_target ); 
+	//void SetDepthStencilTarget( Texture* depth_target ); 
+
+	int GetID() { return m_ID; }
+	int GetDepthStencilTargetWidth();
+	int GetDepthStencilTargetHeight();
+
+	// setups the the GL frame buffer - called before us. 
+	// TODO: Make sure this only does work if the targets
+	// have changed.
+	bool Finalize(); 
 
 public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
+	int			m_ID; 
+	Texture*	m_colorTarget = nullptr; 
+	Texture*	m_depthStencilTarget = nullptr; 
 };
-
 
 //====================================================================================
 // Standalone C Functions
@@ -46,5 +60,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [1/31/2019]
 //====================================================================================

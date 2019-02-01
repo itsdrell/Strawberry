@@ -23,6 +23,19 @@
     <ClInclude Include="Math\Geometry\AABB2.hpp" />
     <ClInclude Include="Core\Tools\ErrorWarningAssert.hpp" />
     <ClInclude Include="Core\Utils\StringUtils.hpp" />
+    <ClInclude Include="Renderer\BuiltInShaders.hpp" />
+    <ClInclude Include="Core\General\Camera.hpp" />
+    <ClInclude Include="Math\Matrices\Matrix44.hpp" />
+    <ClInclude Include="Renderer\Pipeline\FrameBuffer.hpp" />
+    <ClInclude Include="Renderer\Images\Texture.hpp" />
+    <ClInclude Include="Math\Vectors\IntVector2.hpp" />
+    <ClInclude Include="Renderer\Images\Image.hpp" />
+    <ClInclude Include="Renderer\Pipeline\RenderBuffer.hpp" />
+    <ClInclude Include="Renderer\Components\Shader.hpp" />
+    <ClInclude Include="Renderer\Components\ShaderProgram.hpp" />
+    <ClInclude Include="Renderer\Pipeline\Sampler.hpp" />
+    <ClInclude Include="ThirdParty\stbi\stb_image.h" />
+    <ClInclude Include="ThirdParty\stbi\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -59,6 +72,45 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Utils\StringUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Matrices\Matrix44.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\General\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Pipeline\FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vectors\IntVector2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Images\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Images\Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Pipeline\RenderBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Components\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Components\ShaderProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\BuiltInShaders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Pipeline\Sampler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\stbi\stb_image.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\stbi\stb_image_write.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

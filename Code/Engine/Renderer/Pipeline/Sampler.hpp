@@ -13,7 +13,12 @@
 //====================================================================================
 // ENUMS
 //====================================================================================
-
+enum SamplerTypes
+{
+	NORMAL,
+	MIPS,
+	NUM_OF_SAMPLER_TYPES
+};
 
 //====================================================================================
 // Structs
@@ -23,17 +28,21 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class Sampler
 {
 public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	Sampler();
+	~Sampler();
 
-public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
+	bool CreateDefault();
+	//bool CreateWithMips();
+	void Destroy();
+
+	void* GetHandle()const { return m_sampler_handle; }
+
+private:
+	void* m_sampler_handle;
 };
-
 
 //====================================================================================
 // Standalone C Functions
@@ -46,5 +55,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [1/31/2019]
 //====================================================================================

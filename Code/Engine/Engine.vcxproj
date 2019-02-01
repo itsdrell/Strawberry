@@ -160,6 +160,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\General\Camera.hpp" />
     <ClInclude Include="Core\General\EngineCommon.hpp" />
     <ClInclude Include="Core\General\Rgba.hpp" />
     <ClInclude Include="Core\Platform\Window.hpp" />
@@ -167,29 +168,54 @@
     <ClInclude Include="Core\Utils\StringUtils.hpp" />
     <ClInclude Include="Internal\WindowsCommon.hpp" />
     <ClInclude Include="Math\Geometry\AABB2.hpp" />
+    <ClInclude Include="Math\Matrices\Matrix44.hpp" />
+    <ClInclude Include="Math\Vectors\IntVector2.hpp" />
     <ClInclude Include="Math\Vectors\Vector2.hpp" />
     <ClInclude Include="Math\Vectors\Vector3.hpp" />
+    <ClInclude Include="Renderer\BuiltInShaders.hpp" />
+    <ClInclude Include="Renderer\Components\Shader.hpp" />
+    <ClInclude Include="Renderer\Components\ShaderProgram.hpp" />
     <ClInclude Include="Renderer\external\gl\glcorearb.h" />
     <ClInclude Include="Renderer\external\gl\glext.h" />
     <ClInclude Include="Renderer\external\gl\wglext.h" />
     <ClInclude Include="Renderer\GLFunctions.hpp" />
+    <ClInclude Include="Renderer\Images\Image.hpp" />
+    <ClInclude Include="Renderer\Images\Texture.hpp" />
+    <ClInclude Include="Renderer\Pipeline\FrameBuffer.hpp" />
+    <ClInclude Include="Renderer\Pipeline\RenderBuffer.hpp" />
+    <ClInclude Include="Renderer\Pipeline\Sampler.hpp" />
     <ClInclude Include="Renderer\Pipeline\VertexLayout.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Renderer\RenderTypes.hpp" />
+    <ClInclude Include="ThirdParty\stbi\stb_image.h" />
+    <ClInclude Include="ThirdParty\stbi\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\General\Camera.cpp" />
     <ClCompile Include="Core\General\EngineCommon.cpp" />
     <ClCompile Include="Core\General\Rgba.cpp" />
     <ClCompile Include="Core\Platform\Window.cpp" />
     <ClCompile Include="Core\Tools\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Utils\StringUtils.cpp" />
     <ClCompile Include="Math\Geometry\AABB2.cpp" />
+    <ClCompile Include="Math\Matrices\Matrix44.cpp" />
+    <ClCompile Include="Math\Vectors\IntVector2.cpp" />
     <ClCompile Include="Math\Vectors\Vector2.cpp" />
     <ClCompile Include="Math\Vectors\Vector3.cpp" />
+    <ClCompile Include="Renderer\BuiltInShaders.cpp" />
+    <ClCompile Include="Renderer\Components\Shader.cpp" />
+    <ClCompile Include="Renderer\Components\ShaderProgram.cpp" />
     <ClCompile Include="Renderer\GLFunctions.cpp" />
+    <ClCompile Include="Renderer\Images\Image.cpp" />
+    <ClCompile Include="Renderer\Images\Texture.cpp" />
+    <ClCompile Include="Renderer\Pipeline\FrameBuffer.cpp" />
+    <ClCompile Include="Renderer\Pipeline\RenderBuffer.cpp" />
+    <ClCompile Include="Renderer\Pipeline\Sampler.cpp" />
     <ClCompile Include="Renderer\Pipeline\VertexLayout.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RenderTypes.cpp" />
+    <ClCompile Include="ThirdParty\stbi\stb_image.c" />
+    <ClCompile Include="ThirdParty\stbi\stb_image_write.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

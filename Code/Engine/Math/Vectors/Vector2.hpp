@@ -1,5 +1,4 @@
-
-
+#pragma once
 
 //====================================================================================
 // Forward Declare
@@ -28,6 +27,7 @@ class Vector2
 {
 public:
 	Vector2();
+	Vector2( float theX, float theY );
 
 
 public:

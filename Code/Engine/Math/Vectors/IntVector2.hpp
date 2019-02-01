@@ -23,17 +23,15 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class IntVector2
 {
 public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	IntVector2();
+	IntVector2(int theX, int theY);
 
 public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
+	int x,y;
 };
-
 
 //====================================================================================
 // Standalone C Functions
@@ -46,5 +44,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [1/31/2019]
 //====================================================================================

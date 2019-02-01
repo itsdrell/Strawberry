@@ -27,6 +27,7 @@ class Vector3
 {
 public:
 	Vector3();
+	Vector3( float theX, float theY, float theZ );
 
 
 public:

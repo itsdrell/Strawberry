@@ -1,9 +1,13 @@
 #pragma once
+#include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Renderer/Renderer.hpp"
+#include "Engine/Renderer/RenderTypes.hpp"
+#include "Engine/Math/Vectors/IntVector2.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-
+class Image;
 
 //====================================================================================
 // Type Defs + Defines
@@ -23,17 +27,30 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class Texture
 {
-public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	friend class Renderer; 
+
+private:
+	Texture();
+	Texture(const String& filePath, bool flip = true);
+
+	void PopulateFromData( unsigned char* imageData, const IntVector2& texelSize, int numComponents) ;
+	bool CreateRenderTarget( int width, int height, eTextureFormat format );
+	
+	Texture* CreateFromImage(const Image& imageToCreateFrom);
 
 public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
+	IntVector2 GetDimensions() { return m_dimensions; } 
+	uint GetID() const { return m_textureID; }
+
+private:
+	uint				m_textureID;
+	IntVector2			m_dimensions;
+	eTextureFormat		m_format;
+
+	unsigned char*		m_data;
 };
-
 
 //====================================================================================
 // Standalone C Functions
@@ -46,5 +63,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [1/31/2019]
 //====================================================================================

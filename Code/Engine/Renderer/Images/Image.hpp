@@ -1,4 +1,7 @@
 #pragma once
+#include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Math/Vectors/IntVector2.hpp"
+#include "Engine/Core/General/Rgba.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -23,17 +26,22 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class Image
 {
 public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	Image();
+	Image(const String& name, const IntVector2& dimension, const Rgba& color);
+	~Image();
 
 public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
-};
+	unsigned char* GetColorCharPointer() const;
+	IntVector2 GetDimensions() const { return m_dimensions; }
 
+private:
+	IntVector2				m_dimensions;
+	std::vector<Rgba>		m_colors;
+	String					m_name;
+};
 
 //====================================================================================
 // Standalone C Functions
@@ -46,5 +54,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [1/31/2019]
 //====================================================================================
