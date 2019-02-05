@@ -17,13 +17,20 @@ LuaScript::LuaScript(const String & path)
 
 	int resultOfLoad = luaL_loadfile(m_state, path.c_str());
 	if(resultOfLoad != LUA_OK)
-		m_errorFromLoad = resultOfLoad;
-
-	m_errorFromPCall = lua_pcall(m_state, 0, 0, 0);
-	if(m_errorFromPCall != LUA_OK)
 	{
+		m_errorCode = resultOfLoad;
 		LogError();
 		m_state = nullptr;
+	}
+	else // only do this if the load succeeds
+	{
+		int resultFromPCall = lua_pcall(m_state, 0, 0, 0);
+		if(resultFromPCall != LUA_OK)
+		{
+			m_errorCode = resultFromPCall;
+			LogError();
+			m_state = nullptr;
+		}
 	}
 
 	AddLibrariesToLuaScript();
@@ -56,13 +63,16 @@ void LuaScript::LogError()
 {
 	DebuggerPrintf("//---------------------------------------------------------------------------- \n");
 	
-	String loadErrorMessage = LuaErrorCodeToString(m_errorFromLoad);
-	String stack = std::to_string(lua_gettop(m_state));
+	String loadErrorMessage = LuaErrorCodeToString(m_errorCode);
+	String msg = lua_tostring(m_state, -1);
 
-	const char *msg = lua_tostring(m_state, -1);
+	size_t leftColonPos = msg.find( ':' );
+	size_t rightColonPos = msg.find( ':', leftColonPos + 1 );
+	String lineNumber = String( msg, leftColonPos+1, (rightColonPos - leftColonPos - 1));
+
 	m_errorMessage = 
 		loadErrorMessage + 
-		"\nStack: " + stack +
+		"\nOn Line: " + lineNumber + 
 		"\nReason: " + String(msg) + "\n";
 	lua_pop(m_state, 1);  /* remove message */
 
@@ -81,7 +91,7 @@ String LuaScript::LuaErrorCodeToString(int theCode)
 //-----------------------------------------------------------------------------------------------
 bool LuaScript::HasError()
 {
-	return (m_errorFromLoad != LUA_OK || m_errorFromPCall != LUA_OK); 
+	return (m_errorCode != LUA_OK); 
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -96,9 +106,9 @@ bool LuaStartUp(LuaScript& mainScript)
 	lua_State* theState = mainScript.GetLuaState();
 	if(theState == nullptr) return false;
 
-	lua_getglobal(theState, "Test");
+	lua_getglobal(theState, "StartUp");
 
-	lua_pcall(theState, 1, 0, 0);
+	lua_pcall(theState, 0, 0, 0);
 
 	return true;
 }
