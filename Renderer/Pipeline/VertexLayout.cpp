@@ -30,7 +30,7 @@ VertexAttributeT & VertexLayout::GetAttribute(int const idx)
 }
 
 //-----------------------------------------------------------------------------------------------
-VertexAttributeT::VertexAttributeT(const String & theName, eRenderDataType theType, uint theCount, bool isNormalized, size_t theMemberOffset)
+VertexAttributeT::VertexAttributeT(const String & theName, int theType, uint theCount, bool isNormalized, size_t theMemberOffset)
 {
 	name = theName;
 	type = theType;

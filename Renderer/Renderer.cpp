@@ -6,7 +6,6 @@
 #include "Engine/Core/General/Camera.hpp"
 #include "Engine/Renderer/Components/Shader.hpp"
 #include "Engine/Renderer/Components/ShaderProgram.hpp"
-#include "Engine/Core/Platform/Window.hpp"
 #include "Engine/Renderer/Images/Image.hpp"
 #include "Engine/Renderer/Images/Texture.hpp"
 #include "Engine/Renderer/BuiltInShaders.hpp"
@@ -14,10 +13,16 @@
 #include "Engine/Renderer/Pipeline/FrameBuffer.hpp"
 
 
+
+#ifdef EMSCRIPTEN_PORT
+#else
+#include "Engine/Core/Platform/Window.hpp"
+
 //===============================================================================================
 // Four needed variables for RenderStartup.
 //static HMODULE gGLLibrary  = NULL; 
-HMODULE gGLLibrary  = NULL;				// this is externed in GLFunctions
+//HMODULE gGLLibrary  = NULL;				// this is externed in GLFunctions
+HMODULE gGLLibrary  = NULL;		// this is externed in GLFunctions
 static HWND gGLwnd         = NULL;    // window our context is attached to; 
 static HDC gHDC            = NULL;    // our device context
 static HGLRC gGLContext    = NULL;    // our rendering context; 
@@ -25,6 +30,8 @@ static HGLRC gGLContext    = NULL;    // our rendering context;
 // these need to be declared here for linking!
 static HGLRC CreateOldRenderContext( HDC hdc );
 static HGLRC CreateRealRenderContext( HDC hdc, int major, int minor );
+#endif
+
 
 //-----------------------------------------------------------------------------------------------
 int g_openGlPrimitiveTypes[ NUM_PRIMITIVE_TYPES ] =
@@ -53,8 +60,10 @@ Renderer::~Renderer()
 }
 
 //-----------------------------------------------------------------------------------------------
-void Renderer::RenderStartup(void* hwnd)
+void Renderer::RenderStartupForWindows(void* hwnd)
 {
+	
+#ifndef EMSCRIPTEN_PORT
 	// load and get a handle to the opengl dll (dynamic link library)
 	gGLLibrary = ::LoadLibraryA( "opengl32.dll" ); 
 
@@ -84,19 +93,35 @@ void Renderer::RenderStartup(void* hwnd)
 	gHDC = hdc; 
 	gGLContext = real_context; 
 
+	m_windowSize = Vector2(Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight());
+
+	// Turn off VSync
+	wglSwapIntervalEXT( 0 ); 
+
 	RenderPostStartUp();
 
 	//return true; 
 
+#endif
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::RenderStartupForWeb(const Vector2& windowSize)
+{
+	//gGLLibrary = ::LoadLibraryA( "opengl32.dll" ); 
+	
+	m_windowSize = windowSize;
+
+	// Bind all our OpenGL functions we'll be using.
+	BindGLFunctions(); 
+
+	RenderPostStartUp();
 }
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::RenderPostStartUp()
 {
 	//BuiltInShaders::CreateAllBuiltInShaders();
-
-	// Turn off VSync
-	wglSwapIntervalEXT( 0 ); 
 
 	// default_vao is a GLuint member variable
 	glGenVertexArrays( 1, &m_defaultVAO ); 
@@ -123,8 +148,8 @@ void Renderer::RenderPostStartUp()
 	// Frame buffer stuff
 	// the default color and depth should match our output window
 	// so get width/height however you need to.
-	int window_width =  (int)Window::GetInstance()->GetWidth(); 
-	int window_height = (int)Window::GetInstance()->GetHeight();
+	int window_width =  m_windowSize.x;
+	int window_height = m_windowSize.y;
 
 	// create our output textures
 	m_defaultColorTarget = CreateRenderTarget( window_width, 
@@ -154,11 +179,16 @@ void Renderer::BeginFrame()
 void Renderer::EndFrame()
 {
 	GL_CHECK_ERROR();
-	CopyFrameBuffer( nullptr, &m_defaultCamera->GetFramebuffer() ); 
+	FrameBuffer temp = m_defaultCamera->GetFramebuffer();
+	CopyFrameBuffer(nullptr, &temp);
+	//CopyFrameBuffer( nullptr, &m_defaultCamera->GetFramebuffer() ); 
 
+#ifdef EMSCRIPTEN_PORT
+#else
 	HWND hWnd = GetActiveWindow();
 	HDC hDC = GetDC( hWnd );
 	SwapBuffers( hDC );
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -203,11 +233,11 @@ bool Renderer::CopyFrameBuffer(FrameBuffer* dst, FrameBuffer* src)
 	}
 	else
 	{
-		Window* theWindow = Window::GetInstance();
+		//Window* theWindow = Window::GetInstance();
 
 		// might want to make em floats but w/e
-		width = (int)theWindow->GetWidth();
-		height = (int)theWindow->GetHeight();
+		width = (int)m_windowSize.x;
+		height = (int)m_windowSize.y;
 	}
 
 	// Copy it over
@@ -432,11 +462,17 @@ Renderer * Renderer::GetInstance()
 //-----------------------------------------------------------------------------------------------
 void* Renderer::GetGLLibrary()
 {
-	return gGLLibrary;
+#ifdef EMSCRIPTEN_PORT
+	return NULL;
+#else
+	return (void*) gGLLibrary;
+#endif
 }
 
 //===============================================================================================
 // Creates a real context as a specific version (major.minor)
+#ifdef EMSCRIPTEN_PORT
+#else
 static HGLRC CreateRealRenderContext( HDC hdc, int major, int minor ) 
 {
 	// So similar to creating the temp one - we want to define 
@@ -566,3 +602,4 @@ void GLShutdown()
 
 	::FreeLibrary( gGLLibrary );
 }
+#endif

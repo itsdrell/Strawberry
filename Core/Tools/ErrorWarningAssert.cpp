@@ -1,19 +1,41 @@
 //-----------------------------------------------------------------------------------------------
 // ErrorWarningAssert.cpp
 //
+//-----------------------------------------------------------------------------------------------
+#include "Engine/Core/Tools/ErrorWarningAssert.hpp"
+#include "Engine/Core/Utils/StringUtils.hpp"
+#include <stdarg.h>
+#include <iostream>
 
+
+#ifdef EMSCRIPTEN_PORT
+//-----------------------------------------------------------------------------------------------
+void DebuggerPrintf( const char* messageFormat, ... )
+{
+	//#TODO figure out how to print in html
+}
+
+//-----------------------------------------------------------------------------------------------
+std::string GetDirectoryPath()
+{
+	// https://msdn.microsoft.com/en-us/library/windows/desktop/aa364934(v=vs.85).aspx
+
+	char NPath[1000];
+	//GetCurrentDirectoryA(1000, NPath);
+
+	return String("idk man");
+}
+
+//===============================================================================================
+//	Windows port
+//===============================================================================================
+#else 
 //-----------------------------------------------------------------------------------------------
 #ifdef _WIN32
 #define PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #endif
-
-//-----------------------------------------------------------------------------------------------
-#include "Engine/Core/Tools/ErrorWarningAssert.hpp"
-#include "Engine/Core/Utils/StringUtils.hpp"
-#include <stdarg.h>
-#include <iostream>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -321,4 +343,4 @@ void RecoverableWarning( const char* filePath, const char* functionName, int lin
 	}
 }
 
-
+#endif

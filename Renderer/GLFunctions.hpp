@@ -1,20 +1,25 @@
 #pragma once
 #include "Engine/Renderer/external/gl/glcorearb.h"
 #include "Engine/Renderer/external/gl/glext.h"
+
+#ifndef EMSCRIPTEN_PORT
 #include "Engine/Renderer/external/gl/wglext.h"
-//#include "Engine/Renderer/Renderer.hpp"
+extern HMODULE gGLLibrary; // needed for the template to work
+#endif
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-
+//typedef int HMODULE; // clears up an error
+//void GetProcAddress(HMODULE, char const*) {}
 
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
-#define GL_CHECK_ERROR()  GLCheckError( __FILE__, __LINE__ )
+#define GL_CHECK_ERROR()	GLCheckError( __FILE__, __LINE__ )
 #define GL_CHECK_ERROR_AND_DIE() GLCheckErrorAndDie( __FILE__, __FUNCTION__, __LINE__ )
 #define GL_BIND_FUNCTION(f)      wglGetTypedProcAddress( &f, #f )
+
 
 //====================================================================================
 // Standalone C Functions
@@ -31,14 +36,14 @@ void BindGLFunctions();
 //===============================================================================================
 // Templates
 //===============================================================================================
-extern HMODULE gGLLibrary; // needed for the template to work
-
 template <typename T>
 bool wglGetTypedProcAddress( T *out, char const *name ) 
 {
+#ifndef EMSCRIPTEN_PORT
 	// Grab the function from the currently bound render context
 	// most opengl 2.0+ features will be found here
 	*out = (T) wglGetProcAddress(name); 
+
 
 	if ((*out) == nullptr) {
 		// if it is not part of wgl (the device), then attempt to get it from the GLL library
@@ -49,7 +54,11 @@ bool wglGetTypedProcAddress( T *out, char const *name )
 	}
 
 	return (*out != nullptr); 
+#endif
+
+	return true;
 }
+
 
 //====================================================================================
 // Externs
@@ -126,11 +135,16 @@ extern PFNGLTEXSUBIMAGE2DPROC glTexSubImage2D;
 extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
 extern PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf;
 
+
+#ifdef EMSCRIPTEN_PORT
+#else
 // wgl
 extern PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB;
 extern PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
 extern PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
 extern PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
+
+#endif
 
 //====================================================================================
 // Written by Zachary Bracken : [1/29/2019]

@@ -1,62 +1,67 @@
 #pragma once
-#include "Engine/Core/General/EngineCommon.hpp"
+#include <string>
+#include <vector>
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
 
+//===============================================================================================
+// Defines
+//===============================================================================================
+#define UNUSED(x) (void)(x);
 
 //====================================================================================
-// Type Defs + Defines
+// Type Defs 
 //====================================================================================
-
+typedef std::string					String;
+typedef std::vector<std::string>	Strings;
+typedef std::vector<int>			Ints;
+typedef unsigned int				uint;
+typedef unsigned short				uint16;
+typedef unsigned char				Byte;
 
 //====================================================================================
 // ENUMS
 //====================================================================================
-enum eRenderDataType;
+
 
 //====================================================================================
 // Structs
 //====================================================================================
-struct VertexAttributeT
-{
 
-public:
-	VertexAttributeT() { name = "END";} // null terminator
-	VertexAttributeT(const String & theName, eRenderDataType theType, uint theCount, bool isNormalized, size_t theMemberOffset);
-
-public:
-	String						name; // because we have to search for it
-	eRenderDataType				type; // what? (abstract away GL from the header)
-	uint						elem_count; // how many?
-	bool						normalized; 
-	uint						vertex_stride;
-	size_t						member_offset; 
-};
 
 //====================================================================================
 // Classes
 //====================================================================================
-class VertexLayout 
-{
-public:
-	VertexLayout(uint stride, const VertexAttributeT data[]);
 
-	uint						GetAttributeCount(); 
-	VertexAttributeT&			GetAttribute( int const idx );  
-
-public:
-	// what are the members
-	std::vector<VertexAttributeT>		m_attributes;
-
-	// how large is the vertex in bytes
-	uint m_stride; 
-};
 
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
+void EngineStartUp();
+void EngineShutdown();
+
+//===============================================================================================
+// Templates
+//===============================================================================================
+template< typename T>
+void RemoveFast( uint& idx, std::vector<T>& theVector )
+{
+	T endThing = theVector.at(theVector.size() - 1);
+
+	if(theVector.size() == 1)
+	{
+		theVector.pop_back();
+		idx--;
+		return;
+	}
+
+	theVector.at(theVector.size() - 1) = theVector.at(idx);
+	theVector.at(idx) = endThing;
+	theVector.pop_back();
+	idx--; // so we don't have to do it outside of the function
+}
 
 
 //====================================================================================

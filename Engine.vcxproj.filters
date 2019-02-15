@@ -138,9 +138,6 @@
     <ClCompile Include="ThirdParty\stbi\stb_image.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\stbi\stb_image_write.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ThirdParty\Lua\lapi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -250,6 +247,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Lua\EngineLuaFunctionBindings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\stbi\stb_image_write.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -41,7 +41,8 @@ public:
 	~Renderer();
 
 public:
-	void RenderStartup(void* hwnd);
+	void RenderStartupForWindows(void* hwnd);
+	void RenderStartupForWeb(const Vector2& windowSize);
 	void RenderPostStartUp();
 	void BeginFrame();
 	void EndFrame();
@@ -70,6 +71,7 @@ private:
 	static Renderer* s_theRenderer;
 
 public:
+	Vector2				m_windowSize;
 
 	Camera*				m_currentCamera = nullptr;
 	Camera*				m_defaultCamera = nullptr;

@@ -10,7 +10,7 @@ LuaScript::LuaScript(const String & path)
 	m_state = luaL_newstate();
 	if(m_state == NULL)
 	{
-		ERROR_AND_DIE("Lua script at: " + path + " STATE could not be created");
+		//ERROR_AND_DIE("Lua script at: " + path + " STATE could not be created");
 	}
 
 	AddBindingsToScript();

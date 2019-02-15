@@ -74,19 +74,23 @@ PFNGLTEXSUBIMAGE2DPROC glTexSubImage2D = nullptr;
 PFNGLGENERATEMIPMAPPROC glGenerateMipmap = nullptr;
 PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf = nullptr;
 
-// wgl
+// windows-gl
+#ifndef EMSCRIPTEN_PORT
 PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = nullptr;
 PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = nullptr;
 PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = nullptr;
 PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
+#endif
 
 //===============================================================================================
 void BindNewGLFunctions()
 {
+#ifndef EMSCRIPTEN_PORT
 	GL_BIND_FUNCTION( wglGetExtensionsStringARB ); 
 	GL_BIND_FUNCTION( wglChoosePixelFormatARB ); 
 	GL_BIND_FUNCTION( wglCreateContextAttribsARB );
 	GL_BIND_FUNCTION( wglSwapIntervalEXT );
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 #include <string>
 //-----------------------------------------------------------------------------------------------
 // ErrorWarningAssert.hpp
@@ -15,7 +17,8 @@
 
 
 //-----------------------------------------------------------------------------------------------
-#include <string>
+
+
 
 
 //-----------------------------------------------------------------------------------------------
@@ -29,7 +32,9 @@ enum SeverityLevel
 
 
 //-----------------------------------------------------------------------------------------------
-void DebuggerPrintf( const char* messageFormat, ... );
+
+
+#ifndef EMSCRIPTEN_PORT
 bool IsDebuggerAvailable();
 std::string GetDirectoryPath();
 __declspec( noreturn ) void FatalError( const char* filePath, const char* functionName, int lineNum, const std::string& reasonForError, const char* conditionText=nullptr );
@@ -38,6 +43,8 @@ void SystemDialogue_Okay( const std::string& messageTitle, const std::string& me
 bool SystemDialogue_OkayCancel( const std::string& messageTitle, const std::string& messageText, SeverityLevel severity );
 bool SystemDialogue_YesNo( const std::string& messageTitle, const std::string& messageText, SeverityLevel severity );
 int SystemDialogue_YesNoCancel( const std::string& messageTitle, const std::string& messageText, SeverityLevel severity );
+
+
 
 //-----------------------------------------------------------------------------------------------
 // ERROR_AND_DIE
@@ -167,4 +174,10 @@ int SystemDialogue_YesNoCancel( const std::string& messageTitle, const std::stri
 }
 #endif
 
+#else
+void DebuggerPrintf( const char* messageFormat, ... );
+std::string GetDirectoryPath();
 
+#define GUARANTEE_RECOVERABLE( condition, errorMessageText )
+#define ASSERT_RECOVERABLE( condition, errorMessageText ) { (void)( condition ); }
+#endif

@@ -8,6 +8,8 @@
 #include <string>
 
 
+#ifndef EMSCRIPTEN_PORT
+
 //-----------------------------------------------------------------------------------------------
 const int STRINGF_STACK_LOCAL_TEMP_LENGTH = 2048;
 
@@ -55,6 +57,8 @@ std::string Stringv(const char* format, va_list args)
 
 	return std::string( textLiteral );
 }
+
+#endif
 
 //-----------------------------------------------------------------------------------------------
 std::vector<std::string> BreakSentenceIntoWords(std::string text)

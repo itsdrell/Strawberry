@@ -1,6 +1,11 @@
-#include "EngineCommon.hpp"
-#include "Engine/Core/Platform/Window.hpp"
+#include "Engine/Core/General/EngineCommon.hpp"
 #include "Engine/Renderer/Renderer.hpp"
+
+
+#ifdef EMSCRIPTEN_PORT
+#else
+#include "Engine/Core/Platform/Window.hpp"
+#endif
 
 //===============================================================================================
 void EngineStartUp()
@@ -8,9 +13,12 @@ void EngineStartUp()
 	//AudioSystem* audio = new AudioSystem();
 	//InputSystem* input = new InputSystem();
 	Renderer* renderer = new Renderer();
+#ifdef EMSCRIPTEN_PORT
+	renderer->RenderStartupForWeb(Vector2(320.f, 220.f));
+#else
+	renderer->RenderStartupForWindows(Window::GetInstance()->GetHandle()); // call the static variable
 
-	renderer->RenderStartup(Window::GetInstance()->GetHandle()); // call the static variable
-
+#endif
 	//audio = nullptr;
 	//input = nullptr;
 	renderer = nullptr;
