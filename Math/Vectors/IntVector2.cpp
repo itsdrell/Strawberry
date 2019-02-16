@@ -2,7 +2,8 @@
 
 IntVector2::IntVector2()
 {
-	x,y = 0;
+	x = 0;
+	y = 0;
 }
 
 IntVector2::IntVector2(int theX, int theY)

@@ -15,6 +15,7 @@
 
 
 #ifdef EMSCRIPTEN_PORT
+	//#include <emscripten/emscripten.h>
 #else
 #include "Engine/Core/Platform/Window.hpp"
 
@@ -108,12 +109,7 @@ void Renderer::RenderStartupForWindows(void* hwnd)
 //-----------------------------------------------------------------------------------------------
 void Renderer::RenderStartupForWeb(const Vector2& windowSize)
 {
-	//gGLLibrary = ::LoadLibraryA( "opengl32.dll" ); 
-	
 	m_windowSize = windowSize;
-
-	// Bind all our OpenGL functions we'll be using.
-	BindGLFunctions(); 
 
 	RenderPostStartUp();
 }

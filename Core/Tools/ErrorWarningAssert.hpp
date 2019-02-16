@@ -37,6 +37,7 @@ enum SeverityLevel
 #ifndef EMSCRIPTEN_PORT
 bool IsDebuggerAvailable();
 std::string GetDirectoryPath();
+void DebuggerPrintf( const char* messageFormat, ... );
 __declspec( noreturn ) void FatalError( const char* filePath, const char* functionName, int lineNum, const std::string& reasonForError, const char* conditionText=nullptr );
 void RecoverableWarning( const char* filePath, const char* functionName, int lineNum, const std::string& reasonForWarning, const char* conditionText=nullptr );
 void SystemDialogue_Okay( const std::string& messageTitle, const std::string& messageText, SeverityLevel severity );
