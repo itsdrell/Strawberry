@@ -1,4 +1,5 @@
 #include "RenderBuffer.hpp"
+#include "Engine/Internal/EmscriptenCommon.hpp"
 
 //===============================================================================================
 RenderBuffer::RenderBuffer()

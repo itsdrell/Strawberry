@@ -1,4 +1,5 @@
 #include "RenderTypes.hpp"
+#include "Engine/Internal/EmscriptenCommon.hpp"
 
 //===============================================================================================
 GLenum ToGLCubeSide(eTextureCubeSide side)

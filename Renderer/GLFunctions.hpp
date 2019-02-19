@@ -16,11 +16,15 @@ extern HMODULE gGLLibrary; // needed for the template to work
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
+#ifdef EMSCRIPTEN_PORT
+	#define GL_CHECK_ERROR()
+	#define GL_CHECK_ERROR_AND_DIE()
+	#define GL_BIND_FUNCTION(f) 
+#else
 #define GL_CHECK_ERROR()	GLCheckError( __FILE__, __LINE__ )
 #define GL_CHECK_ERROR_AND_DIE() GLCheckErrorAndDie( __FILE__, __FUNCTION__, __LINE__ )
 #define GL_BIND_FUNCTION(f)      wglGetTypedProcAddress( &f, #f )
-
-
+#endif
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
@@ -32,7 +36,7 @@ void GLCheckErrorAndDie( char const *file, char const* function, int line );
 void BindNewGLFunctions();
 void BindGLFunctions();
 
-
+#ifndef EMSCRIPTEN_PORT
 //===============================================================================================
 // Templates
 //===============================================================================================
@@ -135,9 +139,6 @@ extern PFNGLTEXSUBIMAGE2DPROC glTexSubImage2D;
 extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
 extern PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf;
 
-
-#ifdef EMSCRIPTEN_PORT
-#else
 // wgl
 extern PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB;
 extern PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;

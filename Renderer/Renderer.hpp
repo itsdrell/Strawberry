@@ -15,6 +15,7 @@ class FrameBuffer;
 struct Vertex3D_PCU;
 class Texture;
 class Sampler;
+class SDL_Surface;
 
 //====================================================================================
 // Type Defs + Defines
@@ -96,6 +97,7 @@ public:
 	Texture*			m_defaultDepthTarget = nullptr;
 	unsigned int		m_defaultVAO; 
 	
+	SDL_Surface*		m_webScreen;
 };
 
 //====================================================================================

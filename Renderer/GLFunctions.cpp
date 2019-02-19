@@ -2,6 +2,7 @@
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 
 //===============================================================================================
+#ifndef EMSCRIPTEN_PORT
 PFNGLCLEARPROC glClear = nullptr;
 PFNGLCLEARCOLORPROC glClearColor = nullptr;
 PFNGLDELETESHADERPROC glDeleteShader = nullptr;
@@ -75,7 +76,6 @@ PFNGLGENERATEMIPMAPPROC glGenerateMipmap = nullptr;
 PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf = nullptr;
 
 // windows-gl
-#ifndef EMSCRIPTEN_PORT
 PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = nullptr;
 PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = nullptr;
 PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = nullptr;
@@ -96,6 +96,7 @@ void BindNewGLFunctions()
 //-----------------------------------------------------------------------------------------------
 void BindGLFunctions()
 {
+#ifndef EMSCRIPTEN_PORT
 	GL_BIND_FUNCTION(glClear);
 	GL_BIND_FUNCTION(glClearColor);
 	GL_BIND_FUNCTION(glDeleteShader);
@@ -167,18 +168,21 @@ void BindGLFunctions()
 	GL_BIND_FUNCTION(glTexSubImage2D);
 	GL_BIND_FUNCTION(glGenerateMipmap);
 	GL_BIND_FUNCTION(glSamplerParameterf);
+#endif
 }
 
 //===============================================================================================
 bool GLCheckError(char const * file, int line)
 {
 #if defined(_DEBUG)
+	#ifndef EMSCRIPTEN_PORT
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR) 
 	{
 		DebuggerPrintf( "\nGL ERROR [0x%04x] at [%s(%i)] \n", error, file, line );
 		return true; 
 	}
+	#endif
 #endif
 	return false;
 }
@@ -186,7 +190,11 @@ bool GLCheckError(char const * file, int line)
 //-----------------------------------------------------------------------------------------------
 bool GLFailed()
 {
+#ifndef EMSCRIPTEN_PORT
 	return GL_CHECK_ERROR(); 
+#else
+	return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -199,11 +207,13 @@ bool GLSucceeded()
 void GLCheckErrorAndDie(char const * file, char const * function, int line)
 {
 #if defined(_DEBUG)
+	#ifndef EMSCRIPTEN_PORT
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR) 
 	{
 		//ERROR_RECOVERABLE( Stringf("\nGL ERROR [0x%04x] in [%s] at [%s(%i)] \n", error, function, file, line).c_str() );
 	}
+	#endif
 #endif
 }
 

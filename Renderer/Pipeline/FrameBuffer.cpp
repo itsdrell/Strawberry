@@ -2,6 +2,7 @@
 #include "Engine/Renderer/GLFunctions.hpp"
 #include "Engine/Renderer/Images/Texture.hpp"
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
+#include "Engine/Internal/EmscriptenCommon.hpp"
 
 //===============================================================================================
 FrameBuffer::FrameBuffer()
@@ -49,35 +50,35 @@ bool FrameBuffer::Finalize()
 
 	// Bind a color target to an attachment point
 	// and keep track of which locations to to which attachments. 
-	glFramebufferTexture( GL_FRAMEBUFFER, 
-		GL_COLOR_ATTACHMENT0 + 0, 
-		m_colorTarget->GetID(), 
-		0 ); 
+	//glFramebufferTexture( GL_FRAMEBUFFER, 
+	//	GL_COLOR_ATTACHMENT0 + 0, 
+	//	m_colorTarget->GetID(), 
+	//	0 ); 
 	GL_CHECK_ERROR();
 
 	// 0 to to attachment 0
 	targets[0] = GL_COLOR_ATTACHMENT0 + 0; 
 
 	// Update target bindings
-	glDrawBuffers( 1, targets );									GL_CHECK_ERROR();
+	//glDrawBuffers( 1, targets );									GL_CHECK_ERROR();
 
 	// Bind depth if available;
-	if (m_depthStencilTarget == nullptr) 
-	{
-		glFramebufferTexture( GL_FRAMEBUFFER, 
-			GL_DEPTH_STENCIL_ATTACHMENT, 
-			NULL, 
-			0 ); 
-		GL_CHECK_ERROR();
-	} 
-	else 
-	{
-		glFramebufferTexture( GL_FRAMEBUFFER, 
-			GL_DEPTH_STENCIL_ATTACHMENT, 
-			m_depthStencilTarget->GetID(), 
-			0 ); 
-		GL_CHECK_ERROR();
-	}
+	//if (m_depthStencilTarget == nullptr) 
+	//{
+	//	glFramebufferTexture( GL_FRAMEBUFFER, 
+	//		GL_DEPTH_STENCIL_ATTACHMENT, 
+	//		NULL, 
+	//		0 ); 
+	//	GL_CHECK_ERROR();
+	//} 
+	//else 
+	//{
+	//	glFramebufferTexture( GL_FRAMEBUFFER, 
+	//		GL_DEPTH_STENCIL_ATTACHMENT, 
+	//		m_depthStencilTarget->GetID(), 
+	//		0 ); 
+	//	GL_CHECK_ERROR();
+	//}
 
 	// Error Check - recommend only doing in debug
 #if defined(_DEBUG)

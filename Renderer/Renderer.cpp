@@ -11,12 +11,9 @@
 #include "Engine/Renderer/BuiltInShaders.hpp"
 #include "Engine/Renderer/Pipeline/Sampler.hpp"
 #include "Engine/Renderer/Pipeline/FrameBuffer.hpp"
+#include "Engine/Internal/EmscriptenCommon.hpp"
 
-
-
-#ifdef EMSCRIPTEN_PORT
-	//#include <emscripten/emscripten.h>
-#else
+#ifndef EMSCRIPTEN_PORT
 #include "Engine/Core/Platform/Window.hpp"
 
 //===============================================================================================
@@ -109,9 +106,28 @@ void Renderer::RenderStartupForWindows(void* hwnd)
 //-----------------------------------------------------------------------------------------------
 void Renderer::RenderStartupForWeb(const Vector2& windowSize)
 {
+#ifdef EMSCRIPTEN_PORT
+
 	m_windowSize = windowSize;
 
+	//if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) == 0) 
+	//{
+	//	m_webScreen = SDL_SetVideoMode(m_windowSize.x, m_windowSize.y, 0, SDL_OPENGL);
+	//	if (m_webScreen == NULL)
+	//	{
+	//		printf("Could not set video mode: %s", SDL_GetError());
+	//		return;
+	//	}
+	//}
+	//else 
+	//{
+	//	printf("Could not initialize SDL: %s", SDL_GetError());
+	//	return;
+	//}
+
 	RenderPostStartUp();
+
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -120,8 +136,8 @@ void Renderer::RenderPostStartUp()
 	//BuiltInShaders::CreateAllBuiltInShaders();
 
 	// default_vao is a GLuint member variable
-	glGenVertexArrays( 1, &m_defaultVAO ); 
-	glBindVertexArray( m_defaultVAO );  
+	//glGenVertexArrays( 1, &m_defaultVAO ); 
+	//glBindVertexArray( m_defaultVAO );  
 
 	m_immediateBuffer = new RenderBuffer();
 
@@ -237,12 +253,12 @@ bool Renderer::CopyFrameBuffer(FrameBuffer* dst, FrameBuffer* src)
 	}
 
 	// Copy it over
-	glBlitFramebuffer( 0, 0, // src start pixel
-		width, height,        // src size
-		0, 0,                 // dst start pixel
-		width, height,        // dst size
-		GL_COLOR_BUFFER_BIT,  // what are we copying (just colour)
-		GL_NEAREST );         // resize filtering rule (in case src/dst don't match)
+	//glBlitFramebuffer( 0, 0, // src start pixel
+	//	width, height,        // src size
+	//	0, 0,                 // dst start pixel
+	//	width, height,        // dst size
+	//	GL_COLOR_BUFFER_BIT,  // what are we copying (just colour)
+	//	GL_NEAREST );         // resize filtering rule (in case src/dst don't match)
 
 							  // Make sure it succeeded
 	GL_CHECK_ERROR(); 
@@ -302,7 +318,7 @@ void Renderer::BindCameraToShader(const Camera& theCamera)
 
 	// bind to the shader
 	m_cameraMatrixBuffer.CopyToGPU(sizeof(m_cameraMatrixData), &m_cameraMatrixData);
-	glBindBufferBase(GL_UNIFORM_BUFFER, CAMERA_BUFFER_BINDING, m_cameraMatrixBuffer.m_handle);			GL_CHECK_ERROR();
+	//glBindBufferBase(GL_UNIFORM_BUFFER, CAMERA_BUFFER_BINDING, m_cameraMatrixBuffer.m_handle);			GL_CHECK_ERROR();
 }
 
 //-----------------------------------------------------------------------------------------------

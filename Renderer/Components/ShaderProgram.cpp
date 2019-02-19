@@ -1,6 +1,7 @@
 #include "ShaderProgram.hpp"
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 #include "Engine/Renderer/BuiltInShaders.hpp"
+#include "Engine/Internal/EmscriptenCommon.hpp"
 
 //===============================================================================================
 ShaderProgram::ShaderProgram()

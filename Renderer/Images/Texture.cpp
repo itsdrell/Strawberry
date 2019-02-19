@@ -3,6 +3,7 @@
 #include "Engine/ThirdParty/stbi/stb_image_write.h"
 #include "Engine/Renderer/Images/Image.hpp"
 #include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Internal/EmscriptenCommon.hpp"
 
 //===============================================================================================
 Texture::Texture()
@@ -76,11 +77,11 @@ void Texture::PopulateFromData(unsigned char * imageData, const IntVector2 & tex
 
 	// create the gpu buffer
 	// note: only this is needed for render targets
-	glTexStorage2D( GL_TEXTURE_2D,
-		1,               // number of levels (mip-layers)
-		internalFormat, // how is the memory stored on the GPU
-		m_dimensions.x, 
-		m_dimensions.y ); // dimensions
+	//glTexStorage2D( GL_TEXTURE_2D,
+	//	1,               // number of levels (mip-layers)
+	//	internalFormat, // how is the memory stored on the GPU
+	//	m_dimensions.x, 
+	//	m_dimensions.y ); // dimensions
 
 	GL_CHECK_ERROR();
 	// copies cpu memory to the gpu - needed for texture resources
