@@ -15,7 +15,7 @@ class FrameBuffer;
 struct Vertex3D_PCU;
 class Texture;
 class Sampler;
-class SDL_Surface;
+struct SDL_Surface;
 
 //====================================================================================
 // Type Defs + Defines
