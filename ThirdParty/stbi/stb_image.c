@@ -1,2 +1,2 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include "Engine/Thirdparty/stbi/stb_image.h"
+#include "stb_image.h" // dont do full path cause batch file
