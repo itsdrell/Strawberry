@@ -148,6 +148,7 @@
     <ClInclude Include="ThirdParty\SDL2\SDL_version.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_video.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_vulkan.h" />
+    <ClInclude Include="ThirdParty\SDL2\SDL_mixer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">

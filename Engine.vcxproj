@@ -319,6 +319,7 @@
     <ClInclude Include="ThirdParty\SDL2\SDL_log.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_main.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_messagebox.h" />
+    <ClInclude Include="ThirdParty\SDL2\SDL_mixer.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_mouse.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_mutex.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_name.h" />
