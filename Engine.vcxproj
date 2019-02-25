@@ -256,6 +256,14 @@
     <ClInclude Include="Renderer\Pipeline\VertexLayout.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Renderer\RenderTypes.hpp" />
+    <ClInclude Include="ThirdParty\fmod\fmod.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod.hpp" />
+    <ClInclude Include="ThirdParty\fmod\fmod_codec.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_common.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_dsp.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_dsp_effects.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_errors.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_output.h" />
     <ClInclude Include="ThirdParty\Lua\lapi.h" />
     <ClInclude Include="ThirdParty\Lua\lauxlib.h" />
     <ClInclude Include="ThirdParty\Lua\lcode.h" />

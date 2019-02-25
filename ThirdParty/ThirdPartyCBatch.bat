@@ -10,6 +10,9 @@ SET luaSources= Lua/lapi.c Lua/lauxlib.c Lua/lbaselib.c Lua/lbitlib.c Lua/lcode.
 REM StbiFiles
 SET stbiFiles=stbi/stb_image.c stbi/stb_image_write.c
 
+REM Fmod binaries
+SET fmodSource=fmod/fmod.bc
+
 REM ---------------------------------------------
 REM Time to build
 REM ---------------------------------------------
@@ -23,7 +26,7 @@ cd "D:\Github\Strawberry\Games\ProtoGame\Engine\ThirdParty"
 REM ---------------------------------------------
 REM |	The command to build the files to bc type which is like a static library
 REM ---------------------------------------------
-emcc -DFT2_BUILD_LIBRARY %luaSources% %stbiFiles% --memory-init-file 0 -O3 -o thirdparty.bc 
+emcc -DFT2_BUILD_LIBRARY %luaSources% %stbiFiles% %fmodSource% --memory-init-file 0 -O3 -o thirdparty.bc 
 REM ---------------------------------------------
 REM | 		DONE with 3rd party stuff
 REM ---------------------------------------------

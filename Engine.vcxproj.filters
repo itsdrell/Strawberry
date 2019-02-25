@@ -149,6 +149,14 @@
     <ClInclude Include="ThirdParty\SDL2\SDL_video.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_vulkan.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_mixer.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod.hpp" />
+    <ClInclude Include="ThirdParty\fmod\fmod_codec.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_common.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_dsp.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_dsp_effects.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_errors.h" />
+    <ClInclude Include="ThirdParty\fmod\fmod_output.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
