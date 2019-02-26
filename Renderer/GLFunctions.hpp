@@ -58,15 +58,17 @@ bool wglGetTypedProcAddress( T *out, char const *name )
 	}
 
 	return (*out != nullptr); 
-#endif
-
+#else
 	return true;
+#endif
 }
 
 
 //====================================================================================
 // Externs
 //====================================================================================
+
+
 extern PFNGLCLEARPROC glClear;
 extern PFNGLCLEARCOLORPROC glClearColor;
 extern PFNGLDELETESHADERPROC glDeleteShader;

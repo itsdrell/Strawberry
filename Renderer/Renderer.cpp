@@ -106,28 +106,13 @@ void Renderer::RenderStartupForWindows(void* hwnd)
 //-----------------------------------------------------------------------------------------------
 void Renderer::RenderStartupForWeb(const Vector2& windowSize)
 {
-#ifdef EMSCRIPTEN_PORT
-
 	m_windowSize = windowSize;
 
-	//if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) == 0) 
-	//{
-	//	m_webScreen = SDL_SetVideoMode(m_windowSize.x, m_windowSize.y, 0, SDL_OPENGL);
-	//	if (m_webScreen == NULL)
-	//	{
-	//		printf("Could not set video mode: %s", SDL_GetError());
-	//		return;
-	//	}
-	//}
-	//else 
-	//{
-	//	printf("Could not initialize SDL: %s", SDL_GetError());
-	//	return;
-	//}
-
-	RenderPostStartUp();
-
+	// Bind all our OpenGL functions we'll be using.
+#ifndef EMSCRIPTEN_PORT
+	BindGLFunctions(); 
 #endif
+	RenderPostStartUp();
 }
 
 //-----------------------------------------------------------------------------------------------
