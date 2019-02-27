@@ -40,7 +40,7 @@ PFNGLGENSAMPLERSPROC glGenSamplers = nullptr;
 PFNGLSAMPLERPARAMETERIPROC glSamplerParameteri = nullptr;
 PFNGLDELETESAMPLERSPROC glDeleteSamplers = nullptr;
 PFNGLBINDSAMPLERPROC glBindSampler = nullptr;
-//PFNGLACTIVETEXTUREARBPROC glActiveTexture = nullptr;
+PFNGLACTIVETEXTUREPROC glActiveTexturePls = nullptr;
 //PFNGLBINDTEXTUREPROC glBindTexture = nullptr;
 //PFNGLPIXELSTOREIPROC glPixelStorei = nullptr;
 //PFNGLGENTEXTURESPROC glGenTextures = nullptr;
@@ -85,6 +85,7 @@ PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf = nullptr;
 void BindGLFunctions()
 {
 #ifndef EMSCRIPTEN_PORT
+	
 	//glClear = (PFNGLCLEARPROC) SDL_GL_GetProcAddress("glClear");
 	//glClearColor = (PFNGLCLEARCOLORPROC) SDL_GL_GetProcAddress("glClearColor");
 	glDeleteShader = (PFNGLDELETESHADERPROC) SDL_GL_GetProcAddress("glDeleteShader");
@@ -120,7 +121,7 @@ void BindGLFunctions()
 	glSamplerParameteri = (PFNGLSAMPLERPARAMETERIPROC ) SDL_GL_GetProcAddress("glSamplerParameteri");
 	glDeleteSamplers = (PFNGLDELETESAMPLERSPROC ) SDL_GL_GetProcAddress("glDeleteSamplers");
 	glBindSampler = (PFNGLBINDSAMPLERPROC ) SDL_GL_GetProcAddress("glBindSampler");
-//	glActiveTexture = (PFNGLACTIVETEXTUREARBPROC ) SDL_GL_GetProcAddress("glActiveTexture");
+	glActiveTexturePls = (PFNGLACTIVETEXTUREPROC ) SDL_GL_GetProcAddress("glActiveTexture");
 	//glBindTexture = (PFNGLBINDTEXTUREPROC ) SDL_GL_GetProcAddress("glBindTexture");
 	//glPixelStorei = (PFNGLPIXELSTOREIPROC ) SDL_GL_GetProcAddress("glPixelStorei");
 	//glGenTextures = (PFNGLGENTEXTURESPROC ) SDL_GL_GetProcAddress("glGenTextures");
@@ -156,6 +157,9 @@ void BindGLFunctions()
 	//glTexSubImage2D = (PFNGLTEXSUBIMAGE2DPROC ) SDL_GL_GetProcAddress("glTexSubImage2D");
 	glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC ) SDL_GL_GetProcAddress("glGenerateMipmap");
 	glSamplerParameterf= (PFNGLSAMPLERPARAMETERFPROC ) SDL_GL_GetProcAddress("glSamplerParameterf");
+	
+#else
+	glActiveTexturePls = glActiveTexture;
 #endif
 }
 

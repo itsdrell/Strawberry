@@ -12,6 +12,7 @@
 #include "Engine/Renderer/Pipeline/Sampler.hpp"
 #include "Engine/Renderer/Pipeline/FrameBuffer.hpp"
 #include "Engine/Internal/EmscriptenCommon.hpp"
+#include "Engine/Core/Platform/Window.hpp"
 
 
 
@@ -33,29 +34,41 @@ Renderer* Renderer::s_theRenderer = nullptr;
 Renderer::Renderer()
 {
 	s_theRenderer = this;
+
+	RenderStartup();
 }
 
 //-----------------------------------------------------------------------------------------------
 Renderer::~Renderer()
 {
-	
+	SDL_GL_DeleteContext(m_glContext);
 }
 
 //-----------------------------------------------------------------------------------------------
-void Renderer::RenderStartupForWindows(void* hwnd)
+void Renderer::RenderStartup()
 {
+	// https://wiki.libsdl.org/SDL_GL_SetAttribute
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // sets the max version (need this for render doc)
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0); // set mins
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+	//0 for immediate updates, 1 for updates synchronized with the vertical retrace, -1 for adaptive vsync;
+	SDL_GL_SetSwapInterval(0);
+
+	Window* theWindow = Window::GetInstance();
+
+	// this is important and has to be after all the attributes
+	m_glContext = SDL_GL_CreateContext(theWindow->GetWindowReference());
+	if(!m_glContext)
+		printf("Error creating context \n");
 	
-#ifndef EMSCRIPTEN_PORT
+	m_windowSize = theWindow->GetDimensions();
 
-
-#endif
-}
-
-//-----------------------------------------------------------------------------------------------
-void Renderer::RenderStartupForWeb(const Vector2& windowSize)
-{
-	m_windowSize = windowSize;
-
+	// if you create the SDL_Renderer it will break renderdoc, so don't do it unless needed
+	//m_theSDLRenderer = SDL_CreateRenderer(theWindow->GetWindowReference(), -1, SDL_RENDERER_ACCELERATED);
+	
 	BindGLFunctions(); 
 	RenderPostStartUp();
 }
@@ -114,23 +127,28 @@ void Renderer::RenderPostStartUp()
 void Renderer::BeginFrame()
 {
 	GL_CHECK_ERROR();
-	ClearScreen(Rgba(0,0,0,0));
+	ClearScreen(Rgba(0,0,255,255));
 }
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::EndFrame()
 {
 	GL_CHECK_ERROR();
-	FrameBuffer temp = m_defaultCamera->GetFramebuffer();
-	CopyFrameBuffer(nullptr, &temp);
-	//CopyFrameBuffer( nullptr, &m_defaultCamera->GetFramebuffer() ); 
+	CopyFrameBuffer( nullptr, &m_defaultCamera->GetFramebuffer() ); 
 
-#ifdef EMSCRIPTEN_PORT
-#else
-	HWND hWnd = GetActiveWindow();
-	HDC hDC = GetDC( hWnd );
-	SwapBuffers( hDC );
-#endif
+	// doing my own framebuffer swap asd;foiha;sod'fih
+	// this breaks renderdoc tho :(
+	//Window* w = Window::GetInstance();
+	//SDL_Rect dest = {0,0, w->GetWidth(), w->GetHeight()};
+	//SDL_Texture* theTexture = temp.m_colorTarget->GetSDLTextureFromGLTexture();
+	//SDL_RenderCopyEx(m_theSDLRenderer, theTexture, NULL, &dest, 0.f, NULL, SDL_FLIP_VERTICAL);
+	//SDL_RenderPresent(m_theSDLRenderer);
+	//SDL_DestroyTexture(theTexture);
+
+	SDL_Window* theWindow = Window::GetWindowReference();
+	SDL_GL_SwapWindow(theWindow);
+
+	String theError = SDL_GetError();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -175,20 +193,18 @@ bool Renderer::CopyFrameBuffer(FrameBuffer* dst, FrameBuffer* src)
 	}
 	else
 	{
-		//Window* theWindow = Window::GetInstance();
 
-		// might want to make em floats but w/e
-		width = (int)m_windowSize.x;
-		height = (int)m_windowSize.y;
+		width =	(int) Window::GetInstance()->GetWidth();
+		height = (int)Window::GetInstance()->GetHeight();
 	}
 
 	// Copy it over
-	//glBlitFramebuffer( 0, 0, // src start pixel
-	//	width, height,        // src size
-	//	0, 0,                 // dst start pixel
-	//	width, height,        // dst size
-	//	GL_COLOR_BUFFER_BIT,  // what are we copying (just colour)
-	//	GL_NEAREST );         // resize filtering rule (in case src/dst don't match)
+	glBlitFramebuffer( 0, 0, // src start pixel
+		width, height,        // src size
+		0, 0,                 // dst start pixel
+		width, height,        // dst size
+		GL_COLOR_BUFFER_BIT,  // what are we copying (just colour)
+		GL_NEAREST );         // resize filtering rule (in case src/dst don't match)
 
 							  // Make sure it succeeded
 	GL_CHECK_ERROR(); 
@@ -240,15 +256,15 @@ void Renderer::BindCameraToShader(const Camera& theCamera)
 	m_cameraMatrixData.viewProjection = Matrix44(); 
 
 	// inverses
-	//m_cameraMatrixData.inverseView = theCamera.m_cameraMatrix;
-	//m_cameraMatrixData.inverseProjection = Invert(m_cameraMatrixData.projection);
-	//m_cameraMatrixData.inverseViewProjection = Invert(m_cameraMatrixData.inverseViewProjection);
+	m_cameraMatrixData.inverseView = theCamera.m_cameraMatrix;
+	m_cameraMatrixData.inverseProjection = Matrix44();//Invert(m_cameraMatrixData.projection);
+	m_cameraMatrixData.inverseViewProjection = Matrix44(); //Invert(m_cameraMatrixData.inverseViewProjection);
 
 	m_modelMatrixData.model = theCamera.m_cameraMatrix;
 
 	// bind to the shader
 	m_cameraMatrixBuffer.CopyToGPU(sizeof(m_cameraMatrixData), &m_cameraMatrixData);
-	//glBindBufferBase(GL_UNIFORM_BUFFER, CAMERA_BUFFER_BINDING, m_cameraMatrixBuffer.m_handle);			GL_CHECK_ERROR();
+	glBindBufferBase(GL_UNIFORM_BUFFER, CAMERA_BUFFER_BINDING, m_cameraMatrixBuffer.m_handle);			GL_CHECK_ERROR();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -282,10 +298,30 @@ void Renderer::SetCurrentTexture(int bindIndex /*= 0*/, Texture* texture /*= nul
 	m_currentTexture = texture;
 
 	// Bind the texture
-	//glActiveTexture( GL_TEXTURE0 + bindIndex );						GL_CHECK_ERROR();
+	glActiveTexturePls( GL_TEXTURE0 + bindIndex );						GL_CHECK_ERROR();
 
 	glBindTexture( GL_TEXTURE_2D, m_currentTexture->GetID() );		GL_CHECK_ERROR();
 }
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::SetUniform(const String& name, const Matrix44& uniform)
+{
+	GL_CHECK_ERROR();
+
+	glUseProgram(m_currentShader->m_program->m_programHandle ); // but very redundant O WELL
+
+	// https://www.khronos.org/opengl/wiki/GLSL_:_common_mistakes
+	float asArray[16]; 
+	uniform.GetValuesAsArray(asArray);
+
+	int bind_idx = glGetUniformLocation( m_currentShader->m_program->m_programHandle, name.c_str() ); 
+	if (bind_idx >= 0) {
+		glUniformMatrix4fv( bind_idx, 1, GL_FALSE, asArray );
+	}
+
+	GL_CHECK_ERROR();
+}
+
 
 //-----------------------------------------------------------------------------------------------
 Texture* Renderer::CreateRenderTarget(int width, int height, eTextureFormat format)
@@ -311,7 +347,6 @@ void Renderer::DrawMeshImmediate(PrimitiveType primitiveType, Vertex3D_PCU* vert
 
 	// Tell GL what shader program to use.
 	GLuint program_handle = m_currentShader->m_program->m_programHandle; 
-
 
 	// Bind the Position
 	GLint pos_bind = glGetAttribLocation(program_handle, "POSITION");		GL_CHECK_ERROR();

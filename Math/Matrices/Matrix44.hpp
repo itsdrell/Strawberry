@@ -37,6 +37,9 @@ public:
 	void Translate2D( const Vector2& translation );
 
 public:
+	void GetValuesAsArray(float* outArray) const;
+
+public:
 	static Matrix44 MakeOrtho2D( const Vector2& mins, const Vector2& maxs );
 	static Matrix44 MakeTranslation2D( const Vector2& translation );	
 	static Matrix44 MakeOrtho3D( const Vector3& mins, const Vector3& maxs );

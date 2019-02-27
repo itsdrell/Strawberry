@@ -78,6 +78,30 @@ void Matrix44::Translate2D(const Vector2& translation)
 }
 
 //-----------------------------------------------------------------------------------------------
+void Matrix44::GetValuesAsArray(float* outArray) const
+{
+	outArray[0] =	Ix;
+	outArray[1] =	Iy;
+	outArray[2] =	Iz;
+	outArray[3] =	Iw;
+
+	outArray[4] =	Jx;
+	outArray[5] =	Jy;
+	outArray[6] =	Jz;
+	outArray[7] =	Jw;
+
+	outArray[8] =	Kx;
+	outArray[9] =	Ky;
+	outArray[10] =	Kz;
+	outArray[11] =	Kw;
+
+	outArray[12] =	Tx;
+	outArray[13] =	Ty;
+	outArray[14] =	Tz;
+	outArray[15] =	Tw; 
+}
+
+//-----------------------------------------------------------------------------------------------
 Matrix44 Matrix44::MakeOrtho2D(const Vector2 & mins, const Vector2 & maxs)
 {
 	Matrix44 result = Matrix44(); // Get Identity 

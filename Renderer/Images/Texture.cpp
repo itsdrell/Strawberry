@@ -77,11 +77,11 @@ void Texture::PopulateFromData(unsigned char * imageData, const IntVector2 & tex
 
 	// create the gpu buffer
 	// note: only this is needed for render targets
-	//glTexStorage2D( GL_TEXTURE_2D,
-	//	1,               // number of levels (mip-layers)
-	//	internalFormat, // how is the memory stored on the GPU
-	//	m_dimensions.x, 
-	//	m_dimensions.y ); // dimensions
+	glTexStorage2D( GL_TEXTURE_2D,
+		1,               // number of levels (mip-layers)
+		internalFormat, // how is the memory stored on the GPU
+		m_dimensions.x, 
+		m_dimensions.y ); // dimensions
 
 	GL_CHECK_ERROR();
 	// copies cpu memory to the gpu - needed for texture resources
@@ -96,7 +96,7 @@ void Texture::PopulateFromData(unsigned char * imageData, const IntVector2 & tex
 
 	GL_CHECK_ERROR();
 
-	//glActiveTexture( GL_TEXTURE0 );								GL_CHECK_ERROR();
+	glActiveTexturePls( GL_TEXTURE0 );								GL_CHECK_ERROR();
 	glBindTexture( GL_TEXTURE_2D, m_textureID );				GL_CHECK_ERROR();
 }
 
@@ -124,7 +124,7 @@ bool Texture::CreateRenderTarget(int width, int height, eTextureFormat format)
 	}
 
 	// Copy the texture - first, get use to be using texture unit 0 for this; 
-	//glActiveTexture( GL_TEXTURE0 );								GL_CHECK_ERROR();
+	glActiveTexturePls( GL_TEXTURE0 );								GL_CHECK_ERROR();
 	glBindTexture( GL_TEXTURE_2D, m_textureID );				GL_CHECK_ERROR();
 
 	// Copy data into it;
@@ -167,4 +167,54 @@ Texture * Texture::CreateFromImage(const Image & imageToCreateFrom)
 
 	GL_CHECK_ERROR();
 	return this;
+}
+
+//-----------------------------------------------------------------------------------------------
+SDL_Surface* Texture::GetSDLSurfaceFromGLTexture()
+{
+	glBindTexture( GL_TEXTURE_2D, m_textureID );    // bind our texture to our current texture unit (0)
+
+	const int size = m_dimensions.x * m_dimensions.y * 4; //4 because texels rgba
+
+	if(m_data != NULL)
+		free(m_data);
+	m_data = (unsigned char*)malloc(size);
+	
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE,m_data);
+
+	// the color format you request stb_image to output,
+	// use STBI_rgb if you don't want/need the alpha channel
+	int req_format = STBI_rgb_alpha;
+	int width = m_dimensions.x; 
+	int height = m_dimensions.y; 
+	int orig_format, depth, pitch;
+	Uint32 pixel_format;
+	if (req_format == STBI_rgb) {
+		depth = 24;
+		pitch = 3*width; // 3 bytes per pixel * pixels per row
+		pixel_format = SDL_PIXELFORMAT_RGB24;
+	} else { // STBI_rgb_alpha (RGBA)
+		depth = 32;
+		pitch = 4*width;
+		pixel_format = SDL_PIXELFORMAT_RGBA32;
+	}
+
+	SDL_Surface* theSurface = SDL_CreateRGBSurfaceWithFormatFrom((void*)m_data, width, height,
+		depth, pitch, pixel_format);
+
+	return theSurface;
+}
+
+//-----------------------------------------------------------------------------------------------
+SDL_Texture* Texture::GetSDLTextureFromGLTexture()
+{
+	Renderer* r = Renderer::GetInstance();
+	
+	SDL_Surface* tempSurface = GetSDLSurfaceFromGLTexture();
+
+	SDL_Texture* theTexture = SDL_CreateTextureFromSurface(r->m_theSDLRenderer, tempSurface);
+
+	SDL_FreeSurface(tempSurface);
+
+	return theTexture;
 }

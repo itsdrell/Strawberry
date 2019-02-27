@@ -13,14 +13,7 @@ void EngineStartUp()
 	//AudioSystem* audio = new AudioSystem();
 	//InputSystem* input = new InputSystem();
 	Renderer* renderer = new Renderer();
-	renderer->RenderStartupForWeb(Vector2(320.f, 220.f));
 
-//#ifdef EMSCRIPTEN_PORT
-//	renderer->RenderStartupForWeb(Vector2(320.f, 220.f));
-//#else
-//	renderer->RenderStartupForWindows(Window::GetInstance()->GetHandle()); // call the static variable
-
-//#endif
 	//audio = nullptr;
 	//input = nullptr;
 	renderer = nullptr;

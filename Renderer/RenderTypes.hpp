@@ -190,15 +190,15 @@ struct CameraMatrixT
 	Matrix44 view;
 	Matrix44 projection;
 	Matrix44 viewProjection;
-	//
-	//Matrix44 inverseView; // camera matrix
-	//Matrix44 inverseProjection;
-	//Matrix44 inverseViewProjection;
-	//
-	//Vector3 cameraRight;			float pad0;
-	//Vector3 cameraUp;				float pad1;
-	//Vector3 cameraForward;			float pad2;
-	//Vector3 cameraPosition;			float pad3;
+	
+	Matrix44 inverseView; // camera matrix
+	Matrix44 inverseProjection;
+	Matrix44 inverseViewProjection;
+	
+	Vector3 cameraRight;			float pad0;
+	Vector3 cameraUp;				float pad1;
+	Vector3 cameraForward;			float pad2;
+	Vector3 cameraPosition;			float pad3;
 
 };
 #define CAMERA_BUFFER_BINDING (2)

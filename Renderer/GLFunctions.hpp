@@ -68,8 +68,6 @@ bool wglGetTypedProcAddress( T *out, char const *name )
 // Externs
 //====================================================================================
 
-//typedef GLAPI void (*CUSTOM_GL_CLEAR_CB) ( GLbitfield mask );
-//extern CUSTOM_GL_CLEAR_CB glClearColor;
 
 //extern PFNGLCLEARPROC glClearColor;
 extern PFNGLDELETESHADERPROC glDeleteShader;
@@ -105,7 +103,7 @@ extern PFNGLGENSAMPLERSPROC glGenSamplers;
 extern PFNGLSAMPLERPARAMETERIPROC glSamplerParameteri;
 extern PFNGLDELETESAMPLERSPROC glDeleteSamplers;
 extern PFNGLBINDSAMPLERPROC glBindSampler;
-//extern PFNGLACTIVETEXTUREARBPROC glActiveTexture; // This gives me an error, and im using a different type (ARBPROC) which is in deku
+extern PFNGLACTIVETEXTUREPROC glActiveTexturePls; // This gives me an error, and im using a different type (ARBPROC) which is in deku
 //extern PFNGLBINDTEXTUREPROC glBindTexture;
 //extern PFNGLPIXELSTOREIPROC glPixelStorei;
 //extern PFNGLGENTEXTURESPROC glGenTextures;

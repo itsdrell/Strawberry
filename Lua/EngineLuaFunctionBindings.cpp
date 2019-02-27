@@ -27,7 +27,6 @@ int DrawTestTriangle(lua_State* theState)
 	Renderer* r = Renderer::GetInstance();
 
 	// The code we want
-	//r->m_defaultCamera->SetColorTarget(nullptr);
 	r->m_defaultCamera->SetProjectionOrthoByAspect(10.f);
 
 	r->SetCamera(r->m_defaultCamera);
@@ -42,7 +41,6 @@ int DrawTestTriangle(lua_State* theState)
 	};
 
 	r->DrawMeshImmediate(PRIMITIVE_TRIANGLES, triangle, 3); //DrawVertexArray
-	r->SetCamera(r->m_defaultCamera);
 
 	return 0;
 }

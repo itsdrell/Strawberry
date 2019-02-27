@@ -8,6 +8,8 @@
 // Forward Declare
 //====================================================================================
 class Image;
+struct SDL_Surface;
+struct SDL_Texture;
 
 //====================================================================================
 // Type Defs + Defines
@@ -39,6 +41,8 @@ private:
 	bool CreateRenderTarget( int width, int height, eTextureFormat format );
 	
 	Texture* CreateFromImage(const Image& imageToCreateFrom);
+	SDL_Surface* GetSDLSurfaceFromGLTexture();
+	SDL_Texture* GetSDLTextureFromGLTexture();
 
 public:
 	IntVector2 GetDimensions() { return m_dimensions; } 

@@ -16,6 +16,7 @@ struct Vertex3D_PCU;
 class Texture;
 class Sampler;
 struct SDL_Surface;
+struct SDL_Renderer;
 
 //====================================================================================
 // Type Defs + Defines
@@ -42,8 +43,7 @@ public:
 	~Renderer();
 
 public:
-	void RenderStartupForWindows(void* hwnd);
-	void RenderStartupForWeb(const Vector2& windowSize);
+	void RenderStartup();
 	void RenderPostStartUp();
 	void BeginFrame();
 	void EndFrame();
@@ -56,6 +56,9 @@ public:
 	void SetShader( Shader* shader = nullptr );
 	void SetCurrentTexture( int bindIndex = 0, Texture* texture = nullptr);
 	Texture* CreateRenderTarget( int width, int height, eTextureFormat format = TEXTURE_FORMAT_RGBA8 );
+
+public:
+	void SetUniform(const String& name, const Matrix44& uniform);
 
 public:
 	void DrawAABB2( const AABB2& bounds, const Rgba& color, bool filled = true );
@@ -96,7 +99,9 @@ public:
 	Texture*			m_defaultDepthTarget = nullptr;
 	unsigned int		m_defaultVAO; 
 	
-	SDL_Surface*		m_webScreen;
+	SDL_Surface*		m_webScreen = nullptr;
+	SDL_Renderer*		m_theSDLRenderer = nullptr;
+	SDL_GLContext		m_glContext;
 };
 
 //====================================================================================

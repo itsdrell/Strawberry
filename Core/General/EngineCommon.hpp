@@ -10,6 +10,29 @@
 // Defines
 //===============================================================================================
 #define UNUSED(x) (void)(x);
+#define STATIC
+#define EPSILON (FLT_EPSILON)
+#define UINFINITY ((float)INT_MAX);
+
+//-----------------------------------------------------------------------------------------------
+// Source from http://www.flipcode.com/archives/FIXME_TODO_Notes_As_Warnings_In_Compiler_Output.shtml
+#define _QUOTE(x) # x
+#define QUOTE(x) _QUOTE(x)
+#define __FILE__LINE__ __FILE__ "(" QUOTE(__LINE__) ") : "
+
+#define PRAGMA(p)  __pragma( p )
+#define NOTE( x )  PRAGMA( message(x) )
+#define FILE_LINE  NOTE( __FILE__LINE__ )
+
+// THE IMPORANT BITS
+#define TODO( x )  NOTE( __FILE__LINE__"\n"           \
+        " --------------------------------------------------------------------------------------\n" \
+        "|  TODO :   " ##x "\n" \
+        " --------------------------------------------------------------------------------------\n" )
+
+// Unimplemented (Todo comment on steroids)
+#define UNIMPLEMENTED()  TODO( "IMPLEMENT: " QUOTE(__FILE__) " (" QUOTE(__LINE__) ")" ); ASSERT_RECOVERABLE(1,"")
+
 
 //====================================================================================
 // Type Defs 
