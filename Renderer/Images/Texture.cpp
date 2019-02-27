@@ -96,7 +96,7 @@ void Texture::PopulateFromData(unsigned char * imageData, const IntVector2 & tex
 
 	GL_CHECK_ERROR();
 
-	glActiveTexture( GL_TEXTURE0 );								GL_CHECK_ERROR();
+	//glActiveTexture( GL_TEXTURE0 );								GL_CHECK_ERROR();
 	glBindTexture( GL_TEXTURE_2D, m_textureID );				GL_CHECK_ERROR();
 }
 
@@ -124,7 +124,7 @@ bool Texture::CreateRenderTarget(int width, int height, eTextureFormat format)
 	}
 
 	// Copy the texture - first, get use to be using texture unit 0 for this; 
-	glActiveTexture( GL_TEXTURE0 );								GL_CHECK_ERROR();
+	//glActiveTexture( GL_TEXTURE0 );								GL_CHECK_ERROR();
 	glBindTexture( GL_TEXTURE_2D, m_textureID );				GL_CHECK_ERROR();
 
 	// Copy data into it;

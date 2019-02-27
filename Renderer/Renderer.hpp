@@ -66,7 +66,6 @@ public:
 	static Renderer* GetInstance();
 
 private:
-	void* GetGLLibrary();
 
 private:
 	static Renderer* s_theRenderer;

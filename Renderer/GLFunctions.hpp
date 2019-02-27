@@ -1,10 +1,11 @@
 #pragma once
-#include "Engine/Renderer/external/gl/glcorearb.h"
-#include "Engine/Renderer/external/gl/glext.h"
-
-#ifndef EMSCRIPTEN_PORT
-#include "Engine/Renderer/external/gl/wglext.h"
-extern HMODULE gGLLibrary; // needed for the template to work
+#ifdef EMSCRIPTEN_PORT
+	#include "emscripten/emscripten.h"
+	#include "Engine/Renderer/external/gl/glcorearb.h"
+	#include "Engine/Renderer/external/gl/glext.h"
+#else
+	#include "Engine/ThirdParty/SDL2/SDL.h"
+	#include "Engine/ThirdParty/SDL2/SDL_opengl.h"
 #endif
 
 //====================================================================================
@@ -33,7 +34,6 @@ bool GLFailed();
 bool GLSucceeded();
 void GLCheckErrorAndDie( char const *file, char const* function, int line );
 
-void BindNewGLFunctions();
 void BindGLFunctions();
 
 #ifndef EMSCRIPTEN_PORT
@@ -52,7 +52,7 @@ bool wglGetTypedProcAddress( T *out, char const *name )
 	if ((*out) == nullptr) {
 		// if it is not part of wgl (the device), then attempt to get it from the GLL library
 		// (most OpenGL functions come from here)
-		*out = (T) GetProcAddress( gGLLibrary, name); 
+		//*out = (T) GetProcAddress( gGLLibrary, name); 
 		//*out = (T) GetProcAddress( (HMODULE) Renderer::GetInstance()->GetGLLibrary(), name); 
 
 	}
@@ -68,9 +68,10 @@ bool wglGetTypedProcAddress( T *out, char const *name )
 // Externs
 //====================================================================================
 
+//typedef GLAPI void (*CUSTOM_GL_CLEAR_CB) ( GLbitfield mask );
+//extern CUSTOM_GL_CLEAR_CB glClearColor;
 
-extern PFNGLCLEARPROC glClear;
-extern PFNGLCLEARCOLORPROC glClearColor;
+//extern PFNGLCLEARPROC glClearColor;
 extern PFNGLDELETESHADERPROC glDeleteShader;
 extern PFNGLCREATESHADERPROC glCreateShader;
 extern PFNGLSHADERSOURCEPROC glShaderSource;
@@ -94,40 +95,40 @@ extern PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation;
 extern PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
 extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
 extern PFNGLUSEPROGRAMPROC glUseProgram;
-extern PFNGLDRAWARRAYSPROC glDrawArrays;
-extern PFNGLLINEWIDTHPROC glLineWidth;
-extern PFNGLENABLEPROC glEnable;
-extern PFNGLBLENDFUNCPROC glBlendFunc;
+// extern PFNGLDRAWARRAYSPROC glDrawArrays;
+// extern PFNGLLINEWIDTHPROC glLineWidth;
+//extern PFNGLENABLEPROC glEnable;
+//extern PFNGLBLENDFUNCPROC glBlendFunc;
 extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
 extern PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
 extern PFNGLGENSAMPLERSPROC glGenSamplers;
 extern PFNGLSAMPLERPARAMETERIPROC glSamplerParameteri;
 extern PFNGLDELETESAMPLERSPROC glDeleteSamplers;
 extern PFNGLBINDSAMPLERPROC glBindSampler;
-extern PFNGLACTIVETEXTUREARBPROC glActiveTexture;
-extern PFNGLBINDTEXTUREPROC glBindTexture;
-extern PFNGLPIXELSTOREIPROC glPixelStorei;
-extern PFNGLGENTEXTURESPROC glGenTextures;
-extern PFNGLTEXPARAMETERIPROC glTexParameteri;
-extern PFNGLTEXIMAGE2DPROC glTexImage2D;
-extern PFNGLCLEARDEPTHPROC glClearDepth;
-extern PFNGLDEPTHFUNCPROC glDepthFunc;
+//extern PFNGLACTIVETEXTUREARBPROC glActiveTexture; // This gives me an error, and im using a different type (ARBPROC) which is in deku
+//extern PFNGLBINDTEXTUREPROC glBindTexture;
+//extern PFNGLPIXELSTOREIPROC glPixelStorei;
+//extern PFNGLGENTEXTURESPROC glGenTextures;
+//extern PFNGLTEXPARAMETERIPROC glTexParameteri;
+//extern PFNGLTEXIMAGE2DPROC glTexImage2D;
+//extern PFNGLCLEARDEPTHPROC glClearDepth;
+//extern PFNGLDEPTHFUNCPROC glDepthFunc;
 extern PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers;
 extern PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers;
 extern PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer;
 extern PFNGLFRAMEBUFFERTEXTUREPROC glFramebufferTexture;
 extern PFNGLDRAWBUFFERSPROC glDrawBuffers;
 extern PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus; 
-extern PFNGLGETERRORPROC glGetError;
+//extern PFNGLGETERRORPROC glGetError;
 extern PFNGLBLITFRAMEBUFFERPROC glBlitFramebuffer;
-extern PFNGLDEPTHMASKPROC glDepthMask;
-extern PFNGLGETTEXIMAGEPROC glGetTexImage;
+//extern PFNGLDEPTHMASKPROC glDepthMask;
+//extern PFNGLGETTEXIMAGEPROC glGetTexImage;
 extern PFNGLBINDBUFFERBASEPROC glBindBufferBase;
-extern PFNGLDRAWELEMENTSPROC glDrawElements;
-extern PFNGLPOLYGONMODEPROC glPolygonMode;
-extern PFNGLDISABLEPROC glDisable;
-extern PFNGLCULLFACEPROC glCullFace;
-extern PFNGLFRONTFACEPROC glFrontFace;
+//extern PFNGLDRAWELEMENTSPROC glDrawElements;
+//extern PFNGLPOLYGONMODEPROC glPolygonMode;
+//extern PFNGLDISABLEPROC glDisable;
+//extern PFNGLCULLFACEPROC glCullFace;
+//extern PFNGLFRONTFACEPROC glFrontFace;
 extern PFNGLBLENDFUNCIPROC glBlendFunci;
 extern PFNGLUNIFORM1FVPROC glUniform1fv;
 extern PFNGLUNIFORM1FVPROC glUniform2fv;
@@ -136,16 +137,12 @@ extern PFNGLUNIFORM1FVPROC glUniform4fv;
 extern PFNGLBLENDFUNCSEPARATEPROC glBlendFuncSeparate;
 extern PFNGLBLENDEQUATIONSEPARATEPROC glBlendEquationSeparate;
 extern PFNGLTEXSTORAGE2DPROC glTexStorage2D;
-extern PFNGLDELETETEXTURESPROC glDeleteTextures;
-extern PFNGLTEXSUBIMAGE2DPROC glTexSubImage2D;
+//extern PFNGLDELETETEXTURESPROC glDeleteTextures;
+//extern PFNGLTEXSUBIMAGE2DPROC glTexSubImage2D;
 extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
 extern PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf;
 
-// wgl
-extern PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB;
-extern PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
-extern PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
-extern PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
+
 
 #endif
 

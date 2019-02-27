@@ -30,11 +30,11 @@ Camera::~Camera()
 //-----------------------------------------------------------------------------------------------
 void Camera::SetProjectionOrthoByAspect(float height, float theNear /*= -10.f*/, float theFar /*= 100.f */)
 {
-
+	float ar = 1.77f;
 #ifdef EMSCRIPTEN_PORT
 	float ar = 1.77f;
 #else
-	float ar = Window::GetInstance()->GetAspect();
+	//float ar = Window::GetInstance()->GetAspect();
 #endif
 	m_orthoDimensions = Vector2(ar * height, height);
 
