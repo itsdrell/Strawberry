@@ -4,6 +4,7 @@
 #include "Engine/Renderer/Images/Image.hpp"
 #include "Engine/Core/General/EngineCommon.hpp"
 #include "Engine/Internal/EmscriptenCommon.hpp"
+#include "Engine/ThirdParty/SDL2/SDL.h"
 
 //===============================================================================================
 Texture::Texture()

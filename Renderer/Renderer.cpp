@@ -14,6 +14,7 @@
 #include "Engine/Internal/EmscriptenCommon.hpp"
 #include "Engine/Core/Platform/Window.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
+#include "Engine/ThirdParty/SDL2/SDL.h"
 
 
 
@@ -286,28 +287,10 @@ void Renderer::BindCameraToShader(const Camera& theCamera)
 {
 	GL_CHECK_ERROR();
 
-	//SetUniform("VIEW", theCamera.m_viewMatrix);
-	//SetUniform("PROJECTION", theCamera.m_projectionMatrix);
-	//SetUniform("VIEW_PROJECTION", Matrix44());
-
-
-	// Set the variables so that we can use them in the uniform shader
-	m_cameraMatrixData.view = theCamera.m_viewMatrix;
-	m_cameraMatrixData.projection = theCamera.m_projectionMatrix;
-
-	//TODO("viewProjection was breaking stuff pls fix");
-	m_cameraMatrixData.viewProjection = Matrix44(); 
-
-	// inverses
-	m_cameraMatrixData.inverseView = theCamera.m_cameraMatrix;
-	m_cameraMatrixData.inverseProjection = Matrix44();//Invert(m_cameraMatrixData.projection);
-	m_cameraMatrixData.inverseViewProjection = Matrix44(); //Invert(m_cameraMatrixData.inverseViewProjection);
-
-	m_modelMatrixData.model = theCamera.m_cameraMatrix;
-
-	// bind to the shader
-	m_cameraMatrixBuffer.CopyToGPU(sizeof(m_cameraMatrixData), &m_cameraMatrixData);
-	glBindBufferBase(GL_UNIFORM_BUFFER, CAMERA_BUFFER_BINDING, m_cameraMatrixBuffer.m_handle);			GL_CHECK_ERROR();
+	SetUniform("VIEW", theCamera.m_viewMatrix);
+	SetUniform("PROJECTION", theCamera.m_projectionMatrix);
+	SetUniform("VIEW_PROJECTION", Matrix44());
+	SetUniform("MODEL", theCamera.m_cameraMatrix);
 }
 
 //-----------------------------------------------------------------------------------------------

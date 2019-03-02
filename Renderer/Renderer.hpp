@@ -99,12 +99,6 @@ public:
 
 	RenderBuffer*		m_immediateBuffer = nullptr;
 
-	UniformBuffer		m_cameraMatrixBuffer;
-	CameraMatrixT		m_cameraMatrixData;
-
-	UniformBuffer		m_modelMatrixBuffer;
-	ModelT				m_modelMatrixData;
-
 	Texture*			m_currentTexture = nullptr;
 	Texture*			m_defaultTexture = nullptr;
 	Texture*			m_defaultColorTarget = nullptr;
@@ -118,7 +112,6 @@ public:
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-void GLShutdown();
 
 //====================================================================================
 // Externs

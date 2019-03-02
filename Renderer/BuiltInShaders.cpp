@@ -70,7 +70,7 @@ void main( void )
     passColor = COLOR; // pass it on. 
     passUV = UV; // we have to set our outs.
 	
-	gl_texcoord = UV;
+	//gl_texcoord = UV;
     gl_Position = clip_pos;  
 })";
 
