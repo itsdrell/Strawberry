@@ -16,92 +16,62 @@ Shader* BuiltInShaders::CreateDefaultShader()
 
 	//////////////////////////////////////////////////////////////////////////
 	// FS
-	const char* fs = R"(#version 420 core
+	const char* fs = R"(#version 100
 
-// create a uniform for our sampler2D.
-// layout binding = 0 is us binding it to texture slot 0.  
-layout(binding = 0) uniform sampler2D gTexDiffuse;
+precision mediump float; //important
 
+//-----------------------------------------------------------------------------------------------
+uniform sampler2D gTexDiffuse;
 
+//-----------------------------------------------------------------------------------------------
 // We match the name and type of the previous stages out
-in vec4 passColor; // NEW, passed color
-in vec2 passUV; 
+varying vec4 passColor;
+varying vec2 passUV; 
 
-
-// Outputs
-out vec4 outColor; 
-
-// Entry Point
+//-----------------------------------------------------------------------------------------------
 void main( void )
 {
-   // sample (gather) our texel colour for this UV
-   vec4 diffuse = texture( gTexDiffuse, passUV ); 
-   outColor = diffuse * passColor;
+   vec4 diffuse = texture2D( gTexDiffuse, passUV ); 
+   gl_FragColor = diffuse * passColor;
+
 })";
 
 	//////////////////////////////////////////////////////////////////////////
 	// VS
 	const char* vs = R"(// define the shader version (this is required)
-#version 420 core
+#version 100
 
-// Frame information ;
-layout(binding=1, std140) uniform cFrameBlock 
-{
-   float GAME_TIME;
-   float GAME_DELTA_TIME;
-   float SYSTEM_TIME; 
-   float SYSTEM_DELTA_TIME; 
-}; 
-
-// Camera Constants
-layout(binding=2, std140) uniform cCameraBlock 
-{
-    mat4 VIEW;
-    mat4 PROJECTION; 
-    mat4 VIEW_PROJECTION; 
-
-    mat4 INV_VIEW;          // also just called the camera matrix
-    mat4 INV_PROJECTION; 
-    mat4 INT_VIEW_PROJECTION; 
-
-    // dupliate of INV_VIEW, but just convenient
-    vec3 CAMERA_RIGHT;      float pad0;
-    vec3 CAMERA_UP;         float pad1; 
-    vec3 CAMERA_FORWARD;    float pad2; 
-    vec3 CAMERA_POSITION;   float pad3;  
-
-}; 
-
+//-----------------------------------------------------------------------------------------------
+uniform mat4 VIEW;
+uniform mat4 PROJECTION;
+uniform mat4 VIEW_PROJECTION;
 uniform mat4 MODEL;
 
+//-----------------------------------------------------------------------------------------------
+attribute vec3 POSITION;
+attribute vec4 COLOR;      
+attribute vec2 UV;          
 
-// Attributes - input to this shasder stage (constant as far as the code is concerned)
-in vec3 POSITION;
-in vec4 COLOR;       // NEW - GLSL will use a Vector4 for this;
-in vec2 UV;          // new
-
-
+//-----------------------------------------------------------------------------------------------
 //pass variables or "varying" variables
 // These are variables output from this stage for use by the next stage
 // These are called "varying" because for a triangle, we'll only output 3, and 
 // the Raster stage may output hundreds of pixels, each a blended value
 // of the initial 3, hence - they "vary"
-out vec2 passUV; 
-out vec4 passColor;  // NEW - to use it in the pixel stage, we must pass it.
+varying vec2 passUV; 
+varying vec4 passColor; 
 
-// Entry point - required.  What does this stage do?
+//-----------------------------------------------------------------------------------------------
 void main( void )
 {
-   // multiply it through - for now, local_pos
-   // is being treated as view space position
-   // this will be updated later once we introduce the other matrices
     vec4 local_pos = vec4( POSITION, 1 ); 
     vec4 clip_pos =  PROJECTION * (VIEW * local_pos); 
    
     passColor = COLOR; // pass it on. 
     passUV = UV; // we have to set our outs.
-
-    gl_Position = clip_pos;  // changed
+	
+	gl_texcoord = UV;
+    gl_Position = clip_pos;  
 })";
 
 #pragma endregion

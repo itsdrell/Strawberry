@@ -237,10 +237,12 @@
     <ClInclude Include="Lua\EngineLuaFunctionBindings.hpp" />
     <ClInclude Include="Lua\LuaScript.hpp" />
     <ClInclude Include="Math\Geometry\AABB2.hpp" />
+    <ClInclude Include="Math\MathUtils.hpp" />
     <ClInclude Include="Math\Matrices\Matrix44.hpp" />
     <ClInclude Include="Math\Vectors\IntVector2.hpp" />
     <ClInclude Include="Math\Vectors\Vector2.hpp" />
     <ClInclude Include="Math\Vectors\Vector3.hpp" />
+    <ClInclude Include="Math\Vectors\Vector4.hpp" />
     <ClInclude Include="Renderer\BuiltInShaders.hpp" />
     <ClInclude Include="Renderer\Components\Shader.hpp" />
     <ClInclude Include="Renderer\Components\ShaderProgram.hpp" />
@@ -387,10 +389,12 @@
     <ClCompile Include="Lua\EngineLuaFunctionBindings.cpp" />
     <ClCompile Include="Lua\LuaScript.cpp" />
     <ClCompile Include="Math\Geometry\AABB2.cpp" />
+    <ClCompile Include="Math\MathUtils.cpp" />
     <ClCompile Include="Math\Matrices\Matrix44.cpp" />
     <ClCompile Include="Math\Vectors\IntVector2.cpp" />
     <ClCompile Include="Math\Vectors\Vector2.cpp" />
     <ClCompile Include="Math\Vectors\Vector3.cpp" />
+    <ClCompile Include="Math\Vectors\Vector4.cpp" />
     <ClCompile Include="Renderer\BuiltInShaders.cpp" />
     <ClCompile Include="Renderer\Components\Shader.cpp" />
     <ClCompile Include="Renderer\Components\ShaderProgram.cpp" />

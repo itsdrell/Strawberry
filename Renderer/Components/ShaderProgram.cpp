@@ -195,6 +195,9 @@ void FormatAndPrintShaderErrors(std::string log, std::string path, uint defineOf
 
 		//////////////////////////////////////////////////////////////////////////
 		// Calculating the offsets due to the define
+		if(lineNumber.length() > 10) // bug pls fix later #TODO
+			break;
+		
 		int currentLineNumber = std::stoi(lineNumber);
 		currentLineNumber -= ((int)defineOffset);
 		String finalLineNumber = std::to_string(currentLineNumber);

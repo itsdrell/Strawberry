@@ -2,6 +2,7 @@
 #include "Engine/Core/General/EngineCommon.hpp"
 #include "Engine/Renderer/Pipeline/RenderBuffer.hpp"
 #include "Engine/Renderer/RenderTypes.hpp"
+#include "Engine/Math/Vectors/Vector4.hpp"
 
 
 //====================================================================================
@@ -58,12 +59,22 @@ public:
 	Texture* CreateRenderTarget( int width, int height, eTextureFormat format = TEXTURE_FORMAT_RGBA8 );
 
 public:
+	void SetUniform( const String& name, float uniform );
+	void SetUniform( const String& name, const Vector3& uniform );
+	void SetUniform( const String& name, const Vector4& uniform ); 
+	void SetUniform( const String& name, const Rgba& uniform ); 
 	void SetUniform(const String& name, const Matrix44& uniform);
 
 public:
 	void DrawAABB2( const AABB2& bounds, const Rgba& color, bool filled = true );
+	void DrawTexturedAABB2(const AABB2& bounds, const Texture& texture,
+		const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const Rgba& tint );
+
+
 	void DrawMeshImmediate( PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices );
+	void DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices);
 	void DrawMeshImmediate( PrimitiveType thePrimitive, uint vertexCount, Vertex3D_PCU* vertices, uint indicesCount = 0, uint* indices = nullptr );
+
 
 public:
 	static Renderer* GetInstance();
@@ -78,6 +89,7 @@ public:
 
 	Camera*				m_currentCamera = nullptr;
 	Camera*				m_defaultCamera = nullptr;
+	Camera*				m_defaultUICamera = nullptr;
 									  
 	Shader*				m_currentShader = nullptr;
 	Shader*				m_defaultShader = nullptr;
@@ -101,7 +113,6 @@ public:
 	
 	SDL_Surface*		m_webScreen = nullptr;
 	SDL_Renderer*		m_theSDLRenderer = nullptr;
-	SDL_GLContext		m_glContext;
 };
 
 //====================================================================================

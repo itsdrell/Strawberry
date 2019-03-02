@@ -65,7 +65,7 @@ void Texture::PopulateFromData(unsigned char * imageData, const IntVector2 & tex
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // one of: GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_LINEAR
 	GL_CHECK_ERROR();
 
-	GLenum bufferFormat = GL_RGBA8; // the format our source pixel data is in; any of: GL_RGB, GL_RGBA, GL_LUMINANCE, GL_LUMINANCE_ALPHA, ...
+	GLenum bufferFormat = GL_RGBA; // was GL_RGBA8, the format our source pixel data is in; any of: GL_RGB, GL_RGBA, GL_LUMINANCE, GL_LUMINANCE_ALPHA, ...
 	if( numComponents == 3 )
 		bufferFormat = GL_RGB8;
 
@@ -77,26 +77,41 @@ void Texture::PopulateFromData(unsigned char * imageData, const IntVector2 & tex
 
 	// create the gpu buffer
 	// note: only this is needed for render targets
-	glTexStorage2D( GL_TEXTURE_2D,
-		1,               // number of levels (mip-layers)
-		internalFormat, // how is the memory stored on the GPU
-		m_dimensions.x, 
-		m_dimensions.y ); // dimensions
+	//glTexStorage2D( GL_TEXTURE_2D,
+	//	1,               // number of levels (mip-layers)
+	//	internalFormat, // how is the memory stored on the GPU
+	//	m_dimensions.x, 
+	//	m_dimensions.y ); // dimensions
+	//
+	//GL_CHECK_ERROR();
+	//// copies cpu memory to the gpu - needed for texture resources
+	//glTexSubImage2D( GL_TEXTURE_2D,
+	//	0,             // mip layer we're copying to
+	//	0, 0,          // offset
+	//	m_dimensions.x, 
+	//	m_dimensions.y, // dimensions
+	//	channels,      // which channels exist in the CPU buffer
+	//	GL_UNSIGNED_BYTE,     // how are those channels stored
+	//	imageData ); // cpu buffer to copy;
+
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		internalFormat,
+		m_dimensions.x,
+		m_dimensions.y,
+		0,
+		bufferFormat,
+		GL_UNSIGNED_BYTE,
+		imageData);
 
 	GL_CHECK_ERROR();
-	// copies cpu memory to the gpu - needed for texture resources
-	glTexSubImage2D( GL_TEXTURE_2D,
-		0,             // mip layer we're copying to
-		0, 0,          // offset
-		m_dimensions.x, 
-		m_dimensions.y, // dimensions
-		channels,      // which channels exist in the CPU buffer
-		GL_UNSIGNED_BYTE,     // how are those channels stored
-		imageData ); // cpu buffer to copy;
 
-	GL_CHECK_ERROR();
-
+#ifdef EMSCRIPTEN_PORT
+	glActiveTexture(GL_TEXTURE0);
+#else
 	glActiveTexturePls( GL_TEXTURE0 );								GL_CHECK_ERROR();
+#endif
 	glBindTexture( GL_TEXTURE_2D, m_textureID );				GL_CHECK_ERROR();
 }
 
@@ -113,7 +128,7 @@ bool Texture::CreateRenderTarget(int width, int height, eTextureFormat format)
 
 	// TODO - add a TextureFormatToGLFormats( GLenum*, GLenum*, GLenum*, eTextureFormat )
 	//        when more texture formats are required; 
-	GLenum internal_format = GL_RGBA8; 
+	GLenum internal_format = GL_RGBA; // was GL_RGBA8 
 	GLenum channels = GL_RGBA;  
 	GLenum pixel_layout = GL_UNSIGNED_BYTE;  
 	if (format == TEXTURE_FORMAT_D24S8) 
@@ -124,7 +139,12 @@ bool Texture::CreateRenderTarget(int width, int height, eTextureFormat format)
 	}
 
 	// Copy the texture - first, get use to be using texture unit 0 for this; 
+#ifdef EMSCRIPTEN_PORT
+	glActiveTexture(GL_TEXTURE0);
+#else
 	glActiveTexturePls( GL_TEXTURE0 );								GL_CHECK_ERROR();
+#endif
+
 	glBindTexture( GL_TEXTURE_2D, m_textureID );				GL_CHECK_ERROR();
 
 	// Copy data into it;
@@ -172,6 +192,9 @@ Texture * Texture::CreateFromImage(const Image & imageToCreateFrom)
 //-----------------------------------------------------------------------------------------------
 SDL_Surface* Texture::GetSDLSurfaceFromGLTexture()
 {
+
+// does not work on web because of glGetTexImage
+#ifndef EMSCRIPTEN_PORT
 	glBindTexture( GL_TEXTURE_2D, m_textureID );    // bind our texture to our current texture unit (0)
 
 	const int size = m_dimensions.x * m_dimensions.y * 4; //4 because texels rgba
@@ -203,6 +226,10 @@ SDL_Surface* Texture::GetSDLSurfaceFromGLTexture()
 		depth, pitch, pixel_format);
 
 	return theSurface;
+
+#else
+	return nullptr;
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------

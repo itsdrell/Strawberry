@@ -1,5 +1,4 @@
 #pragma once
-#include "Engine/Math/Vectors/Vector4.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -24,20 +23,15 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class Vector4
 {
 public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	Vector4() {}
+	Vector4(float theX, float theY, float theZ, float theW);
 
 public:
-	Vector4 GetAsNormalizedVector4() const;
-
-public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
+	float x,y,z,w = 0.f;
 };
-
 
 //====================================================================================
 // Standalone C Functions
@@ -50,5 +44,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [3/1/2019]
 //====================================================================================

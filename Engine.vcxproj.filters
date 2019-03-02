@@ -157,6 +157,8 @@
     <ClInclude Include="ThirdParty\fmod\fmod_dsp_effects.h" />
     <ClInclude Include="ThirdParty\fmod\fmod_errors.h" />
     <ClInclude Include="ThirdParty\fmod\fmod_output.h" />
+    <ClInclude Include="Math\Vectors\Vector4.hpp" />
+    <ClInclude Include="Math\MathUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -343,6 +345,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\stbi\stb_image_write.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vectors\Vector4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MathUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -28,6 +28,8 @@ class AABB2
 {
 public:
 	AABB2();
+	AABB2(float minX, float minY, float maxX, float maxY);
+	AABB2(const Vector2& theMins, const Vector2& theMaxs);
 
 public:
 	Vector2 mins, maxs;

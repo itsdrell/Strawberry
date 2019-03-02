@@ -51,6 +51,7 @@ PFNGLACTIVETEXTUREPROC glActiveTexturePls = nullptr;
 PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers = nullptr;
 PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers = nullptr;
 PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer = nullptr;
+PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D = nullptr;
 PFNGLFRAMEBUFFERTEXTUREPROC glFramebufferTexture = nullptr;
 PFNGLDRAWBUFFERSPROC glDrawBuffers = nullptr;
 PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus = nullptr; 
@@ -132,6 +133,7 @@ void BindGLFunctions()
 	glGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC ) SDL_GL_GetProcAddress("glGenFramebuffers");
 	glDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC ) SDL_GL_GetProcAddress("glDeleteFramebuffers");
 	glBindFramebuffer = (PFNGLBINDFRAMEBUFFERPROC ) SDL_GL_GetProcAddress("glBindFramebuffer");
+	glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC) SDL_GL_GetProcAddress("glFramebufferTexture2D");
 	glFramebufferTexture = (PFNGLFRAMEBUFFERTEXTUREPROC ) SDL_GL_GetProcAddress("glFramebufferTexture");
 	glDrawBuffers = (PFNGLDRAWBUFFERSPROC ) SDL_GL_GetProcAddress("glDrawBuffers");
 	glCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC ) SDL_GL_GetProcAddress("glCheckFramebufferStatus");
@@ -159,7 +161,18 @@ void BindGLFunctions()
 	glSamplerParameterf= (PFNGLSAMPLERPARAMETERFPROC ) SDL_GL_GetProcAddress("glSamplerParameterf");
 	
 #else
-	glActiveTexturePls = glActiveTexture;
+	//glActiveTexturePls = glActiveTexture;
+
+
+/*
+	glActiveTexture
+	glGetTexImage
+	glTexStorage2D 
+	glFramebufferTexture
+	glDrawBuffers 
+	glBlitFramebuffer 
+	glBindBufferBase 
+*/
 #endif
 }
 
