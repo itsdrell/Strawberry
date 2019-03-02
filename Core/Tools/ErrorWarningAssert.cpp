@@ -8,11 +8,24 @@
 #include <iostream>
 
 
+//===============================================================================================
+// both
+//===============================================================================================
+void PrintLog(const std::string& message)
+{
+#ifdef EMSCRIPTEN_PORT
+	printf("%s \n", message.c_str());
+#else
+	DebuggerPrintf(message.c_str());
+#endif
+}
+
+
 #ifdef EMSCRIPTEN_PORT
 //-----------------------------------------------------------------------------------------------
 void DebuggerPrintf( const char* messageFormat, ... )
 {
-	//#TODO figure out how to print in html
+
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -112,6 +125,9 @@ UINT GetWindowsMessageBoxIconFlagForSeverityLevel( SeverityLevel severity )
 		default:						return MB_ICONEXCLAMATION;
 	}
 }
+
+
+
 #endif
 
 

@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "Engine/Internal/EmscriptenCommon.hpp"
 #include "Engine/ThirdParty/SDL2/SDL.h"
 
 //===============================================================================================
@@ -35,6 +36,9 @@ void Window::CreateSDLWindow()
 		m_width, 
 		m_height, 
 		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+
+	if(m_windowReference == NULL)
+		printf("Window failed to create \n");
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -32,7 +32,8 @@ enum SeverityLevel
 
 
 //-----------------------------------------------------------------------------------------------
-
+// Calls printf or debug based on the build mode
+void PrintLog(const std::string& message);
 
 #ifndef EMSCRIPTEN_PORT
 bool IsDebuggerAvailable();

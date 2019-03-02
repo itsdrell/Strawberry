@@ -50,6 +50,6 @@ int PrintString(lua_State* theState)
 {
 	const char* str = lua_tostring(theState, 1); // get function argument
 	String text = String(str) + "\n";
-	DebuggerPrintf(text.c_str()); // calling C++ function with this argument...
+	PrintLog(text.c_str()); // calling C++ function with this argument...
 	return 0; // nothing to return!
 }

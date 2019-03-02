@@ -5,17 +5,22 @@
 //===============================================================================================
 LuaScript::LuaScript(const String & path)
 {
+
+#ifdef EMSCRIPTEN_PORT
+	m_filePath = "Run_Win32/" + path;
+#else
 	m_filePath = path;
+#endif
 
 	m_state = luaL_newstate();
 	if(m_state == NULL)
 	{
-		//ERROR_AND_DIE("Lua script at: " + path + " STATE could not be created");
+		printf("Lua script at: %s  :STATE could not be created \n", m_filePath.c_str());
 	}
 
 	AddBindingsToScript();
 
-	int resultOfLoad = luaL_loadfile(m_state, path.c_str());
+	int resultOfLoad = luaL_loadfile(m_state, m_filePath.c_str());
 	if(resultOfLoad != LUA_OK)
 	{
 		m_errorCode = resultOfLoad;
@@ -61,7 +66,7 @@ void LuaScript::AddBindingsToScript()
 //-----------------------------------------------------------------------------------------------
 void LuaScript::LogError()
 {
-	DebuggerPrintf("//---------------------------------------------------------------------------- \n");
+	printf("//---------------------------------------------------------------------------- \n");
 	
 	String loadErrorMessage = LuaErrorCodeToString(m_errorCode);
 	String msg = lua_tostring(m_state, -1);
@@ -76,8 +81,8 @@ void LuaScript::LogError()
 		"\nReason: " + String(msg) + "\n";
 	lua_pop(m_state, 1);  /* remove message */
 
-	DebuggerPrintf(m_errorMessage.c_str());
-	DebuggerPrintf("//---------------------------------------------------------------------------- \n");
+	printf(m_errorMessage.c_str());
+	printf("//---------------------------------------------------------------------------- \n");
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -49,22 +49,35 @@ Renderer::~Renderer()
 //-----------------------------------------------------------------------------------------------
 void Renderer::RenderStartup()
 {
+	int result = 0;
+	
 	// https://wiki.libsdl.org/SDL_GL_SetAttribute
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2); // sets the max version (need this for render doc)
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0); // set mins
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	if(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES) == -1)
+		printf("Error with attribute \n");
+	
+	if(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2) == -1) // sets the max version (need this for render doc)
+		printf("Error with attribute \n");
 
+	if(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0) == -1) // set mins
+		printf("Error with attribute \n");
+
+	if(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) == -1)
+		printf("Error with attribute \n");
+
+	if(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24)== -1)
+		printf("Error with attribute \n");
+
+	// this doesn't work on the web for some reason? :l
 	//0 for immediate updates, 1 for updates synchronized with the vertical retrace, -1 for adaptive vsync;
-	SDL_GL_SetSwapInterval(0);
+	//if(SDL_GL_SetSwapInterval(-1) == -1)
+	//	printf("Error swap interval \n");
 
 	Window* theWindow = Window::GetInstance();
 
 	// this is important and has to be after all the attributes
-	SDL_GL_CreateContext(theWindow->GetWindowReference());
-	//if(!m_glContext)
-	//	printf("Error creating context \n");
+	SDL_GLContext theContext = SDL_GL_CreateContext(theWindow->GetWindowReference());
+	if(!theContext)
+		printf("Error creating context \n");
 	
 	m_windowSize = theWindow->GetDimensions();
 
@@ -73,6 +86,8 @@ void Renderer::RenderStartup()
 	
 	BindGLFunctions(); 
 	RenderPostStartUp();
+
+	printf("renderer finished startup \n");
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -147,7 +162,7 @@ void Renderer::EndFrame()
 	SDL_Window* theWindow = Window::GetWindowReference();
 	SDL_GL_SwapWindow(theWindow);
 
-	String theError = SDL_GetError();
+	//ClearScreen(Rgba(0,255, 0, 0));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -573,6 +588,7 @@ void Renderer::DrawMeshImmediate(PrimitiveType thePrimitive, uint vertexCount, V
 {
 }
 
+//-----------------------------------------------------------------------------------------------
 void Renderer::DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices)
 {
 	GL_CHECK_ERROR();
