@@ -1,4 +1,5 @@
 #include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Audio/AudioSystem.hpp"
 #include "Engine/Renderer/Renderer.hpp"
 
 
@@ -10,11 +11,11 @@
 //===============================================================================================
 void EngineStartUp()
 {
-	//AudioSystem* audio = new AudioSystem();
+	AudioSystem* audio = new AudioSystem();
 	//InputSystem* input = new InputSystem();
 	Renderer* renderer = new Renderer();
 
-	//audio = nullptr;
+	audio = nullptr;
 	//input = nullptr;
 	renderer = nullptr;
 }
@@ -22,9 +23,8 @@ void EngineStartUp()
 //-----------------------------------------------------------------------------------------------
 void EngineShutdown()
 {
-	//delete g_theAudioSystem;
-	//g_theAudioSystem = nullptr;
-	//
+	AudioSystem::Shutdown();
+
 	//delete g_theInputSystem;
 	//g_theInputSystem = nullptr;
 
