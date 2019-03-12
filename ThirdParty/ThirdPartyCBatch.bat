@@ -24,7 +24,7 @@ REM ---------------------------------------------
 REM ---------------------------------------------
 REM | 	Make sure we are in the right directory
 REM ---------------------------------------------
-cd "D:\Github\Strawberry\Games\ProtoGame\Engine\ThirdParty"
+cd "%cd%\Engine\ThirdParty"
 
 REM ---------------------------------------------
 REM |	The command to build the files to bc type which is like a static library
