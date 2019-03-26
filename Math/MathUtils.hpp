@@ -4,11 +4,22 @@
 // Forward Declare
 //====================================================================================
 
+//====================================================================================
+// Defines
+//====================================================================================
+#define PI 3.14159265359f
 
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
 float RangeMapFloat(float inValue, float inStart, float inEnd, float outStart, float outEnd);
+
+float ConvertRadiansToDegrees(float radians);
+float ConvertDegreesToRadians(float degrees);
+float CosDegrees(float degrees);
+float SinDegrees(float degrees);
+
+
 
 
 //====================================================================================

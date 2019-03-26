@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Math/Vectors/Vector2.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -28,6 +29,7 @@ class Vector3
 public:
 	Vector3();
 	Vector3( float theX, float theY, float theZ );
+	Vector3(const Vector2& xy);
 
 
 public:

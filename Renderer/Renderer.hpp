@@ -52,7 +52,10 @@ public:
 
 public:
 	void ClearScreen( const Rgba& clearColor );
+	void EnableWireframe(bool check);
+	void SetLineWidth(float width);
 	void SetCamera( Camera* theCamera = nullptr );
+	void SetDefaultDrawColor(const Rgba& theColor);
 	void BindCameraToShader(const Camera& theCamera);
 	void SetShader( Shader* shader = nullptr );
 	void SetCurrentTexture( int bindIndex = 0, Texture* texture = nullptr);
@@ -66,26 +69,33 @@ public:
 	void SetUniform(const String& name, const Matrix44& uniform);
 
 public:
-	void DrawAABB2( const AABB2& bounds, const Rgba& color, bool filled = true );
+	void DrawLine2D(const Vector2& start, const Vector2& end, const Rgba& color = Rgba(0, 0, 0, 255));
+	void DrawLines2D(Vector2* arrayPointer, int numberOfSides, const Rgba& theColor);
+	
+	void DrawCircleOutline2D(const Vector2& center, float radius, const Rgba& color = Rgba(255, 255, 255, 255), int numberOfEdges = 60);
+	void DrawCircleFilled2D(const Vector2& center, float radius, const Rgba& color = Rgba(255, 255, 255, 255), int numberOfEdges = 60);
+
+	void DrawAABB2Outline( const AABB2& bounds, const Rgba& color = Rgba(255, 255, 255, 255));
+	void DrawAABB2Filled(const AABB2& bounds, const Rgba& color = Rgba(255, 255, 255, 255));
 	void DrawTexturedAABB2(const AABB2& bounds, const Texture& texture,
 		const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const Rgba& tint );
 
-
+public:
 	void DrawMeshImmediate( PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices );
-	void DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices);
 	void DrawMeshImmediate( PrimitiveType thePrimitive, uint vertexCount, Vertex3D_PCU* vertices, uint indicesCount = 0, uint* indices = nullptr );
+	void DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices);
 
 
 public:
 	static Renderer* GetInstance();
 
 private:
-
-private:
 	static Renderer* s_theRenderer;
 
 public:
 	Vector2				m_windowSize;
+
+	Rgba				m_defaultDrawColor;
 
 	Camera*				m_currentCamera = nullptr;
 	Camera*				m_defaultCamera = nullptr;

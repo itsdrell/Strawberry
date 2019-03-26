@@ -15,6 +15,7 @@
 #include "Engine/Core/Platform/Window.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/ThirdParty/SDL2/SDL.h"
+#include "Engine/Math/MathUtils.hpp"
 
 
 
@@ -142,13 +143,20 @@ void Renderer::RenderPostStartUp()
 	// set our default camera to be our current camera
 	SetCamera(nullptr); 
 
+	// Hard setting the width of the lines we use to be a certain size
+	SetLineWidth(2.f);
+
+	m_defaultDrawColor = Rgba(255, 255, 255, 255);
+
 }
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::BeginFrame()
 {
 	GL_CHECK_ERROR();
-	ClearScreen(Rgba(0,0,255,255));
+
+	// needs to be called first in Lua
+	//ClearScreen(Rgba(0,0,255,255));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -278,6 +286,21 @@ void Renderer::ClearScreen(const Rgba & clearColor)
 }
 
 //-----------------------------------------------------------------------------------------------
+void Renderer::EnableWireframe(bool check)
+{
+	if (check)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	else
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::SetLineWidth(float width)
+{
+	glLineWidth(width);
+}
+
+//-----------------------------------------------------------------------------------------------
 void Renderer::SetCamera(Camera* theCamera /*= nullptr */)
 {
 	GL_CHECK_ERROR();
@@ -295,6 +318,12 @@ void Renderer::SetCamera(Camera* theCamera /*= nullptr */)
 	m_currentCamera = theCamera;
 
 	BindCameraToShader(*m_currentCamera);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::SetDefaultDrawColor(const Rgba& theColor)
+{
+	m_defaultDrawColor = theColor;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -457,6 +486,34 @@ void Renderer::SetUniform(const String& name, const Rgba& uniform)
 }
 
 //-----------------------------------------------------------------------------------------------
+void Renderer::DrawLine2D(const Vector2& start, const Vector2& end, const Rgba& color /*= Rgba(0, 0, 0, 255)*/)
+{
+	m_currentTexture = m_defaultTexture;
+
+	// Create the array
+	Vertex3D_PCU vertices[2];
+
+	// Create the index
+	vertices[0] = Vertex3D_PCU(start, color, Vector2(0.f, 0.f));
+	vertices[1] = Vertex3D_PCU(end, color, Vector2(0.f, 0.f));
+
+	DrawMeshImmediate(PRIMITIVE_LINES, vertices, 2);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawLines2D(Vector2* arrayPointer, int numberOfSides, const Rgba& theColor)
+{
+	std::vector<Vertex3D_PCU> points;
+	for (int i = 0; i < numberOfSides; i++)
+	{
+		Vertex3D_PCU current = Vertex3D_PCU(arrayPointer[i], theColor, Vector2(0.f, 0.f));
+		points.push_back(current); 
+	}
+
+	DrawMeshImmediate(PRIMITIVE_LINES, points.data(), numberOfSides);
+}
+
+//-----------------------------------------------------------------------------------------------
 Texture* Renderer::CreateRenderTarget(int width, int height, eTextureFormat format)
 {
 	Texture *tex = new Texture();
@@ -466,8 +523,49 @@ Texture* Renderer::CreateRenderTarget(int width, int height, eTextureFormat form
 }
 
 //-----------------------------------------------------------------------------------------------
-void Renderer::DrawAABB2(const AABB2 & bounds, const Rgba & color, bool filled)
+void Renderer::DrawAABB2Outline(const AABB2 & bounds, const Rgba & color)
 {
+	glEnable(GL_BLEND);												GL_CHECK_ERROR();
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);				GL_CHECK_ERROR();
+
+	SetCurrentTexture(0, m_defaultTexture);
+
+	Vertex3D_PCU vertices[8];
+
+	vertices[0] = Vertex3D_PCU(Vector3(bounds.mins.x, bounds.mins.y, 0.f), color, Vector2(0.f, 0.f)); // bottom left
+	vertices[1] = Vertex3D_PCU(Vector3(bounds.maxs.x, bounds.mins.y, 0.f), color, Vector2(1.f, 0.f)); // bottom right
+
+	vertices[2] = Vertex3D_PCU(Vector3(bounds.maxs.x, bounds.mins.y, 0.f), color, Vector2(1.f, 0.f)); // bottom right
+	vertices[3] = Vertex3D_PCU(Vector3(bounds.maxs.x, bounds.maxs.y, 0.f), color, Vector2(1.f, 1.f)); // top right
+
+	vertices[4] = Vertex3D_PCU(Vector3(bounds.maxs.x, bounds.maxs.y, 0.f), color, Vector2(1.f, 1.f)); // top right
+	vertices[5] = Vertex3D_PCU(Vector3(bounds.mins.x, bounds.maxs.y, 0.f), color, Vector2(0.0f, 0.f)); // bottom left
+
+	vertices[6] = Vertex3D_PCU(Vector3(bounds.mins.x, bounds.maxs.y, 0.f), color, Vector2(0.0f, 0.f)); // bottom left
+	vertices[7] = Vertex3D_PCU(Vector3(bounds.mins.x, bounds.mins.y, 0.f), color, Vector2(1.0f, 1.f)); // top right
+
+	DrawMeshImmediate(PRIMITIVE_LINES, vertices, 8);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawAABB2Filled(const AABB2& bounds, const Rgba& color /*= Rgba(255, 255, 255, 255)*/)
+{
+	glEnable(GL_BLEND);												GL_CHECK_ERROR();
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);				GL_CHECK_ERROR();
+
+	SetCurrentTexture(0, m_defaultTexture);
+
+	Vertex3D_PCU vertices[6];
+
+	vertices[0] = Vertex3D_PCU(Vector3(bounds.mins.x, bounds.mins.y, 0.f), color, Vector2(0.f, 0.f)); // bottom left
+	vertices[1] = Vertex3D_PCU(Vector3(bounds.maxs.x, bounds.mins.y, 0.f), color, Vector2(1.f, 0.f)); // bottom right
+	vertices[2] = Vertex3D_PCU(Vector3(bounds.maxs.x, bounds.maxs.y, 0.f), color, Vector2(1.f, 1.f)); // top right
+
+	vertices[3] = Vertex3D_PCU(Vector3(bounds.mins.x, bounds.mins.y, 0.f), color, Vector2(0.0f, 0.f)); // bottom left
+	vertices[4] = Vertex3D_PCU(Vector3(bounds.maxs.x, bounds.maxs.y, 0.f), color, Vector2(1.0f, 1.f)); // top right
+	vertices[5] = Vertex3D_PCU(Vector3(bounds.mins.x, bounds.maxs.y, 0.f), color, Vector2(0.0f, 1.f)); // top left
+
+	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices, 6);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -493,6 +591,61 @@ void Renderer::DrawTexturedAABB2(const AABB2& bounds, const Texture& texture, co
 	vertices[5] = Vertex3D_PCU(Vector3(bounds.mins.x,bounds.maxs.y, 0.f),tint,Vector2(texCoordsAtMins.x,texCoordsAtMaxs.y)); // top left
 
 	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices, 6);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawCircleFilled2D(const Vector2 & center, float radius, const Rgba & color, int numberOfEdges)
+{
+	float distanceInDegrees = 360.f / ((float) numberOfEdges * .3f);
+	float degrees = 0.f;
+
+	std::vector<Vertex3D_PCU> vertices;
+	for (int i = 0; i < numberOfEdges; i += 3)
+	{
+		// Starting point
+		float startX = center.x + (radius * (CosDegrees(degrees)));
+		float startY = center.y + (radius * (SinDegrees(degrees)));
+
+		// Increase degrees so that we can find the next point
+		degrees += distanceInDegrees;
+
+		// End point
+		float endX = center.x + (radius * (CosDegrees(degrees)));
+		float endY = center.y + (radius * (SinDegrees(degrees)));
+
+		vertices.push_back(Vertex3D_PCU(center, color, Vector2(0.f, 0.f)));
+		vertices.push_back(Vertex3D_PCU(Vector2(startX, startY), color, Vector2(0.f, 0.f)));
+		vertices.push_back(Vertex3D_PCU(Vector2(endX, endY), color, Vector2(0.f, 0.f)));
+	}
+
+	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices.data(), numberOfEdges);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawCircleOutline2D(const Vector2 & center, float radius, const Rgba & color, int numberOfEdges)
+{
+	float distanceInDegrees = 360.f / ((float)numberOfEdges * .5f);
+	float degrees = 0.f;
+
+	std::vector<Vertex3D_PCU> vertices;
+	for (int i = 0; i < numberOfEdges; i += 2)
+	{
+		// Starting point
+		float startX = center.x + (radius * (CosDegrees(degrees)));
+		float startY = center.y + (radius * (SinDegrees(degrees)));
+
+		// Increase degrees so that we can find the next point
+		degrees += distanceInDegrees;
+
+		// End point
+		float endX = center.x + (radius * (CosDegrees(degrees)));
+		float endY = center.y + (radius * (SinDegrees(degrees)));
+
+		vertices.push_back(Vertex3D_PCU(Vector2(startX, startY), color, Vector2(0.f, 0.f)));
+		vertices.push_back(Vertex3D_PCU(Vector2(endX, endY), color, Vector2(0.f, 0.f)));
+	}
+
+	DrawMeshImmediate(PRIMITIVE_LINES, vertices.data(), numberOfEdges);
 }
 
 //-----------------------------------------------------------------------------------------------

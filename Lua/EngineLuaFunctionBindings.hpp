@@ -30,6 +30,22 @@ void BindFunctionToScript( lua_State* theState, FunctionForLua theFunction, cons
 static int DrawTestTriangle( lua_State* theState );
 static int PrintString( lua_State* theState );
 
+//-----------------------------------------------------------------------------------------------
+// Rendering
+static int LuaClearScreen(lua_State* theState);
+static int LuaSetDefaultDrawColor(lua_State* theState);
+
+static int LuaDrawLine(lua_State* theState);
+
+static int LuaDrawCircleFilled(lua_State* theState);
+static int LuaDrawCircleOutline(lua_State* theState);
+
+static int LuaDrawAABB2Filled(lua_State* theState);
+static int LuaDrawAABB2WireFrame(lua_State* theState);
+
+
+
+
 //====================================================================================
 // Externs
 //====================================================================================
