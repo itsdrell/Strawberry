@@ -160,6 +160,7 @@
     <ClInclude Include="Math\Vectors\Vector4.hpp" />
     <ClInclude Include="Math\MathUtils.hpp" />
     <ClInclude Include="Audio\AudioSystem.hpp" />
+    <ClInclude Include="Input\InputSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -355,6 +356,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Audio\AudioSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -44,6 +44,12 @@ static int LuaDrawAABB2Filled(lua_State* theState);
 static int LuaDrawAABB2WireFrame(lua_State* theState);
 
 
+//-----------------------------------------------------------------------------------------------
+// Input
+static int LuaIsKeyPressed(lua_State* theState);
+static int LuaWasKeyJustPressed(lua_State* theState);
+static int LuaWasKeyJustReleased(lua_State* theState);
+
 
 
 //====================================================================================

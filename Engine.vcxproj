@@ -233,6 +233,7 @@
     <ClInclude Include="Core\Platform\Window.hpp" />
     <ClInclude Include="Core\Tools\ErrorWarningAssert.hpp" />
     <ClInclude Include="Core\Utils\StringUtils.hpp" />
+    <ClInclude Include="Input\InputSystem.hpp" />
     <ClInclude Include="Internal\EmscriptenCommon.hpp" />
     <ClInclude Include="Internal\WindowsCommon.hpp" />
     <ClInclude Include="Lua\EngineLuaFunctionBindings.hpp" />
@@ -388,6 +389,7 @@
     <ClCompile Include="Core\Platform\Window.cpp" />
     <ClCompile Include="Core\Tools\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Utils\StringUtils.cpp" />
+    <ClCompile Include="Input\InputSystem.cpp" />
     <ClCompile Include="Lua\EngineLuaFunctionBindings.cpp" />
     <ClCompile Include="Lua\LuaScript.cpp" />
     <ClCompile Include="Math\Geometry\AABB2.cpp" />

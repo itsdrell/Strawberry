@@ -21,6 +21,10 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaDrawAABB2Filled, "DrawAABB2Fill");
 	BindFunctionToScript(theState, LuaDrawAABB2WireFrame, "DrawAABB2");
 
+// input
+	BindFunctionToScript(theState, LuaIsKeyPressed, "IsKeyPressed");
+	BindFunctionToScript(theState, LuaWasKeyJustPressed, "WasKeyJustPressed");
+	BindFunctionToScript(theState, LuaWasKeyJustReleased, "WasKeyJustReleased");
 
 
 	// goes at the end
@@ -189,5 +193,26 @@ int LuaDrawAABB2WireFrame(lua_State* theState)
 
 	Renderer::GetInstance()->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), Rgba(r, g, b, a));
 
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// IsKeyPressed( stringCode )
+int LuaIsKeyPressed(lua_State * theState)
+{
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// WasKeyJustPressed( stringCode )
+int LuaWasKeyJustPressed(lua_State * theState)
+{
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// WasKeyJustReleased( stringCode )
+int LuaWasKeyJustReleased(lua_State * theState)
+{
 	return 0;
 }
