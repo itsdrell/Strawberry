@@ -6,6 +6,17 @@
 //===============================================================================================
 InputSystem*		g_theInputSystem = nullptr;
 
+//-----------------------------------------------------------------------------------------------
+// https://wiki.libsdl.org/SDL_Keycode
+const KeyCode KEYBOARD_SPACE			= SDLK_SPACE;
+const KeyCode KEYBOARD_LSHIFT			= SDLK_LSHIFT;
+const KeyCode KEYBOARD_ENTER			= SDLK_RETURN;
+const KeyCode KEYBOARD_BACKSPACE		= SDLK_BACKSPACE;
+const KeyCode KEYBOARD_LEFT_ARROW		= SDLK_LEFT;
+const KeyCode KEYBOARD_RIGHT_ARROW		= SDLK_RIGHT;
+const KeyCode KEYBOARD_UP_ARROW			= SDLK_UP;
+const KeyCode KEYBOARD_DOWN_ARROW		= SDLK_DOWN;
+
 //===============================================================================================
 InputSystem::InputSystem()
 {

@@ -78,6 +78,17 @@ bool					WasKeyJustReleased(KeyCode keyCode);
 //====================================================================================
 extern InputSystem*		g_theInputSystem;
 
+extern const KeyCode KEYBOARD_SPACE;
+extern const KeyCode KEYBOARD_LSHIFT;
+extern const KeyCode KEYBOARD_ENTER;
+extern const KeyCode KEYBOARD_BACKSPACE;
+extern const KeyCode KEYBOARD_LEFT_ARROW;
+extern const KeyCode KEYBOARD_RIGHT_ARROW;
+extern const KeyCode KEYBOARD_UP_ARROW;
+extern const KeyCode KEYBOARD_DOWN_ARROW;
+
+
+
 //====================================================================================
 // Written by Zachary Bracken : [3/26/2019]
 //====================================================================================
