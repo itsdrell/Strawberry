@@ -15,9 +15,21 @@ float LuaGetFloat(lua_State* theState, int stackIndex, float defaultValue)
 }
 
 //-----------------------------------------------------------------------------------------------
+int LuaGetInt(lua_State* theState, int stackIndex, int defaultValue)
+{
+	return (int) (lua_isinteger(theState, stackIndex) ? lua_tointeger(theState, stackIndex) : defaultValue);
+}
+
+//-----------------------------------------------------------------------------------------------
 unsigned char LuaGetUnsignedChar(lua_State* theState, int stackIndex, unsigned char defaultValue)
 {
 	return (unsigned char) (lua_isnumber(theState, stackIndex) ? lua_tointeger(theState, stackIndex) : defaultValue);
+}
+
+//-----------------------------------------------------------------------------------------------
+bool LuaGetBool(lua_State * theState, int stackIndex, bool defaultValue)
+{
+	return lua_isboolean(theState, stackIndex) ? lua_toboolean(theState, stackIndex) : defaultValue;
 }
 
 //----------------------------------------------------------------------------------------------- 
@@ -56,4 +68,60 @@ KeyCode LuaGetKeyCode(lua_State* theState, int stackIndex, KeyCode defaultValue)
 
 	// if no cases matched, return default
 	return defaultValue;
+}
+
+//-----------------------------------------------------------------------------------------------
+String LuaGetGlobalString(lua_State* theState, const String& nameOfGlobal, const String& defaultValue)
+{
+	lua_getglobal(theState, nameOfGlobal.c_str());
+	return LuaGetString(theState, -1, defaultValue);
+}
+
+//-----------------------------------------------------------------------------------------------
+int LuaGetGlobalInt(lua_State * theState, const String & nameOfGlobal, int defaultValue)
+{
+	lua_getglobal(theState, nameOfGlobal.c_str());
+	return LuaGetInt(theState, -1, defaultValue);
+}
+
+//-----------------------------------------------------------------------------------------------
+float LuaGetGlobalFloat(lua_State * theState, const String & nameOfGlobal, float defaultValue)
+{
+	lua_getglobal(theState, nameOfGlobal.c_str());
+	return LuaGetFloat(theState, -1, defaultValue);
+}
+
+//-----------------------------------------------------------------------------------------------
+bool LuaGetGlobalBool(lua_State * theState, const String & nameOfGlobal, bool defaultValue)
+{
+	lua_getglobal(theState, nameOfGlobal.c_str());
+	return LuaGetBool(theState, -1, defaultValue);
+}
+
+//-----------------------------------------------------------------------------------------------
+int GetValueFromTable(lua_State * theState, const String & nameOfTableKey, int defaultValue)
+{
+	lua_pushstring(theState, nameOfTableKey.c_str());
+	lua_gettable(theState, -2);
+
+	int value = LuaGetInt(theState, -1, defaultValue);
+	lua_pop(theState, 1);
+
+	return value;
+}
+
+//-----------------------------------------------------------------------------------------------
+Rgba LuaGetRgbaFromTable(lua_State * theState, const String & tableName, const Rgba & defaultValue)
+{
+	lua_getglobal(theState, tableName.c_str());
+
+	if (!lua_istable(theState, -1))
+		return defaultValue;
+	
+	unsigned char r = (unsigned char) GetValueFromTable(theState, "r", defaultValue.r);
+	unsigned char g = (unsigned char) GetValueFromTable(theState, "g", defaultValue.g);
+	unsigned char b = (unsigned char) GetValueFromTable(theState, "b", defaultValue.b);
+	unsigned char a = (unsigned char) GetValueFromTable(theState, "a", defaultValue.a);
+
+	return Rgba(r, g, b, a);
 }

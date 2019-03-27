@@ -8,14 +8,15 @@ InputSystem*		g_theInputSystem = nullptr;
 
 //-----------------------------------------------------------------------------------------------
 // https://wiki.libsdl.org/SDL_Keycode
-const KeyCode KEYBOARD_SPACE			= SDLK_SPACE;
-const KeyCode KEYBOARD_LSHIFT			= SDLK_LSHIFT;
-const KeyCode KEYBOARD_ENTER			= SDLK_RETURN;
-const KeyCode KEYBOARD_BACKSPACE		= SDLK_BACKSPACE;
-const KeyCode KEYBOARD_LEFT_ARROW		= SDLK_LEFT;
-const KeyCode KEYBOARD_RIGHT_ARROW		= SDLK_RIGHT;
-const KeyCode KEYBOARD_UP_ARROW			= SDLK_UP;
-const KeyCode KEYBOARD_DOWN_ARROW		= SDLK_DOWN;
+#pragma warning( disable : 4310 ) // weird warning about "cast truncates constant value" should be fine tho :o
+const KeyCode KEYBOARD_SPACE			= (const KeyCode) SDLK_SPACE;
+const KeyCode KEYBOARD_LSHIFT			= (const KeyCode) SDLK_LSHIFT;
+const KeyCode KEYBOARD_ENTER			= (const KeyCode) SDLK_RETURN;
+const KeyCode KEYBOARD_BACKSPACE		= (const KeyCode) SDLK_BACKSPACE;
+const KeyCode KEYBOARD_LEFT_ARROW		= (const KeyCode) SDLK_LEFT;
+const KeyCode KEYBOARD_RIGHT_ARROW		= (const KeyCode) SDLK_RIGHT;
+const KeyCode KEYBOARD_UP_ARROW			= (const KeyCode) SDLK_UP;
+const KeyCode KEYBOARD_DOWN_ARROW		= (const KeyCode) SDLK_DOWN;
 
 //===============================================================================================
 InputSystem::InputSystem()

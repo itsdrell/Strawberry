@@ -146,7 +146,8 @@ void Renderer::RenderPostStartUp()
 	// Hard setting the width of the lines we use to be a certain size
 	SetLineWidth(2.f);
 
-	m_defaultDrawColor = Rgba(255, 255, 255, 255);
+	m_defaultDrawColor = Rgba(0, 0, 0, 255);
+	m_clearScreenColor = m_defaultDrawColor;
 
 }
 
@@ -155,8 +156,11 @@ void Renderer::BeginFrame()
 {
 	GL_CHECK_ERROR();
 
-	// needs to be called first in Lua
-	//ClearScreen(Rgba(0,0,255,255));
+	if (m_clearScreen)
+	{
+		ClearScreen(m_clearScreenColor);
+		m_clearScreen = false;
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -170,7 +174,7 @@ void Renderer::EndFrame()
 	SDL_Window* theWindow = Window::GetWindowReference();
 	SDL_GL_SwapWindow(theWindow);
 
-	//ClearScreen(Rgba(0,255, 0, 0));
+	//ClearScreen(Rgba(0,0, 0, 255));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -281,7 +285,8 @@ bool Renderer::CopyFrameBuffer(FrameBuffer* dst, FrameBuffer* src)
 //-----------------------------------------------------------------------------------------------
 void Renderer::ClearScreen(const Rgba & clearColor)
 {
-	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+	Vector4 normalizedFloatColor = clearColor.GetAsNormalizedVector4();
+	glClearColor(normalizedFloatColor.x, normalizedFloatColor.y, normalizedFloatColor.z, normalizedFloatColor.w);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 

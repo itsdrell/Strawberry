@@ -145,6 +145,8 @@ LICENSE
 
 */
 
+#pragma warning( disable : 4204 )
+
 #ifndef INCLUDE_STB_IMAGE_WRITE_H
 #define INCLUDE_STB_IMAGE_WRITE_H
 

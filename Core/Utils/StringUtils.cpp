@@ -7,6 +7,8 @@
 #include <regex>
 #include <string>
 
+#pragma warning( disable : 4310 ) // weird warning about "cast truncates constant value" should be fine tho :o
+
 
 #ifndef EMSCRIPTEN_PORT
 

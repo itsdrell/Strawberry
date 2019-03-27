@@ -77,9 +77,12 @@ int PrintString(lua_State* theState)
 int LuaClearScreen(lua_State* theState)
 {
 	Renderer* r = Renderer::GetInstance();
-	Rgba color = LuaGetRgba(theState, 1, r->m_defaultDrawColor);
+	Rgba color = LuaGetRgba(theState, 1, r->m_clearScreenColor);
 	
-	r->ClearScreen( color );
+	// we clear the screen next time? 
+	// Had a bug where it didn't like me clearing the screen late in the pipeline so doing it like this
+	r->m_clearScreenColor = color;
+	r->m_clearScreen = true;
 	
 	return 0;
 }

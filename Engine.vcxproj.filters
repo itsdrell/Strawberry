@@ -162,6 +162,7 @@
     <ClInclude Include="Audio\AudioSystem.hpp" />
     <ClInclude Include="Input\InputSystem.hpp" />
     <ClInclude Include="Lua\LuaUtils.hpp" />
+    <ClInclude Include="Core\General\BlackBoard.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -363,6 +364,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Lua\LuaUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\General\BlackBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

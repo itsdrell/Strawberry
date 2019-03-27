@@ -33,8 +33,8 @@ void Window::CreateSDLWindow()
 		m_appName, 
 		SDL_WINDOWPOS_CENTERED, 
 		SDL_WINDOWPOS_CENTERED, 
-		m_width, 
-		m_height, 
+		(int) m_width, 
+		(int) m_height, 
 		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
 	if(m_windowReference == NULL)

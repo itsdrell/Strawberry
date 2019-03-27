@@ -95,6 +95,8 @@ private:
 public:
 	Vector2				m_windowSize;
 
+	bool				m_clearScreen = true;
+	Rgba				m_clearScreenColor;
 	Rgba				m_defaultDrawColor;
 
 	Camera*				m_currentCamera = nullptr;

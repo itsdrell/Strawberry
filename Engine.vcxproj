@@ -227,6 +227,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Audio\AudioSystem.hpp" />
+    <ClInclude Include="Core\General\BlackBoard.hpp" />
     <ClInclude Include="Core\General\Camera.hpp" />
     <ClInclude Include="Core\General\EngineCommon.hpp" />
     <ClInclude Include="Core\General\Rgba.hpp" />
@@ -384,6 +385,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Audio\AudioSystem.cpp" />
+    <ClCompile Include="Core\General\BlackBoard.cpp" />
     <ClCompile Include="Core\General\Camera.cpp" />
     <ClCompile Include="Core\General\EngineCommon.cpp" />
     <ClCompile Include="Core\General\Rgba.cpp" />
