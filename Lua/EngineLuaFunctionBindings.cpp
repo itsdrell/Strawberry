@@ -5,6 +5,7 @@
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/Lua/LuaUtils.hpp"
+#include "../Audio/AudioSystem.hpp"
 
 //===============================================================================================
 void BindLuaFunctionsToScript(lua_State * theState)
@@ -26,6 +27,13 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaIsKeyPressed, "IsKeyPressed");
 	BindFunctionToScript(theState, LuaWasKeyJustPressed, "WasKeyJustPressed");
 	BindFunctionToScript(theState, LuaWasKeyJustReleased, "WasKeyJustReleased");
+
+
+// Audio
+	BindFunctionToScript(theState, LuaPlayOneShot, "PlayOneShot");
+	BindFunctionToScript(theState, LuaPlayBackgroundMusic, "PlayMusic");
+	BindFunctionToScript(theState, LuaStopMusic, "StopMusic");
+
 
 
 	// goes at the end
@@ -221,4 +229,52 @@ int LuaWasKeyJustReleased(lua_State * theState)
 	lua_pushboolean(theState, is->WasKeyJustReleased(keyToCheck));
 
 	return 1; // we are returning one variable
+}
+
+//===============================================================================================
+// PlayOneShot( stringPath )
+int LuaPlayOneShot(lua_State * theState)
+{
+	String path = LuaGetString(theState, 1, "idk");
+
+#ifdef EMSCRIPTEN_PORT
+	path = "Run_Win32/" + path;
+#endif
+
+	AudioSystem::GetInstance()->CreateOrGetSound(path);
+	PlayOneShot(path);
+	
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// PlayMusic( stringPath, bool loops )
+int LuaPlayBackgroundMusic(lua_State * theState)
+{
+	String path = LuaGetString(theState, 1, "idk");
+
+#ifdef EMSCRIPTEN_PORT
+	path = "Run_Win32/" + path;
+#endif
+
+	AudioSystem::GetInstance()->CreateOrGetSound(path);
+	PlayLoopingSound(path);
+
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// StopMusic( stringPath )
+int LuaStopMusic(lua_State * theState)
+{
+	String path = LuaGetString(theState, 1, "idk");
+
+#ifdef EMSCRIPTEN_PORT
+	path = "Run_Win32/" + path;
+#endif
+
+	AudioSystem::GetInstance()->CreateOrGetSound(path);
+	StopSound(path);
+
+	return 0;
 }

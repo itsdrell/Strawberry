@@ -24,7 +24,7 @@ void EngineStartUp()
 //-----------------------------------------------------------------------------------------------
 void EngineShutdown()
 {
-	AudioSystem::Shutdown();
+	AudioSystem::GetInstance()->Shutdown();
 
 	delete g_theInputSystem;
 	g_theInputSystem = nullptr;

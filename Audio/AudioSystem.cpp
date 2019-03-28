@@ -43,8 +43,24 @@ void AudioSystem::ReleaseFModAndSounds()
 //-----------------------------------------------------------------------------------------------
 void AudioSystem::Shutdown()
 {
+	DeleteAllAudioClips();
+	
 	delete s_theAudioSystem;
 	s_theAudioSystem = nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
+void AudioSystem::DeleteAllAudioClips()
+{
+	for (uint i = 0; i < m_audioClips.size(); i++)
+	{
+		AudioClip* current = m_audioClips.at(i);
+
+		delete current;
+		current = nullptr;
+	}
+
+	m_audioClips.clear();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -81,11 +97,43 @@ SoundID AudioSystem::CreateOrGetSound(const String & soundFilePath)
 			SoundID newSoundID = m_registeredSounds.size();
 			m_registeredSoundIDs[ thePath ] = newSoundID;
 			m_registeredSounds.push_back( newSound );
+
+			AudioClip* newClip = new AudioClip(thePath, newSoundID);
+			m_audioClips.push_back(newClip);
+
 			return newSoundID;
 		}
 	}
 
 	return MISSING_SOUND_ID;
+}
+
+//-----------------------------------------------------------------------------------------------
+AudioClip* AudioSystem::GetAudioClip(const String& path)
+{
+	for (uint i = 0; i < m_audioClips.size(); i++)
+	{
+		AudioClip* current = m_audioClips.at(i);
+
+		if (current->m_path == path)
+			return current;
+	}
+
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
+AudioClip* AudioSystem::GetAudioClip(SoundID theID)
+{
+	for (uint i = 0; i < m_audioClips.size(); i++)
+	{
+		AudioClip* current = m_audioClips.at(i);
+
+		if (current->m_soundID == theID)
+			return current;
+	}
+
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -120,6 +168,9 @@ SoundPlaybackID AudioSystem::PlaySound(SoundID soundID, bool isLooped, float vol
 		channelAssignedToSound->setLoopCount( loopCount );
 	}
 
+	AudioClip* theClip = GetAudioClip(soundID);
+	theClip->m_playbackID = (SoundPlaybackID)channelAssignedToSound;
+
 	return (SoundPlaybackID) channelAssignedToSound;
 }
 
@@ -133,7 +184,8 @@ void AudioSystem::StopSound(SoundPlaybackID soundPlaybackID)
 	}
 
 	FMOD::Channel* channelAssignedToSound = (FMOD::Channel*) soundPlaybackID;
-	channelAssignedToSound->stop();
+	FMOD_RESULT theREsult = channelAssignedToSound->stop();
+	int i = 3;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -233,4 +285,31 @@ void AudioSystem::ValidateResult(FMOD_RESULT result)
 	{
 		PrintLog("Engine/Audio SYSTEM ERROR: Got error result code " + std::to_string((int) result) + " - error codes listed in fmod_common.h\n" );
 	}
+}
+
+//===============================================================================================
+void PlayLoopingSound(std::string path, float volume, float balance, float speed, bool isPaused)
+{
+	AudioSystem* as = AudioSystem::GetInstance();
+
+	AudioClip* theClip = as->GetAudioClip(path);
+	as->PlaySound(theClip->m_soundID, true, volume, balance, speed, isPaused);
+}
+
+//-----------------------------------------------------------------------------------------------
+void StopSound(std::string path)
+{
+	AudioSystem* as = AudioSystem::GetInstance();
+
+	AudioClip* theClip = as->GetAudioClip(path);
+	as->StopSound(theClip->m_playbackID);
+}
+
+//-----------------------------------------------------------------------------------------------
+void PlayOneShot(std::string path, float volume, float balance, float speed, bool isPaused)
+{
+	AudioSystem* as = AudioSystem::GetInstance();
+
+	AudioClip* theClip = as->GetAudioClip(path);
+	as->PlaySound(theClip->m_soundID, false, volume, balance, speed, isPaused);
 }

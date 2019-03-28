@@ -28,24 +28,16 @@ constexpr size_t MISSING_SOUND_ID = (size_t)(-1); // for bad SoundIDs and SoundP
 //====================================================================================
 struct AudioClip
 {
-	AudioClip(std::string name, std::string path, std::string group, uint weight, SoundID id)
-		:	m_name(name),
-		m_path(path),
-		m_group(group),
-		m_weight(weight),
+	AudioClip(std::string path, SoundID id) 
+		: m_path(path),
 		m_soundID(id),
 		m_playbackID(MISSING_SOUND_ID) {}
 
-
-	String				m_name;
 	String				m_path;
-	String				m_group;
-	uint				m_weight;
-
 	SoundID				m_soundID; // used to play a sound
 
-								   // This is used to turn off sound because it is the channel
-								   // that is currently assigned to the playing sound.
+	// This is used to turn off sound because it is the channel
+	// that is currently assigned to the playing sound.
 	SoundPlaybackID		m_playbackID;
 };
 
@@ -57,9 +49,11 @@ class AudioSystem
 public:
 	AudioSystem();
 	~AudioSystem();
-	void ReleaseFModAndSounds();
 
-	static void Shutdown();
+public:
+	void Shutdown();
+	void DeleteAllAudioClips();
+	void ReleaseFModAndSounds();
 
 public:
 	void BeginFrame();
@@ -67,6 +61,8 @@ public:
 
 public:
 	virtual SoundID CreateOrGetSound( const String& soundFilePath);
+	AudioClip* GetAudioClip(const String& path);
+	AudioClip* GetAudioClip(SoundID theID);
 	static AudioSystem* GetInstance();
 
 public:
@@ -92,13 +88,18 @@ private:
 	std::map< String, SoundID>		m_registeredSoundIDs;
 	std::vector< FMOD::Sound*>		m_registeredSounds;
 
+	std::vector<AudioClip*>			m_audioClips;
+
 	static AudioSystem*				s_theAudioSystem;
 };
 
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
+void PlayLoopingSound(std::string path, float volume = 1.f, float balance = 0.0f, float speed = 1.0f, bool isPaused = false);
+void StopSound(std::string path);
 
+void PlayOneShot(std::string path, float volume = 1.f, float balance = 0.0f, float speed = 1.0f, bool isPaused = false);
 
 //====================================================================================
 // Externs

@@ -11,10 +11,6 @@ struct lua_State;
 //====================================================================================
 typedef int (*FunctionForLua)(lua_State* theState);
 
-//====================================================================================
-// ENUMS
-//====================================================================================
-
 
 //====================================================================================
 // Standalone C Functions
@@ -48,6 +44,16 @@ static int LuaDrawAABB2WireFrame(lua_State* theState);
 static int LuaIsKeyPressed(lua_State* theState);
 static int LuaWasKeyJustPressed(lua_State* theState);
 static int LuaWasKeyJustReleased(lua_State* theState);
+
+//-----------------------------------------------------------------------------------------------
+// Audio
+static int LuaPlayOneShot(lua_State* theState);
+static int LuaPlayBackgroundMusic(lua_State* theState);
+static int LuaStopMusic(lua_State* theState);
+
+
+//-----------------------------------------------------------------------------------------------
+// M A T H
 
 
 //====================================================================================
