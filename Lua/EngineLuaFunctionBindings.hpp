@@ -51,10 +51,22 @@ static int LuaPlayOneShot(lua_State* theState);
 static int LuaPlayBackgroundMusic(lua_State* theState);
 static int LuaStopMusic(lua_State* theState);
 
-
 //-----------------------------------------------------------------------------------------------
 // M A T H
-
+static int LuaAbsoluteValue(lua_State* theState);
+static int LuaATan2(lua_State* theState);
+static int LuaCosDegrees(lua_State* theState);
+static int LuaSinDegrees(lua_State* theState);
+static int LuaFloor(lua_State* theState);
+static int LuaCeil(lua_State* theState);  
+static int LuaMin(lua_State* theState);
+static int LuaMax(lua_State* theState);
+static int LuaSquareRoot(lua_State* theState);
+static int LuaClamp(lua_State* theState);
+static int LuaRandomRange(lua_State* theState);
+static int LuaDotProduct(lua_State* theState);
+static int LuaInterpolate(lua_State* theState);
+static int LuaChance(lua_State* theState);
 
 //====================================================================================
 // Externs

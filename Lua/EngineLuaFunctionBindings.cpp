@@ -6,6 +6,7 @@
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/Lua/LuaUtils.hpp"
 #include "../Audio/AudioSystem.hpp"
+#include "../Math/MathUtils.hpp"
 
 //===============================================================================================
 void BindLuaFunctionsToScript(lua_State * theState)
@@ -28,13 +29,26 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaWasKeyJustPressed, "WasKeyJustPressed");
 	BindFunctionToScript(theState, LuaWasKeyJustReleased, "WasKeyJustReleased");
 
-
 // Audio
 	BindFunctionToScript(theState, LuaPlayOneShot, "PlayOneShot");
 	BindFunctionToScript(theState, LuaPlayBackgroundMusic, "PlayMusic");
 	BindFunctionToScript(theState, LuaStopMusic, "StopMusic");
 
-
+// Math
+	BindFunctionToScript(theState, LuaAbsoluteValue, "Abs");
+	BindFunctionToScript(theState, LuaATan2, "ATan2");
+	BindFunctionToScript(theState, LuaCosDegrees, "Cos");
+	BindFunctionToScript(theState, LuaSinDegrees, "Sin");
+	BindFunctionToScript(theState, LuaFloor, "Floor");
+	BindFunctionToScript(theState, LuaCeil, "Ceil");
+	BindFunctionToScript(theState, LuaMin, "Min");
+	BindFunctionToScript(theState, LuaMax, "Max");
+	BindFunctionToScript(theState, LuaSquareRoot, "Sqrt");
+	BindFunctionToScript(theState, LuaClamp, "Clamp");
+	BindFunctionToScript(theState, LuaRandomRange, "RandomRange");
+	BindFunctionToScript(theState, LuaDotProduct, "Dot");
+	BindFunctionToScript(theState, LuaInterpolate, "Lerp");
+	BindFunctionToScript(theState, LuaChance, "Chance");
 
 	// goes at the end
 	lua_pcall(theState, 0, 0, 0);
@@ -232,6 +246,8 @@ int LuaWasKeyJustReleased(lua_State * theState)
 }
 
 //===============================================================================================
+// Audio
+//===============================================================================================
 // PlayOneShot( stringPath )
 int LuaPlayOneShot(lua_State * theState)
 {
@@ -277,4 +293,192 @@ int LuaStopMusic(lua_State * theState)
 	StopSound(path);
 
 	return 0;
+}
+
+//===============================================================================================
+// Math
+//===============================================================================================
+// Abs( number )
+int LuaAbsoluteValue(lua_State * theState)
+{
+	float number = LuaGetFloat(theState, 1, 1.0f);
+	float result = abs(number);
+
+	lua_pushnumber(theState, result);
+	
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// ATan2( x, y )
+int LuaATan2(lua_State * theState)
+{
+	float x = LuaGetFloat(theState, 1, 0.f);
+	float y = LuaGetFloat(theState, 2, 1.f);
+	
+	// swaps the x and y in the function
+	float result = ATan2fDegrees(x, y);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Cos( x )
+int LuaCosDegrees(lua_State * theState)
+{
+	float degrees = LuaGetFloat(theState, 1, 0.f);
+	float result = CosDegrees(degrees);
+
+	lua_pushnumber(theState, result);
+	
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Sin( x )
+int LuaSinDegrees(lua_State * theState)
+{
+	float degrees = LuaGetFloat(theState, 1, 0.f);
+	float result = SinDegrees(degrees);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Floor ( x )
+int LuaFloor(lua_State * theState)
+{
+	float number = LuaGetFloat(theState, 1, 0.f);
+	float result = floorf(number);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Ceil( x )
+int LuaCeil(lua_State * theState)
+{
+	float number = LuaGetFloat(theState, 1, 0.f);
+	float result = ceilf(number);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Min (x,y)
+int LuaMin(lua_State * theState)
+{
+	float a = LuaGetFloat(theState, 1, 0.f);
+	float b = LuaGetFloat(theState, 2, 1.f);
+
+	float result = Min(a, b);
+
+	lua_pushnumber(theState, result);
+	
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Max (x , y)
+int LuaMax(lua_State * theState)
+{
+	float a = LuaGetFloat(theState, 1, 0.f);
+	float b = LuaGetFloat(theState, 2, 1.f);
+
+	float result = Max(a, b);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Sqrt( x )
+int LuaSquareRoot(lua_State * theState)
+{
+	float number = LuaGetFloat(theState, 1, 0.f);
+	float result = sqrtf(number);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Clamp( number, min, max)
+int LuaClamp(lua_State * theState)
+{
+	float currentValue = LuaGetFloat(theState, 1, 0.f);
+	float min = LuaGetFloat(theState, 2, 0.f);
+	float max = LuaGetFloat(theState, 3, 1.f);
+
+	float result = ClampFloat(currentValue, min, max);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Random( min, max )
+int LuaRandomRange(lua_State * theState)
+{
+	float min = LuaGetFloat(theState, 1, 0.f);
+	float max = LuaGetFloat(theState, 2, 1.f);
+	float result = GetRandomFloat(min, max);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// DotProduct (x1, y1, x2, y2 )
+int LuaDotProduct(lua_State * theState)
+{
+	float x1 = LuaGetFloat(theState, 1, 0.f);
+	float y1 = LuaGetFloat(theState, 2, 0.f);
+	float x2 = LuaGetFloat(theState, 3, 1.f);
+	float y2 = LuaGetFloat(theState, 4, 1.f);
+
+	float result = DotProduct(Vector2(x1, y1), Vector2(x2, y2));
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Lerp ( start, end, t )
+int LuaInterpolate(lua_State * theState)
+{
+	float start = LuaGetFloat(theState, 1, 0.f);
+	float end = LuaGetFloat(theState, 2, 1.f);
+	float t = LuaGetFloat(theState, 3, 1.f);
+
+	float result = Interpolate(start, end, t);
+
+	lua_pushnumber(theState, result);
+	
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Chance( percentChance )
+int LuaChance(lua_State* theState)
+{
+	float chance = LuaGetFloat(theState, 1, 50.f);
+	float result = Chance(chance);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
 }
