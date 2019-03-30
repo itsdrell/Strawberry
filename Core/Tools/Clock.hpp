@@ -1,13 +1,11 @@
 #pragma once
-#include "Engine/Math/Matrices/Matrix44.hpp"
-#include "Engine/Renderer/Pipeline/FrameBuffer.hpp"
 #include "Engine/Core/General/EngineCommon.hpp"
-
+#include "Engine/ThirdParty/SDL2/SDL_config.h"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class Texture;
+
 
 //====================================================================================
 // Type Defs + Defines
@@ -22,52 +20,68 @@ class Texture;
 //====================================================================================
 // Structs
 //====================================================================================
+struct time_unit_t
+{
+	time_unit_t(){}
 
+	uint64_t	hpc = 0;
+	double		hpcSeconds = 0.0;  // high precision seconds 
+	uint		ms = 0;
+
+	float		seconds = 0.f;      // convenience float seconds 
+};
 
 //====================================================================================
 // Classes
 //====================================================================================
-class Camera
+class Clock
 {
 public:
-	Camera();
-	Camera( const Matrix44& cameraMatrix, const Matrix44& view, const Matrix44& projection );
-
-	~Camera();
+	Clock( Clock* parent = nullptr);
+	~Clock();
 
 public:
-	void SetColorTarget( Texture* colorTarget ) { m_output.SetColorTarget(colorTarget); }
-	void SetProjectionOrthoByAspect( float height, float theNear = -10.f, float theFar = 100.f );
+	void Reset();
+	void BeginFrame();
+	void Advance(uint64_t elapsed);
+
+	void AddChild(Clock *child);
 
 public:
-	void LookAt(Vector3 position, Vector3 target, Vector3 up = Vector3(0.f, 1.f, 0.f));  
-	void Translate2D(const Vector2& translation);
+	time_unit_t			frame;
+	time_unit_t			total;
 
-public:
-	FrameBuffer GetFramebuffer() { return m_output; }
-	uint GetFrameBufferID() { return m_output.m_ID; }
+	// for game clock so i can just say g_theGameClock.deltaTime like unity
+	float				deltaTime = 0.f;
+	float				totalTime = 0.f;
+	uint				m_frameCount = 0;
 
-public:
-	Matrix44		m_cameraMatrix; // where is the camera in the world
-	Matrix44		m_viewMatrix; // inverse of camera
-	Matrix44		m_projectionMatrix;
+private:
+	uint64_t			m_startHpc = 0;      // hpc when the clock was last reset (made)
+	uint64_t			m_lastFrameHpc = 0; // hpc during last begin_frame call
 
-public:
-	FrameBuffer		m_output;
-	Vector2			m_orthoDimensions;
+private:
+	Clock* m_parent;
 
+	std::vector<Clock*> m_children;
 };
 
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
+// convenience - calls begin frame on the master clock
+void ClockSystemBeginFrame();
 
+Clock* GetMasterClock();
+float GetDeltaTime();
+float GetFPS();
 
 //====================================================================================
 // Externs
 //====================================================================================
-extern Camera* g_theGameCamera;
+extern Clock* g_theMasterClock;
+extern Clock* g_theGameClock;
 
 //====================================================================================
-// Written by Zachary Bracken : [1/31/2019]
+// Written by Zachary Bracken : [3/29/2019]
 //====================================================================================

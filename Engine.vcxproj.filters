@@ -163,6 +163,9 @@
     <ClInclude Include="Input\InputSystem.hpp" />
     <ClInclude Include="Lua\LuaUtils.hpp" />
     <ClInclude Include="Core\General\BlackBoard.hpp" />
+    <ClInclude Include="Renderer\Images\Sprite.hpp" />
+    <ClInclude Include="Core\Tools\Clock.hpp" />
+    <ClInclude Include="Core\Platform\Time.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -367,6 +370,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\General\BlackBoard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Tools\Clock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Platform\Time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,10 @@
 #include "Rgba.hpp"
 #include "Engine/Math/MathUtils.hpp"
 
+//===============================================================================================
+std::map<String, Rgba> Rgba::s_defaultColors;
+
+//===============================================================================================
 Rgba::Rgba()
 {
 }
@@ -28,4 +32,24 @@ Vector4 Rgba::GetAsNormalizedVector4() const
 	fAlpha = RangeMapFloat(fAlpha,0.f,255.f,0.f,1.f);
 
 	return Vector4(fRed,fGreen,fBlue,fAlpha);
+}
+
+//-----------------------------------------------------------------------------------------------
+STATIC void Rgba::AddColorToMap(const String& name, const Rgba& theColor)
+{
+	s_defaultColors.insert ( std::pair<String, Rgba>(name, theColor));
+}
+
+//-----------------------------------------------------------------------------------------------
+STATIC Rgba Rgba::GetColorByName(const String& name)
+{
+	std::map<String, Rgba>::iterator theIterator;
+
+	for (theIterator = s_defaultColors.begin(); theIterator != s_defaultColors.end(); theIterator++)
+	{
+		if (theIterator->first == name)
+			return theIterator->second;
+	}
+
+	return Rgba(255, 255, 255, 255);
 }

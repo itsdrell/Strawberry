@@ -13,12 +13,10 @@ BlackBoard::BlackBoard()
 #else
 	m_blackboardLuaScript = new LuaScript("Run_Win32/GameConfig.lua");
 #endif
-	
-	g_theGameBlackboard = this;
 
-	//lua_getglobal(m_blackboardLuaScript->GetLuaState(), "color");
-	//int r = lua_tointeger(m_blackboardLuaScript->GetLuaState(), -3);
-	Rgba color = LuaGetRgbaFromTable(m_blackboardLuaScript->GetLuaState(), "color", Rgba(255, 0, 0, 255));
+	GetAllColorsFromGameConfigColorsTable();
+
+	g_theGameBlackboard = this;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -56,5 +54,46 @@ Rgba BlackBoard::GetValue(const String& name, const Rgba& defaultValue) const
 {
 	// we know this is a global table so we can use these helper functions
 	return LuaGetRgbaFromTable(m_blackboardLuaScript->GetLuaState(), name, defaultValue);
+}
+
+//-----------------------------------------------------------------------------------------------
+void BlackBoard::GetAllColorsFromGameConfigColorsTable()
+{
+	lua_State* L = m_blackboardLuaScript->GetLuaState();
+	
+	// us finding the global table and putting it on the stack
+	lua_getglobal(L, "colors");
+	lua_gettable(L, -1);
+	lua_pushnil(L);
+
+	// note: this does read them in reverse order of the table cause stack?
+	while (lua_next(L, -2))
+	{
+		// default values
+		String nameOfColor = LuaGetString(L, -2, "missing");
+		Rgba color = Rgba(255, 255, 255, 255);
+		int index = 0;
+	
+		lua_pushnil(L); // put sub/value table on stack
+		while (lua_next(L, -2))
+		{
+			// note: -2 index is the key of the table at this point in the stack
+
+			unsigned char currentValue = LuaGetUnsignedChar(L, -1, 69);
+
+			if (index == 0) { color.r = currentValue; }
+			if (index == 1) { color.g = currentValue; }
+			if (index == 2) { color.b = currentValue; }
+			if (index == 3) { color.a = currentValue; }
+
+			index++;
+			lua_pop(L, 1);
+		}
+
+		Rgba::AddColorToMap(nameOfColor, color);
+		lua_pop(L, 1);
+	}
+
+	lua_pop(L, 1);
 }
 

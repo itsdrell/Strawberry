@@ -1,5 +1,7 @@
 #pragma once
+#include "Engine/Core/General/EngineCommon.hpp"
 #include "Engine/Math/Vectors/Vector4.hpp"
+#include <map>
 
 //====================================================================================
 // Forward Declare
@@ -32,6 +34,14 @@ public:
 
 public:
 	Vector4 GetAsNormalizedVector4() const;
+
+
+public:
+	static void AddColorToMap(const String& name, const Rgba& theColor);
+	static Rgba GetColorByName(const String& name);
+
+public:
+	static std::map<String, Rgba> s_defaultColors;
 
 public:
 	// 0 - 255

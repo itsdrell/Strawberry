@@ -5,8 +5,10 @@
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/Lua/LuaUtils.hpp"
-#include "../Audio/AudioSystem.hpp"
-#include "../Math/MathUtils.hpp"
+#include "Engine/Audio/AudioSystem.hpp"
+#include "Engine/Math/MathUtils.hpp"
+#include "Engine/Core/General/Camera.hpp"
+
 
 //===============================================================================================
 void BindLuaFunctionsToScript(lua_State * theState)
@@ -24,6 +26,8 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaDrawAABB2Filled, "DrawAABB2Fill");
 	BindFunctionToScript(theState, LuaDrawAABB2WireFrame, "DrawAABB2");
 
+	BindFunctionToScript(theState, LuaSetCameraPosition, "Camera");
+
 // input
 	BindFunctionToScript(theState, LuaIsKeyPressed, "IsKeyPressed");
 	BindFunctionToScript(theState, LuaWasKeyJustPressed, "WasKeyJustPressed");
@@ -37,8 +41,8 @@ void BindLuaFunctionsToScript(lua_State * theState)
 // Math
 	BindFunctionToScript(theState, LuaAbsoluteValue, "Abs");
 	BindFunctionToScript(theState, LuaATan2, "ATan2");
-	BindFunctionToScript(theState, LuaCosDegrees, "Cos");
-	BindFunctionToScript(theState, LuaSinDegrees, "Sin");
+	BindFunctionToScript(theState, LuaCosDegrees, "CosDegrees");
+	BindFunctionToScript(theState, LuaSinDegrees, "SinDegrees");
 	BindFunctionToScript(theState, LuaFloor, "Floor");
 	BindFunctionToScript(theState, LuaCeil, "Ceil");
 	BindFunctionToScript(theState, LuaMin, "Min");
@@ -49,8 +53,10 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaDotProduct, "Dot");
 	BindFunctionToScript(theState, LuaInterpolate, "Lerp");
 	BindFunctionToScript(theState, LuaChance, "Chance");
+	BindFunctionToScript(theState, LuaGetFractionOf, "Fract");
 
-	// goes at the end
+
+// goes at the end
 	lua_pcall(theState, 0, 0, 0);
 }
 
@@ -89,7 +95,7 @@ int DrawTestTriangle(lua_State* theState)
 // Print(string)
 int PrintString(lua_State* theState)
 {
-	String value = LuaGetString(theState, 1, "idk man");
+	String value = "\n" + LuaGetString(theState, 1, "idk man");
  	PrintLog(value.c_str()); // calling C++ function with this argument...
 	return 0; // nothing to return!
 }
@@ -99,8 +105,9 @@ int PrintString(lua_State* theState)
 int LuaClearScreen(lua_State* theState)
 {
 	Renderer* r = Renderer::GetInstance();
+
 	Rgba color = LuaGetRgba(theState, 1, r->m_clearScreenColor);
-	
+
 	// we clear the screen next time? 
 	// Had a bug where it didn't like me clearing the screen late in the pipeline so doing it like this
 	r->m_clearScreenColor = color;
@@ -205,6 +212,19 @@ int LuaDrawAABB2WireFrame(lua_State* theState)
 	Rgba color = LuaGetRgba(theState, 4, r->m_defaultDrawColor);
 
 	Renderer::GetInstance()->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), color);
+
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Camera ( x, y )
+int LuaSetCameraPosition(lua_State* theState)
+{
+	float x = LuaGetFloat(theState, 1, 0.f);
+	float y = LuaGetFloat(theState, 2, 0.f);
+
+	// do - because the view matrix is the inverse
+	g_theGameCamera->m_viewMatrix.SetPosition2D(Vector2(-x, -y));
 
 	return 0;
 }
@@ -477,6 +497,17 @@ int LuaChance(lua_State* theState)
 {
 	float chance = LuaGetFloat(theState, 1, 50.f);
 	float result = Chance(chance);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+int LuaGetFractionOf(lua_State* theState)
+{
+	float value = LuaGetFloat(theState, 1, 50.f);
+	float result = GetFractionOf(value);
 
 	lua_pushnumber(theState, result);
 

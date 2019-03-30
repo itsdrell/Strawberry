@@ -32,6 +32,7 @@ float	Interpolate(float start, float end, float fractionTowardEnd);
 
 float	ClampFloat(float currentValue, float min, float max);
 int		ClampInt(int inValue, int min, int max);
+float	GetFractionOf(float value);
 
 float	DotProduct(const Vector2& a, const Vector2& b);
 float	GetDistance(const Vector2& a, const Vector2& b);

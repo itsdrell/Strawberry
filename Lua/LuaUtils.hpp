@@ -48,6 +48,8 @@ int GetValueFromTable(lua_State* theState, const String& nameOfTableKey, int def
 
 Rgba LuaGetRgbaFromTable(lua_State* theState, const String& tableName, const Rgba& defaultValue);
 
+
+
 //====================================================================================
 // Written by Zachary Bracken : [3/26/2019]
 //====================================================================================

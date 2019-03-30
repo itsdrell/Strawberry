@@ -8,10 +8,13 @@
 #else
 #include "Engine/Core/Platform/Window.hpp"
 #endif
+#include "../Tools/Clock.hpp"
 
 //===============================================================================================
 void EngineStartUp()
 {
+	g_theMasterClock = new Clock();
+	
 	AudioSystem* audio = new AudioSystem();
 	InputSystem* input = new InputSystem();
 	Renderer* renderer = new Renderer();
@@ -25,6 +28,9 @@ void EngineStartUp()
 void EngineShutdown()
 {
 	AudioSystem::GetInstance()->Shutdown();
+
+	delete g_theMasterClock;
+	g_theMasterClock = nullptr;
 
 	delete g_theInputSystem;
 	g_theInputSystem = nullptr;

@@ -39,6 +39,9 @@ public:
 	Rgba GetValue(const String& name, const Rgba& defaultValue) const;
 
 private:
+	void GetAllColorsFromGameConfigColorsTable();
+
+private:
 	LuaScript*		m_blackboardLuaScript;
 
 };

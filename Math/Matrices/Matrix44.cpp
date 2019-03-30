@@ -32,6 +32,28 @@ Matrix44::Matrix44(const float* sixteenValuesBasisMajor)
 }
 
 //-----------------------------------------------------------------------------------------------
+Matrix44::Matrix44(const Vector3& iBasis, const Vector3& jBasis, const Vector3& kBasis, const Vector3& translation /*= Vector3::ZERO*/)
+{
+	this->SetIdentity();
+
+	Ix = iBasis.x;
+	Iy = iBasis.y;
+	Iz = iBasis.z;
+
+	Jx = jBasis.x;
+	Jy = jBasis.y;
+	Jz = jBasis.z;
+
+	Kx = kBasis.x;
+	Ky = kBasis.y;
+	Kz = kBasis.z;
+
+	Tx = translation.x;
+	Ty = translation.y;
+	Tz = translation.z;
+}
+
+//-----------------------------------------------------------------------------------------------
 void Matrix44::SetIdentity()
 {
 	// Set the diagonals
@@ -42,6 +64,13 @@ void Matrix44::SetIdentity()
 	Jx = Jz = Jw = 0.0f;
 	Kx = Ky = Kw = 0.0f;
 	Tx = Ty = Tz = 0.0f;
+}
+
+//-----------------------------------------------------------------------------------------------
+void Matrix44::SetPosition2D(const Vector2& pos)
+{
+	Tx = pos.x;
+	Ty = pos.y;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -147,4 +176,63 @@ Matrix44 Matrix44::MakeOrtho3D(const Vector3& mins, const Vector3& maxs)
 
 	// The rest are all zeros
 	return result;
+}
+
+//-----------------------------------------------------------------------------------------------
+Matrix44 Matrix44::MakeView(Vector3 position, Vector3 target, Vector3 up)
+{
+	//	Formula (THIS MAY BE A RIGHT HANDED BASIS)
+	//	https://msdn.microsoft.com/en-us/library/windows/desktop/bb281710(v=vs.85).aspx
+	// 		zaxis = normal(cameraTarget - cameraPosition)
+	// 		xaxis = normal(cross(cameraUpVector, zaxis))
+	// 		yaxis = cross(zaxis, xaxis)
+	// 
+	// 		xaxis.x           yaxis.x           zaxis.x          0
+	// 		xaxis.y           yaxis.y           zaxis.y          0
+	// 		xaxis.z           yaxis.z           zaxis.z          0
+	// 		-dot(xaxis, cameraPosition)  -dot(yaxis, cameraPosition)  -dot(zaxis, cameraPosition)  1
+
+	Matrix44 view;
+
+	Vector3 z = target - position;
+	Vector3 zaxis = Normalize(z);
+	Vector3 cross = Cross(up, zaxis);
+	Vector3 xaxis = Normalize(cross);
+	Vector3 yaxis = Cross(zaxis, xaxis);
+
+	view.Ix = xaxis.x;
+	view.Iy = yaxis.x;
+	view.Iz = zaxis.x;
+	view.Iw = 0;
+
+	view.Jx = xaxis.y;
+	view.Jy = yaxis.y;
+	view.Jz = zaxis.y;
+	view.Jw = 0;
+
+	view.Kx = xaxis.z;
+	view.Ky = yaxis.z;
+	view.Kz = zaxis.z;
+	view.Kw = 0;
+
+	view.Tx = -DotProduct(xaxis, position);
+	view.Ty = -DotProduct(yaxis, position);
+	view.Tz = -DotProduct(zaxis, position);
+	view.Tw = 1;
+
+
+	return view;
+}
+
+//-----------------------------------------------------------------------------------------------
+Matrix44 Matrix44::LookAt(Vector3 position, Vector3 target, Vector3 up)
+{
+	Vector3 direction = target - position;
+	Vector3 forward = Normalize(direction);
+	Vector3 right = Cross(up, forward);
+	Vector3 normalizeRight = Normalize(right);
+	Vector3 newUp = Cross(forward, normalizeRight);
+
+	// Create a matrix
+	return Matrix44(normalizeRight, newUp, forward, position);
 }

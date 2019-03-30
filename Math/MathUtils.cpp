@@ -122,6 +122,13 @@ int ClampInt(int inValue, int min, int max)
 }
 
 //-----------------------------------------------------------------------------------------------
+float GetFractionOf(float value)
+{
+	double wholeNumber;
+	return modf((double)value, &wholeNumber);
+}
+
+//-----------------------------------------------------------------------------------------------
 float DotProduct(const Vector2 & a, const Vector2 & b)
 {
 	return (a.x * b.x) + (a.y * b.y);

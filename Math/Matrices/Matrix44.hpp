@@ -30,9 +30,11 @@ class Matrix44
 public:
 	Matrix44();
 	explicit Matrix44( const float* sixteenValuesBasisMajor ); // float[16] array in order Ix, Iy...
+	explicit Matrix44(const Vector3& iBasis, const Vector3& jBasis, const Vector3& kBasis, const Vector3& translation = Vector3::ZERO);
 
 public:
 	void SetIdentity();
+	void SetPosition2D(const Vector2& pos);
 	void Append( const Matrix44& matrixToAppend ); // a.k.a. Concatenate (right-multiply)
 	void Translate2D( const Vector2& translation );
 
@@ -43,6 +45,8 @@ public:
 	static Matrix44 MakeOrtho2D( const Vector2& mins, const Vector2& maxs );
 	static Matrix44 MakeTranslation2D( const Vector2& translation );	
 	static Matrix44 MakeOrtho3D( const Vector3& mins, const Vector3& maxs );
+	static Matrix44 MakeView(Vector3 position, Vector3 target, Vector3 up = Vector3::UP);
+	static Matrix44 LookAt(Vector3 position, Vector3 target, Vector3 up = Vector3::UP);
 
 private:
 	// Column Major (squirrels way)

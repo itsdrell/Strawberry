@@ -35,12 +35,29 @@ bool LuaGetBool(lua_State * theState, int stackIndex, bool defaultValue)
 //----------------------------------------------------------------------------------------------- 
 Rgba LuaGetRgba(lua_State* theState, int startingStackIndex, const Rgba& defaultValue)
 {
-	unsigned char r = LuaGetUnsignedChar(theState, startingStackIndex, defaultValue.r);
-	unsigned char g = LuaGetUnsignedChar(theState, startingStackIndex + 1, defaultValue.g);
-	unsigned char b = LuaGetUnsignedChar(theState, startingStackIndex + 2, defaultValue.b);
-	unsigned char a = LuaGetUnsignedChar(theState, startingStackIndex + 3, defaultValue.a);
+	Rgba color;
+	
+	// isstring didn't work so had to do !isNumber
+	if (!lua_isnumber(theState, startingStackIndex))
+	{
+		String nameOfColor = LuaGetString(theState, startingStackIndex, "idkzac");
 
-	return Rgba(r, g, b, a);
+		if (nameOfColor == "idkzac")
+			color = defaultValue;
+		else
+			color = Rgba::GetColorByName(nameOfColor);
+	}
+	else
+	{
+		unsigned char r = LuaGetUnsignedChar(theState, startingStackIndex, defaultValue.r);
+		unsigned char g = LuaGetUnsignedChar(theState, startingStackIndex + 1, defaultValue.g);
+		unsigned char b = LuaGetUnsignedChar(theState, startingStackIndex + 2, defaultValue.b);
+		unsigned char a = LuaGetUnsignedChar(theState, startingStackIndex + 3, defaultValue.a);
+
+		color = Rgba(r, g, b, a);
+	}
+	
+	return color;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -125,3 +142,4 @@ Rgba LuaGetRgbaFromTable(lua_State * theState, const String & tableName, const R
 
 	return Rgba(r, g, b, a);
 }
+

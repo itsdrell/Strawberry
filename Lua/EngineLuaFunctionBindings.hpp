@@ -39,6 +39,8 @@ static int LuaDrawCircleOutline(lua_State* theState);
 static int LuaDrawAABB2Filled(lua_State* theState);
 static int LuaDrawAABB2WireFrame(lua_State* theState);
 
+static int LuaSetCameraPosition(lua_State* theState);
+
 //-----------------------------------------------------------------------------------------------
 // Input
 static int LuaIsKeyPressed(lua_State* theState);
@@ -67,6 +69,7 @@ static int LuaRandomRange(lua_State* theState);
 static int LuaDotProduct(lua_State* theState);
 static int LuaInterpolate(lua_State* theState);
 static int LuaChance(lua_State* theState);
+static int LuaGetFractionOf(lua_State* theState);
 
 //====================================================================================
 // Externs
