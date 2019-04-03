@@ -256,8 +256,10 @@
     <ClInclude Include="Renderer\external\gl\glext.h" />
     <ClInclude Include="Renderer\external\gl\wglext.h" />
     <ClInclude Include="Renderer\GLFunctions.hpp" />
+    <ClInclude Include="Renderer\Images\BitmapFont.hpp" />
     <ClInclude Include="Renderer\Images\Image.hpp" />
     <ClInclude Include="Renderer\Images\Sprite.hpp" />
+    <ClInclude Include="Renderer\Images\SpriteSheet.hpp" />
     <ClInclude Include="Renderer\Images\Texture.hpp" />
     <ClInclude Include="Renderer\Pipeline\FrameBuffer.hpp" />
     <ClInclude Include="Renderer\Pipeline\RenderBuffer.hpp" />
@@ -412,8 +414,10 @@
     <ClCompile Include="Renderer\Components\Shader.cpp" />
     <ClCompile Include="Renderer\Components\ShaderProgram.cpp" />
     <ClCompile Include="Renderer\GLFunctions.cpp" />
+    <ClCompile Include="Renderer\Images\BitmapFont.cpp" />
     <ClCompile Include="Renderer\Images\Image.cpp" />
     <ClCompile Include="Renderer\Images\Sprite.cpp" />
+    <ClCompile Include="Renderer\Images\SpriteSheet.cpp" />
     <ClCompile Include="Renderer\Images\Texture.cpp" />
     <ClCompile Include="Renderer\Pipeline\FrameBuffer.cpp" />
     <ClCompile Include="Renderer\Pipeline\RenderBuffer.cpp" />

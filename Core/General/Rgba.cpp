@@ -4,6 +4,8 @@
 //===============================================================================================
 std::map<String, Rgba> Rgba::s_defaultColors;
 
+Rgba Rgba::WHITE = Rgba(255, 255, 255, 255);
+
 //===============================================================================================
 Rgba::Rgba()
 {
@@ -52,4 +54,16 @@ STATIC Rgba Rgba::GetColorByName(const String& name)
 	}
 
 	return Rgba(255, 255, 255, 255);
+}
+
+//-----------------------------------------------------------------------------------------------
+STATIC Rgba Rgba::GetRandomColor()
+{
+	int colorIdex = GetRandomIntRange(0, s_defaultColors.size() - 1);
+	std::map<String, Rgba>::iterator theIterator = s_defaultColors.begin();
+
+	for (uint i = 0; i < colorIdex; i++)
+		theIterator++;
+
+	return theIterator->second;
 }

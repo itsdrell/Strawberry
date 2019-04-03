@@ -40,6 +40,7 @@ static int LuaDrawAABB2Filled(lua_State* theState);
 static int LuaDrawAABB2WireFrame(lua_State* theState);
 
 static int LuaDrawSprite(lua_State* theState);
+static int LuaDrawText(lua_State* theState);
 
 static int LuaSetCameraPosition(lua_State* theState);
 

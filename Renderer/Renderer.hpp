@@ -19,6 +19,7 @@ class Sampler;
 struct SDL_Surface;
 struct SDL_Renderer;
 class Sprite;
+class BitmapFont;
 
 //====================================================================================
 // Type Defs + Defines
@@ -87,6 +88,10 @@ public:
 		const Vector3& right = Vector3::RIGHT, const Vector3& up = Vector3::UP);
 
 public:
+	void DrawText2D(const Vector2& drawMins, const String& text, float cellHeight, 
+		const Rgba& tint = Rgba::WHITE, float aspectScale = 1.7f, BitmapFont* font = nullptr);
+
+public:
 	void DrawMeshImmediate( PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices );
 	void DrawMeshImmediate( PrimitiveType thePrimitive, uint vertexCount, Vertex3D_PCU* vertices, uint indicesCount = 0, uint* indices = nullptr );
 	void DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices);
@@ -94,6 +99,7 @@ public:
 
 public:
 	Texture* CreateOrGetTexture(const String& path, bool flip = true);
+	BitmapFont* CreateOrGetBitmapFont(const String& path);
 
 public:
 	static Renderer* GetInstance();
@@ -102,7 +108,8 @@ private:
 	static Renderer* s_theRenderer;
 
 private:
-	std::map<String, Texture*> m_createdTextures;
+	std::map<String, Texture*>		m_createdTextures;
+	std::map<String, BitmapFont*>	m_createdFonts;
 
 public:
 	Vector2				m_windowSize;
@@ -128,6 +135,8 @@ public:
 	Texture*			m_defaultColorTarget = nullptr;
 	Texture*			m_defaultDepthTarget = nullptr;
 	unsigned int		m_defaultVAO; 
+
+	BitmapFont*			m_defaultFont = nullptr;
 	
 	SDL_Surface*		m_webScreen = nullptr;
 	SDL_Renderer*		m_theSDLRenderer = nullptr;

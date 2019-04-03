@@ -1,12 +1,12 @@
 #pragma once
 #include "Engine/Core/General/EngineCommon.hpp"
-#include "Engine/Math/Vectors/Vector4.hpp"
-#include <map>
+#include "Engine/Renderer/Images/SpriteSheet.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-
+class AABB2;
+class Texture;
 
 //====================================================================================
 // Type Defs + Defines
@@ -26,33 +26,27 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class BitmapFont
 {
-public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	friend class Renderer;
+
+private:
+	explicit BitmapFont(const String& path, const SpriteSheet& spriteSheet, float baseAspect);
 
 public:
-	Vector4 GetAsNormalizedVector4() const;
+	AABB2		GetUVsForGlyph(int glyphUnicode) const; //
+	float		GetGlyphAspect() const { return m_baseAspect; } // will change later
+	float		GetStringWidth(const std::string& asciiText, float cellHeight, float aspectScale);
+	float		GetWidthOfAGlyph(float cellHeight, float aspectScale = 1.f);
 
+	Texture*	GetTexture() const { return m_spriteSheet->m_texture; }
 
-public:
-	static void AddColorToMap(const String& name, const Rgba& theColor);
-	static Rgba GetColorByName(const String& name);
-	static Rgba GetRandomColor();
+private:
+	const SpriteSheet*			m_spriteSheet = nullptr;
+	float						m_baseAspect = 1.77f;
+	String						m_path;
 
-public:
-	static std::map<String, Rgba> s_defaultColors;
-
-public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
-
-
-public:
-	static Rgba WHITE;
 };
-
 
 //====================================================================================
 // Standalone C Functions
@@ -65,5 +59,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [4/2/2019]
 //====================================================================================

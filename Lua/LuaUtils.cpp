@@ -44,6 +44,8 @@ Rgba LuaGetRgba(lua_State* theState, int startingStackIndex, const Rgba& default
 
 		if (nameOfColor == "idkzac")
 			color = defaultValue;
+		else if (nameOfColor == "random")
+			color = Rgba::GetRandomColor();
 		else
 			color = Rgba::GetColorByName(nameOfColor);
 	}

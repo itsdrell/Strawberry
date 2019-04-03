@@ -53,3 +53,17 @@ STATIC Sprite* Sprite::GetSprite(const String & name)
 	
 	return nullptr;
 }
+
+//-----------------------------------------------------------------------------------------------
+void Sprite::DeleteSprites()
+{
+	std::map<String, Sprite*>::iterator theIterator;
+
+	for (theIterator = s_sprites.begin(); theIterator != s_sprites.end(); theIterator++)
+	{
+		delete theIterator->second;
+		theIterator->second = nullptr;
+	}
+
+	s_sprites.clear();
+}

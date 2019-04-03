@@ -23,11 +23,10 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaDrawLine, "DrawLine");
 	BindFunctionToScript(theState, LuaDrawCircleOutline, "DrawCircle");
 	BindFunctionToScript(theState, LuaDrawCircleFilled, "DrawCircleFill");
-
 	BindFunctionToScript(theState, LuaDrawAABB2Filled, "DrawAABB2Fill");
 	BindFunctionToScript(theState, LuaDrawAABB2WireFrame, "DrawAABB2");
-
 	BindFunctionToScript(theState, LuaDrawSprite, "DrawSprite");
+	BindFunctionToScript(theState, LuaDrawText, "DrawText");
 
 	BindFunctionToScript(theState, LuaSetCameraPosition, "Camera");
 
@@ -150,7 +149,7 @@ int LuaDrawLine(lua_State * theState)
 }
 
 //-----------------------------------------------------------------------------------------------
-// DrawCircleFilled(centerX, centerY, radius, r, g, b, a)
+// DrawCircleFill(centerX, centerY, radius, r, g, b, a)
 int LuaDrawCircleFilled(lua_State * theState)
 {
 	Renderer* r = Renderer::GetInstance();
@@ -167,7 +166,7 @@ int LuaDrawCircleFilled(lua_State * theState)
 }
 
 //-----------------------------------------------------------------------------------------------
-// DrawCircleFilled(centerX, centerY, radius, r, g, b, a)
+// DrawCircle(centerX, centerY, radius, r, g, b, a)
 int LuaDrawCircleOutline(lua_State * theState)
 {
 	Renderer* r = Renderer::GetInstance();
@@ -243,6 +242,23 @@ int LuaDrawSprite(lua_State* theState)
 
 	Renderer* r = Renderer::GetInstance();
 	r->DrawSpriteRotated2D(Vector3(x,y,0.f), *spriteToDraw, rotation, flipX, flipY);
+
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// DrawText string, x, y, height, color
+// may get rid of height cause pico fixes it
+int LuaDrawText(lua_State* theState)
+{
+	String text =	LuaGetString(theState, 1, "idk man");
+	float x =		LuaGetFloat(theState, 2, 0);
+	float y =		LuaGetFloat(theState, 3, 0);
+	float height =	LuaGetFloat(theState, 4, 1.f);
+	Rgba color =	LuaGetRgba(theState, 5, Rgba::WHITE);
+
+	Renderer* r = Renderer::GetInstance();
+	r->DrawText2D(Vector2(x, y), text, height, color);
 
 	return 0;
 }

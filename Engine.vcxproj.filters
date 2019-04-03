@@ -166,6 +166,8 @@
     <ClInclude Include="Renderer\Images\Sprite.hpp" />
     <ClInclude Include="Core\Tools\Clock.hpp" />
     <ClInclude Include="Core\Platform\Time.hpp" />
+    <ClInclude Include="Renderer\Images\SpriteSheet.hpp" />
+    <ClInclude Include="Renderer\Images\BitmapFont.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -379,6 +381,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Images\Sprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Images\SpriteSheet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Images\BitmapFont.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

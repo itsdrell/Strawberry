@@ -17,6 +17,8 @@
 #include "Engine/ThirdParty/SDL2/SDL.h"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Renderer/Images/Sprite.hpp"
+#include "Engine/Renderer/Images/SpriteSheet.hpp"
+#include "Engine/Renderer/Images/BitmapFont.hpp"
 
 
 
@@ -45,6 +47,7 @@ Renderer::Renderer()
 //-----------------------------------------------------------------------------------------------
 Renderer::~Renderer()
 {
+	Sprite::DeleteSprites();
 	//SDL_GL_DeleteContext(m_glContext);
 }
 
@@ -153,6 +156,9 @@ void Renderer::RenderPostStartUp()
 
 	m_defaultDrawColor = Rgba(0, 0, 0, 255);
 	m_clearScreenColor = m_defaultDrawColor;
+
+	//m_defaultFont = CreateOrGetBitmapFont("Images/StrawberryFont.png");
+	m_defaultFont = CreateOrGetBitmapFont("Images/font.png");
 
 }
 
@@ -674,10 +680,62 @@ void Renderer::DrawSprite(const Vector3& position, const Sprite& theSprite, bool
 }
 
 //-----------------------------------------------------------------------------------------------
+void Renderer::DrawText2D(const Vector2& startPos, const String& text, float cellHeight, const Rgba& tint /*= Rgba::WHITE*/, float aspectScale /*= 1.7f*/, BitmapFont* font /*= nullptr*/)
+{
+	if (font == nullptr)
+	{
+		font = m_defaultFont;
+	}
+
+	SetCurrentTexture(0, font->m_spriteSheet->m_texture);
+
+	int length = (int)text.size();
+	Vector2 startPoint = startPos;
+	std::vector<Vertex3D_PCU>	vertices;
+
+	// Draw
+	for (int i = 0; i < length; i++)
+	{
+		// Get Current Letter
+		char currentLetter = text.at(i);
+
+		// calculate cell width
+		float cellWidth = font->GetGlyphAspect() * cellHeight * aspectScale;
+
+		AABB2 posBox = AABB2(startPoint, Vector2(startPoint.x + cellWidth, startPoint.y + cellHeight));
+		AABB2 uvBox = AABB2(font->GetUVsForGlyph(currentLetter));
+
+		vertices.push_back(Vertex3D_PCU(
+			Vector3(posBox.mins.x, posBox.mins.y, 0.01f), tint, uvBox.mins));
+
+		vertices.push_back(Vertex3D_PCU(
+			Vector3(posBox.maxs.x, posBox.mins.y, 0.01f), tint, Vector2(uvBox.maxs.x, uvBox.mins.y)));
+
+		vertices.push_back(Vertex3D_PCU(
+			Vector3(posBox.maxs.x, posBox.maxs.y, 0.01f), tint, Vector2(uvBox.maxs.x, uvBox.maxs.y)));
+
+		vertices.push_back(Vertex3D_PCU(
+			Vector3(posBox.mins.x, posBox.mins.y, 0.01f), tint, Vector2(uvBox.mins.x, uvBox.mins.y)));
+
+		vertices.push_back(Vertex3D_PCU(
+			Vector3(posBox.maxs.x, posBox.maxs.y, 0.01f), tint, Vector2(uvBox.maxs.x, uvBox.maxs.y)));
+		
+		vertices.push_back(Vertex3D_PCU(
+			Vector3(posBox.mins.x, posBox.maxs.y, 0.01f), tint, Vector2(uvBox.mins.x, uvBox.maxs.y)));
+
+		startPoint.x += cellWidth;
+	}
+
+	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices.data(), vertices.size());
+}
+
+//-----------------------------------------------------------------------------------------------
 void Renderer::DrawCircleFilled2D(const Vector2 & center, float radius, const Rgba & color, int numberOfEdges)
 {
 	float distanceInDegrees = 360.f / ((float) numberOfEdges * .3f);
 	float degrees = 0.f;
+
+	SetCurrentTexture(0, m_defaultTexture);
 
 	std::vector<Vertex3D_PCU> vertices;
 	for (int i = 0; i < numberOfEdges; i += 3)
@@ -706,6 +764,8 @@ void Renderer::DrawCircleOutline2D(const Vector2 & center, float radius, const R
 {
 	float distanceInDegrees = 360.f / ((float)numberOfEdges * .5f);
 	float degrees = 0.f;
+
+	SetCurrentTexture(0, m_defaultTexture);
 
 	std::vector<Vertex3D_PCU> vertices;
 	for (int i = 0; i < numberOfEdges; i += 2)
@@ -928,6 +988,31 @@ Texture* Renderer::CreateOrGetTexture(const String& path, bool flip /*= true*/)
 	m_createdTextures.insert(std::pair<String, Texture*>(path, newTexture));
 
 	return newTexture;
+}
+
+//-----------------------------------------------------------------------------------------------
+BitmapFont* Renderer::CreateOrGetBitmapFont(const String& path)
+{
+#ifdef EMSCRIPTEN_PORT
+	path = "Run_Win32/" + path;
+#endif
+
+	std::map<String, BitmapFont*>::iterator theIterator;
+
+	for (theIterator = m_createdFonts.begin(); theIterator != m_createdFonts.end(); theIterator++)
+	{
+		if (theIterator->first == path)
+			return theIterator->second;
+	}
+
+	Texture* fontTexture = CreateOrGetTexture(path);
+	SpriteSheet* fontSpriteSheet = new SpriteSheet(fontTexture, 16, 16);
+
+	BitmapFont* newFont = new BitmapFont(path, *fontSpriteSheet, 1.f);
+
+	m_createdFonts.insert(std::pair<String, BitmapFont*>(path, newFont));
+
+	return newFont;
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -1,12 +1,11 @@
 #pragma once
-#include "Engine/Core/General/EngineCommon.hpp"
-#include "Engine/Math/Vectors/Vector4.hpp"
-#include <map>
+#include "Engine/Math/Vectors/IntVector2.hpp"
+#include "Engine/Math/Geometry/AABB2.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-
+class Texture;
 
 //====================================================================================
 // Type Defs + Defines
@@ -26,33 +25,24 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Rgba
+class SpriteSheet
 {
 public:
-	Rgba();
-	Rgba(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+	SpriteSheet(Texture* theTexture, int tilesWide, int tilesHigh);
 
 public:
-	Vector4 GetAsNormalizedVector4() const;
+	AABB2		GetTexCoordsForSpriteCoords(const IntVector2& spriteCoords) const;
+	AABB2		GetTexCoordsForSpriteIndex(int spriteIndex) const;
 
-
-public:
-	static void AddColorToMap(const String& name, const Rgba& theColor);
-	static Rgba GetColorByName(const String& name);
-	static Rgba GetRandomColor();
+	int			GetIndexFromSpriteCoords(const IntVector2& spriteCoords) const;
+	IntVector2	GetCoordsFromSpriteIndex(int index) const;
 
 public:
-	static std::map<String, Rgba> s_defaultColors;
+	Texture*		m_texture = nullptr;
+	IntVector2		m_spriteLayout = IntVector2(0, 0);
+	IntVector2		m_dimensions = IntVector2(0, 0);
 
-public:
-	// 0 - 255
-	unsigned char r,g,b,a = 255;
-
-
-public:
-	static Rgba WHITE;
 };
-
 
 //====================================================================================
 // Standalone C Functions
@@ -65,5 +55,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [4/2/2019]
 //====================================================================================

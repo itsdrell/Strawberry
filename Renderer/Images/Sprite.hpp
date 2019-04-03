@@ -29,6 +29,8 @@ class Texture;
 //====================================================================================
 class Sprite
 {
+	friend class Renderer;
+
 public:
 
 	Sprite() {}
@@ -41,6 +43,9 @@ public:
 
 private:
 	static Sprite* GetSprite(const String& name);
+
+	// renderer calls this
+	static void DeleteSprites();
 
 public:
 	Texture*		m_texture = nullptr;
