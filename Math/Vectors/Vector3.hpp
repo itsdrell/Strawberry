@@ -36,8 +36,12 @@ public:
 	float GetLength() const;
 
 public:
+	const Vector3 operator+(const Vector3& vecToAdd) const;		// vec3 + vec3
 	const Vector3 operator-(const Vector3& vecToSubtract) const;	// vec3 - vec3
+	const Vector3 operator*(float uniformScale) const;			// vec3 * float
+	void operator*=(const float uniformScale);					// vec3 *= float
 
+	Vector3 operator-() const { return Vector3(-x, -y, -z); }
 public:
 	float x,y,z;
 

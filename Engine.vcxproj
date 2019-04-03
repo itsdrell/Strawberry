@@ -413,6 +413,7 @@
     <ClCompile Include="Renderer\Components\ShaderProgram.cpp" />
     <ClCompile Include="Renderer\GLFunctions.cpp" />
     <ClCompile Include="Renderer\Images\Image.cpp" />
+    <ClCompile Include="Renderer\Images\Sprite.cpp" />
     <ClCompile Include="Renderer\Images\Texture.cpp" />
     <ClCompile Include="Renderer\Pipeline\FrameBuffer.cpp" />
     <ClCompile Include="Renderer\Pipeline\RenderBuffer.cpp" />

@@ -40,12 +40,40 @@ float Vector3::GetLength() const
 }
 
 //-----------------------------------------------------------------------------------------------
+const Vector3 Vector3::operator+(const Vector3& vecToAdd) const
+{
+	float xx = x + vecToAdd.x;
+	float yy = y + vecToAdd.y;
+	float zz = z + vecToAdd.z;
+
+	return Vector3(xx, yy, zz);
+}
+
+//-----------------------------------------------------------------------------------------------
 const Vector3 Vector3::operator-(const Vector3& vecToSubtract) const
 {
 	float xx = x - vecToSubtract.x;
 	float yy = y - vecToSubtract.y;
 
 	return Vector3(xx, yy, 0);
+}
+
+//-----------------------------------------------------------------------------------------------
+const Vector3 Vector3::operator*(float uniformScale) const
+{
+	float xx = x * uniformScale;
+	float yy = y * uniformScale;
+	float zz = z * uniformScale;
+
+	return Vector3(xx, yy, zz);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Vector3::operator*=(const float uniformScale)
+{
+	x *= uniformScale;
+	y *= uniformScale;
+	z *= uniformScale;
 }
 
 //===============================================================================================

@@ -1,4 +1,5 @@
 #include "Matrix44.hpp"
+#include "../MathUtils.hpp"
 
 
 //===============================================================================================
@@ -131,6 +132,30 @@ void Matrix44::GetValuesAsArray(float* outArray) const
 }
 
 //-----------------------------------------------------------------------------------------------
+Vector3 Matrix44::GetForward() const
+{
+	return Vector3(Kx, Ky, Kz);
+}
+
+//-----------------------------------------------------------------------------------------------
+Vector3 Matrix44::GetRight() const
+{
+	return Vector3(Ix, Iy, Iz);
+}
+
+//-----------------------------------------------------------------------------------------------
+Vector3 Matrix44::GetUp() const
+{
+	return Vector3(Jx, Jy, Jz);
+}
+
+//-----------------------------------------------------------------------------------------------
+Vector3 Matrix44::GetPosition() const
+{
+	return Vector3(Tx, Ty, Tz);
+}
+
+//-----------------------------------------------------------------------------------------------
 Matrix44 Matrix44::MakeOrtho2D(const Vector2 & mins, const Vector2 & maxs)
 {
 	Matrix44 result = Matrix44(); // Get Identity 
@@ -235,4 +260,63 @@ Matrix44 Matrix44::LookAt(Vector3 position, Vector3 target, Vector3 up)
 
 	// Create a matrix
 	return Matrix44(normalizeRight, newUp, forward, position);
+}
+
+//-----------------------------------------------------------------------------------------------
+Matrix44 Matrix44::MakeRotationDegreesAroundZ(float rotationDegrees)
+{
+	return MakeRotationDegreesAroundZ(rotationDegrees);
+}
+
+//-----------------------------------------------------------------------------------------------
+Matrix44 Matrix44::MakeRotationDegreesAroundY(float rotationDegrees)
+{
+	//https://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
+
+	Matrix44 result;
+
+	float cosValue = CosDegrees(rotationDegrees);
+	float sinValue = SinDegrees(rotationDegrees);
+
+	result.Ix = cosValue;
+	result.Iz = -sinValue;
+	result.Kx = sinValue;
+	result.Kz = cosValue;
+
+	return result;
+}
+
+//-----------------------------------------------------------------------------------------------
+Matrix44 Matrix44::MakeRotationDegreesAroundX(float rotationDegrees)
+{
+	// https://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
+	Matrix44 result;
+
+	float cosValue = CosDegrees(rotationDegrees);
+	float sinValue = SinDegrees(rotationDegrees);
+
+	result.Jy = cosValue;
+	result.Jz = sinValue;
+	result.Ky = -sinValue;
+	result.Kz = cosValue;
+
+	return result;
+}
+
+//-----------------------------------------------------------------------------------------------
+Matrix44 Matrix44::MakeRotationDegrees2D(float rotationDegreesAboutZ)
+{
+	Matrix44 result;
+
+	//result.RotateDegrees2D(rotationDegreesAboutZ);
+
+	float cosValue = CosDegrees(rotationDegreesAboutZ);
+	float sinValue = SinDegrees(rotationDegreesAboutZ);
+
+	result.Ix = cosValue;
+	result.Iy = sinValue;
+	result.Jx = -sinValue;
+	result.Jy = cosValue;
+
+	return result;
 }

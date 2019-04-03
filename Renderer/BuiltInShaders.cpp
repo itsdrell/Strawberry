@@ -32,7 +32,17 @@ varying vec2 passUV;
 void main( void )
 {
    vec4 diffuse = texture2D( gTexDiffuse, passUV ); 
-   gl_FragColor = diffuse * passColor;
+   
+   //vec3 diffuseColor = pow(texture2D(diffuse, passUV).xyz, vec3(2.2))
+	
+	// this is gamma correction and we do it to the final color, instead of to the
+	// texture sample color because the texture has no color (atm)
+	vec4 color = diffuse * passColor;
+	//color.x = pow(color.x, 2.2);
+	//color.y = pow(color.y, 2.2);
+	//color.z = pow(color.z, 2.2);
+
+	gl_FragColor = color;
 
 })";
 

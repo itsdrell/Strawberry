@@ -18,6 +18,7 @@ class Texture;
 class Sampler;
 struct SDL_Surface;
 struct SDL_Renderer;
+class Sprite;
 
 //====================================================================================
 // Type Defs + Defines
@@ -80,6 +81,11 @@ public:
 	void DrawTexturedAABB2(const AABB2& bounds, const Texture& texture,
 		const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const Rgba& tint );
 
+	void DrawSpriteRotated2D(const Vector3& position, const Sprite& theSprite, float rotation = 0.f, bool flipX = false, bool flipY = false);
+
+	void DrawSprite(const Vector3& position, const Sprite& theSprite, bool flipX = false, bool flipY = false,
+		const Vector3& right = Vector3::RIGHT, const Vector3& up = Vector3::UP);
+
 public:
 	void DrawMeshImmediate( PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices );
 	void DrawMeshImmediate( PrimitiveType thePrimitive, uint vertexCount, Vertex3D_PCU* vertices, uint indicesCount = 0, uint* indices = nullptr );
@@ -87,10 +93,16 @@ public:
 
 
 public:
+	Texture* CreateOrGetTexture(const String& path, bool flip = true);
+
+public:
 	static Renderer* GetInstance();
 
 private:
 	static Renderer* s_theRenderer;
+
+private:
+	std::map<String, Texture*> m_createdTextures;
 
 public:
 	Vector2				m_windowSize;

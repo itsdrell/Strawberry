@@ -33,6 +33,10 @@ public:
 
 public:
 	Vector2 mins, maxs;
+
+
+public:
+	const static AABB2 ZERO_TO_ONE;
 };
 
 //====================================================================================

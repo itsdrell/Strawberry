@@ -42,11 +42,22 @@ public:
 	void GetValuesAsArray(float* outArray) const;
 
 public:
+	Vector3 GetForward() const;
+	Vector3 GetRight() const;
+	Vector3 GetUp() const;
+	Vector3 GetPosition() const;
+
+public:
 	static Matrix44 MakeOrtho2D( const Vector2& mins, const Vector2& maxs );
 	static Matrix44 MakeTranslation2D( const Vector2& translation );	
 	static Matrix44 MakeOrtho3D( const Vector3& mins, const Vector3& maxs );
 	static Matrix44 MakeView(Vector3 position, Vector3 target, Vector3 up = Vector3::UP);
 	static Matrix44 LookAt(Vector3 position, Vector3 target, Vector3 up = Vector3::UP);
+
+	static Matrix44 MakeRotationDegreesAroundZ(float rotationDegrees);
+	static Matrix44 MakeRotationDegreesAroundY(float rotationDegrees);
+	static Matrix44 MakeRotationDegreesAroundX(float rotationDegrees);
+	static Matrix44 MakeRotationDegrees2D(float rotationDegreesAboutZ);
 
 private:
 	// Column Major (squirrels way)

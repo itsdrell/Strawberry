@@ -8,6 +8,7 @@
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/General/Camera.hpp"
+#include "Engine/Renderer/Images/Sprite.hpp"
 
 
 //===============================================================================================
@@ -25,6 +26,8 @@ void BindLuaFunctionsToScript(lua_State * theState)
 
 	BindFunctionToScript(theState, LuaDrawAABB2Filled, "DrawAABB2Fill");
 	BindFunctionToScript(theState, LuaDrawAABB2WireFrame, "DrawAABB2");
+
+	BindFunctionToScript(theState, LuaDrawSprite, "DrawSprite");
 
 	BindFunctionToScript(theState, LuaSetCameraPosition, "Camera");
 
@@ -212,6 +215,34 @@ int LuaDrawAABB2WireFrame(lua_State* theState)
 	Rgba color = LuaGetRgba(theState, 4, r->m_defaultDrawColor);
 
 	Renderer::GetInstance()->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), color);
+
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// DrawSprite(path, x, y, width, height, rotation, flip X, pixelsPerUnit)
+int LuaDrawSprite(lua_State* theState)
+{
+	String path = LuaGetString(theState, 1, "idk man");
+	
+	float x = LuaGetFloat(theState, 2, 0);
+	float y = LuaGetFloat(theState, 3, 0);
+	
+	float width = LuaGetFloat(theState, 4, 1.f);
+	float height = LuaGetFloat(theState, 5, 1.f);
+
+	float rotation = LuaGetFloat(theState, 6, 0.f);
+	bool flipX = LuaGetBool(theState, 7, false);
+	bool flipY = LuaGetBool(theState, 8, false);
+	
+	float ppu = LuaGetFloat(theState, 9, 1.f);
+
+	Vector2 dimensions = Vector2(width * .5f, height * .5f);
+	Sprite* spriteToDraw = Sprite::CreateOrGetSprite(path, dimensions, ppu);
+
+
+	Renderer* r = Renderer::GetInstance();
+	r->DrawSpriteRotated2D(Vector3(x,y,0.f), *spriteToDraw, rotation, flipX, flipY);
 
 	return 0;
 }

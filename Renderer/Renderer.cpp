@@ -16,6 +16,7 @@
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/ThirdParty/SDL2/SDL.h"
 #include "Engine/Math/MathUtils.hpp"
+#include "Engine/Renderer/Images/Sprite.hpp"
 
 
 
@@ -68,6 +69,8 @@ void Renderer::RenderStartup()
 	if(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24)== -1)
 		printf("Error with attribute \n");
 
+	//result = SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 0);
+
 	// this doesn't work on the web for some reason? :l
 	//0 for immediate updates, 1 for updates synchronized with the vertical retrace, -1 for adaptive vsync;
 	//if(SDL_GL_SetSwapInterval(-1) == -1)
@@ -79,6 +82,8 @@ void Renderer::RenderStartup()
 	SDL_GLContext theContext = SDL_GL_CreateContext(theWindow->GetWindowReference());
 	if(!theContext)
 		printf("Error creating context \n");
+
+	//SDL_GL_MakeCurrent(theWindow->GetWindowReference(),theContext);
 	
 	m_windowSize = theWindow->GetDimensions();
 
@@ -155,6 +160,11 @@ void Renderer::RenderPostStartUp()
 void Renderer::BeginFrame()
 {
 	GL_CHECK_ERROR();
+
+	// this fixes colors to not be weird in openGL ES default framebuffer
+	// if we had our own we could just use the shader and it would be fine 
+	// but nooooooooooo we gotta do this cause we are't using our own
+	glDisable(GL_FRAMEBUFFER_SRGB);
 
 	if (m_clearScreen)
 	{
@@ -598,6 +608,71 @@ void Renderer::DrawTexturedAABB2(const AABB2& bounds, const Texture& texture, co
 	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices, 6);
 }
 
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawSpriteRotated2D(const Vector3& position, const Sprite& theSprite, 
+	float rotation /*= Vector2(0.f, 0.f)*/, bool flipX, bool flipY)
+{
+	Matrix44 theRotationMatrix = Matrix44::MakeRotationDegrees2D(rotation);
+	Vector3 right = theRotationMatrix.GetRight();
+	Vector3 up = theRotationMatrix.GetUp();
+
+	DrawSprite(position, theSprite, flipX, flipY, right, up);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawSprite(const Vector3& position, const Sprite& theSprite, bool flipX, bool flipY,
+	const Vector3& right /*= Vector3::RIGHT*/, const Vector3& up /*= Vector3::UP*/)
+{
+	//m_currentTexture = theSprite.m_texture;
+	SetCurrentTexture(0, theSprite.m_texture);
+
+	// calculating offsets from the pivot point
+	float leftOffset = -1.0f * ((theSprite.m_pivot.x) * theSprite.m_dimensions.x);
+	float rightOffset = leftOffset + theSprite.m_dimensions.x;
+	float bottomOffset = -1.0f * ((theSprite.m_pivot.y) * theSprite.m_dimensions.y);
+	float topOffset = bottomOffset + theSprite.m_dimensions.y;
+
+	// calculating the vertex points 
+	Vector3 p0 = position + (right * leftOffset) +  (up * bottomOffset); // bottom left
+	Vector3 p1 = position + (right * rightOffset) + (up * bottomOffset); // bottom right
+	Vector3 p2 = position + (right * rightOffset) + (up * topOffset); // top right
+	Vector3 p3 = position + (right * leftOffset) +  (up * topOffset); // top left
+	
+	// Get the UVs
+	AABB2 uvs = theSprite.m_uvs;
+
+	if (flipY)
+	{
+		uvs.mins.y = theSprite.m_uvs.maxs.y;
+		uvs.maxs.y = theSprite.m_uvs.mins.y;
+	}
+
+	if (flipX)
+	{
+		uvs.mins.x = theSprite.m_uvs.maxs.x;
+		uvs.maxs.x = theSprite.m_uvs.mins.x;
+	}
+
+	Vector2 bl = uvs.mins;
+	Vector2 br = Vector2(uvs.maxs.x, uvs.mins.y);
+	Vector2 tl = Vector2(uvs.mins.x, uvs.maxs.y);
+	Vector2 tr = uvs.maxs;
+
+	Vertex3D_PCU vertices[] =
+	{
+		Vertex3D_PCU(p0, Rgba(255,255,255,255), bl),
+		Vertex3D_PCU(p1, Rgba(255,255,255,255), br),
+		Vertex3D_PCU(p2, Rgba(255,255,255,255), tr),
+
+		Vertex3D_PCU(p0, Rgba(255,255,255,255), bl),
+		Vertex3D_PCU(p2, Rgba(255,255,255,255), tr),
+		Vertex3D_PCU(p3, Rgba(255,255,255,255), tl)
+	};
+
+	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices, 6);
+}
+
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawCircleFilled2D(const Vector2 & center, float radius, const Rgba & color, int numberOfEdges)
 {
@@ -831,6 +906,28 @@ void Renderer::DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, 
 
 	GLenum glPrimitiveType = g_openGlPrimitiveTypes[ primitiveType ];
 	glDrawArrays(glPrimitiveType, 0, numOfVertices );							GL_CHECK_ERROR();
+}
+
+//-----------------------------------------------------------------------------------------------
+Texture* Renderer::CreateOrGetTexture(const String& path, bool flip /*= true*/)
+{
+#ifdef EMSCRIPTEN_PORT
+	path = "Run_Win32/" + path;
+#endif
+	
+	std::map<String, Texture*>::iterator textureIterator;
+
+	for (textureIterator = m_createdTextures.begin(); textureIterator != m_createdTextures.end(); textureIterator++)
+	{
+		if (textureIterator->first == path)
+			return textureIterator->second;
+	}
+
+	// need to make it
+	Texture* newTexture = new Texture(path, flip);
+	m_createdTextures.insert(std::pair<String, Texture*>(path, newTexture));
+
+	return newTexture;
 }
 
 //-----------------------------------------------------------------------------------------------

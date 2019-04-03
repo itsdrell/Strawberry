@@ -29,6 +29,7 @@ public:
 	Vector2();
 	Vector2( float theX, float theY );
 
+	Vector2 operator-() const { return Vector2(-x, -y); }
 
 public:
 	float x,y;

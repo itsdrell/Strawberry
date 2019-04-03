@@ -39,6 +39,11 @@ void Window::CreateSDLWindow()
 
 	if(m_windowReference == NULL)
 		printf("Window failed to create \n");
+
+	// gross overlay thing
+	//SDL_SetWindowBrightness(m_windowReference, 4.4);
+
+
 }
 
 //-----------------------------------------------------------------------------------------------
