@@ -234,7 +234,9 @@
     <ClInclude Include="Core\Platform\Time.hpp" />
     <ClInclude Include="Core\Platform\Window.hpp" />
     <ClInclude Include="Core\Tools\Clock.hpp" />
+    <ClInclude Include="Core\Tools\Command.hpp" />
     <ClInclude Include="Core\Tools\ErrorWarningAssert.hpp" />
+    <ClInclude Include="Core\Utils\GeneralUtils.hpp" />
     <ClInclude Include="Core\Utils\StringUtils.hpp" />
     <ClInclude Include="Input\InputSystem.hpp" />
     <ClInclude Include="Internal\EmscriptenCommon.hpp" />
@@ -397,6 +399,7 @@
     <ClCompile Include="Core\Platform\Time.cpp" />
     <ClCompile Include="Core\Platform\Window.cpp" />
     <ClCompile Include="Core\Tools\Clock.cpp" />
+    <ClCompile Include="Core\Tools\Command.cpp" />
     <ClCompile Include="Core\Tools\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Utils\StringUtils.cpp" />
     <ClCompile Include="Input\InputSystem.cpp" />

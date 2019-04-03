@@ -168,6 +168,8 @@
     <ClInclude Include="Core\Platform\Time.hpp" />
     <ClInclude Include="Renderer\Images\SpriteSheet.hpp" />
     <ClInclude Include="Renderer\Images\BitmapFont.hpp" />
+    <ClInclude Include="Core\Tools\Command.hpp" />
+    <ClInclude Include="Core\Utils\GeneralUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -387,6 +389,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Images\BitmapFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Tools\Command.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

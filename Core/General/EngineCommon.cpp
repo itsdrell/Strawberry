@@ -9,6 +9,7 @@
 #include "Engine/Core/Platform/Window.hpp"
 #endif
 #include "../Tools/Clock.hpp"
+#include "../Tools/Command.hpp"
 
 //===============================================================================================
 void EngineStartUp()
@@ -28,6 +29,8 @@ void EngineStartUp()
 void EngineShutdown()
 {
 	AudioSystem::GetInstance()->Shutdown();
+	CommandRegistration::DeleteAllRegisteredCommands();
+
 
 	delete g_theMasterClock;
 	g_theMasterClock = nullptr;
