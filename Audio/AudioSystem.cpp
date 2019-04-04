@@ -184,8 +184,7 @@ void AudioSystem::StopSound(SoundPlaybackID soundPlaybackID)
 	}
 
 	FMOD::Channel* channelAssignedToSound = (FMOD::Channel*) soundPlaybackID;
-	FMOD_RESULT theREsult = channelAssignedToSound->stop();
-	int i = 3;
+	channelAssignedToSound->stop();
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -78,7 +78,7 @@ CommandRegistration::~CommandRegistration()
 //-----------------------------------------------------------------------------------------------
 void CommandRegistration::DeleteAllRegisteredCommands()
 {
-	DeleteAndClearMap<String, CommandRegistration*>(s_callbacks);
+	DeleteAndClearMap(s_callbacks);
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -235,6 +235,8 @@
     <ClInclude Include="Core\Platform\Window.hpp" />
     <ClInclude Include="Core\Tools\Clock.hpp" />
     <ClInclude Include="Core\Tools\Command.hpp" />
+    <ClInclude Include="Core\Tools\Console.hpp" />
+    <ClInclude Include="Core\Tools\EngineConsoleCommands.hpp" />
     <ClInclude Include="Core\Tools\ErrorWarningAssert.hpp" />
     <ClInclude Include="Core\Utils\GeneralUtils.hpp" />
     <ClInclude Include="Core\Utils\StringUtils.hpp" />
@@ -400,6 +402,8 @@
     <ClCompile Include="Core\Platform\Window.cpp" />
     <ClCompile Include="Core\Tools\Clock.cpp" />
     <ClCompile Include="Core\Tools\Command.cpp" />
+    <ClCompile Include="Core\Tools\Console.cpp" />
+    <ClCompile Include="Core\Tools\EngineConsoleCommands.cpp" />
     <ClCompile Include="Core\Tools\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Utils\StringUtils.cpp" />
     <ClCompile Include="Input\InputSystem.cpp" />

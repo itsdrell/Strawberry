@@ -53,9 +53,7 @@ Renderer::~Renderer()
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::RenderStartup()
-{
-	int result = 0;
-	
+{	
 	// https://wiki.libsdl.org/SDL_GL_SetAttribute
 	if(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES) == -1)
 		printf("Error with attribute \n");
@@ -129,8 +127,8 @@ void Renderer::RenderPostStartUp()
 	// Frame buffer stuff
 	// the default color and depth should match our output window
 	// so get width/height however you need to.
-	int window_width =  m_windowSize.x;
-	int window_height = m_windowSize.y;
+	int window_width =  (int) m_windowSize.x;
+	int window_height = (int) m_windowSize.y;
 
 	// create our output textures
 	m_defaultColorTarget = CreateRenderTarget( window_width, 
@@ -260,8 +258,8 @@ bool Renderer::CopyFrameBuffer(FrameBuffer* dst, FrameBuffer* src)
 	//SetCamera(m_defaultUICamera);
 
 	// bind color target texture
-	float theWidth = width * .5f;
-	float theHeight = height * .5f;
+	//float theWidth = width * .5f;
+	//float theHeight = height * .5f;
 
 	// draw quad window size
 	//DrawTexturedAABB2(
@@ -726,7 +724,7 @@ void Renderer::DrawText2D(const Vector2& startPos, const String& text, float cel
 		startPoint.x += cellWidth;
 	}
 
-	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices.data(), vertices.size());
+	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices.data(), (int) vertices.size());
 }
 
 //-----------------------------------------------------------------------------------------------

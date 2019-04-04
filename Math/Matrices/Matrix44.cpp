@@ -265,7 +265,7 @@ Matrix44 Matrix44::LookAt(Vector3 position, Vector3 target, Vector3 up)
 //-----------------------------------------------------------------------------------------------
 Matrix44 Matrix44::MakeRotationDegreesAroundZ(float rotationDegrees)
 {
-	return MakeRotationDegreesAroundZ(rotationDegrees);
+	return MakeRotationDegrees2D(rotationDegrees);
 }
 
 //-----------------------------------------------------------------------------------------------

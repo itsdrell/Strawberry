@@ -8,9 +8,15 @@
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
-typedef unsigned char KeyCode;
+typedef int KeyCode;
 
 typedef void(*ShutdownFunction)();
+
+// these have a weird case leave me alone #todo
+constexpr KeyCode KEYBOARD_LEFT_ARROW =		(const KeyCode) 0;
+constexpr KeyCode KEYBOARD_RIGHT_ARROW =	(const KeyCode) 1;
+constexpr KeyCode KEYBOARD_UP_ARROW =		(const KeyCode) 2;
+constexpr KeyCode KEYBOARD_DOWN_ARROW =		(const KeyCode) 3;
 
 //====================================================================================
 // ENUMS
@@ -52,10 +58,13 @@ public:
 
 protected:
 	void					PollEvents();
+	void					FilterKeysAndPassToDevConsole(int code);
 	void					UpdateKeyboard();
+	KeyCode					CheckAndCorrectSDLArrowKeys(KeyCode code);
 
 public:
 	void					SetShutdownFunction(ShutdownFunction theFunction) { m_shutdownFunction = theFunction; }
+	void					CallQuitFunction() { m_shutdownFunction(); }
 
 public:
 	static const int		NUM_KEYS = 256; // Values match Windows VK_XXX virtual keys; common keys are 'A' and so on.
@@ -82,11 +91,7 @@ extern const KeyCode KEYBOARD_SPACE;
 extern const KeyCode KEYBOARD_LSHIFT;
 extern const KeyCode KEYBOARD_ENTER;
 extern const KeyCode KEYBOARD_BACKSPACE;
-extern const KeyCode KEYBOARD_LEFT_ARROW;
-extern const KeyCode KEYBOARD_RIGHT_ARROW;
-extern const KeyCode KEYBOARD_UP_ARROW;
-extern const KeyCode KEYBOARD_DOWN_ARROW;
-
+extern const KeyCode KEYBOARD_TILDE;
 
 
 //====================================================================================

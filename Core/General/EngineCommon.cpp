@@ -2,14 +2,15 @@
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Input/InputSystem.hpp"
-
+#include "Engine/Core/Tools/Clock.hpp"
+#include "Engine/Core/Tools/Command.hpp"
+#include "Engine/Core/Tools/Console.hpp"
 
 #ifdef EMSCRIPTEN_PORT
 #else
 #include "Engine/Core/Platform/Window.hpp"
 #endif
-#include "../Tools/Clock.hpp"
-#include "../Tools/Command.hpp"
+
 
 //===============================================================================================
 void EngineStartUp()
@@ -19,6 +20,7 @@ void EngineStartUp()
 	AudioSystem* audio = new AudioSystem();
 	InputSystem* input = new InputSystem();
 	Renderer* renderer = new Renderer();
+	new Console();
 
 	audio = nullptr;
 	input = nullptr;
@@ -31,6 +33,7 @@ void EngineShutdown()
 	AudioSystem::GetInstance()->Shutdown();
 	CommandRegistration::DeleteAllRegisteredCommands();
 
+	delete Console::GetInstance();
 
 	delete g_theMasterClock;
 	g_theMasterClock = nullptr;

@@ -125,7 +125,7 @@ int ClampInt(int inValue, int min, int max)
 float GetFractionOf(float value)
 {
 	double wholeNumber;
-	return modf((double)value, &wholeNumber);
+	return (float) modf((double)value, &wholeNumber);
 }
 
 //-----------------------------------------------------------------------------------------------

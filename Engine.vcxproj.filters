@@ -170,6 +170,8 @@
     <ClInclude Include="Renderer\Images\BitmapFont.hpp" />
     <ClInclude Include="Core\Tools\Command.hpp" />
     <ClInclude Include="Core\Utils\GeneralUtils.hpp" />
+    <ClInclude Include="Core\Tools\Console.hpp" />
+    <ClInclude Include="Core\Tools\EngineConsoleCommands.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -392,6 +394,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Tools\Command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Tools\Console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Tools\EngineConsoleCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

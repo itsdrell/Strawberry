@@ -32,6 +32,12 @@ public:
 	AABB2(const Vector2& theMins, const Vector2& theMaxs);
 
 public:
+	float		GetWidth() const;
+	float		GetHeight() const;
+	Vector2		GetPositionWithinBox(const Vector2& percentWithin);
+
+
+public:
 	Vector2 mins, maxs;
 
 
@@ -42,7 +48,7 @@ public:
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-
+AABB2 GetAABB2FromAABB2(const Vector2& minPercentage, const Vector2& maxPercentage, const AABB2& theBounds);
 
 //====================================================================================
 // Externs

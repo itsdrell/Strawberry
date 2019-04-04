@@ -13,6 +13,7 @@ Clock::Clock(Clock * parent)
 	Reset();
 	m_frameCount = 0;
 
+	m_lastFrameHpc = GetPerformanceCounter();
 
 	if (parent != nullptr)
 	{
@@ -85,7 +86,7 @@ void Clock::Advance(uint64_t elapsed)
 
 	total.hpcSeconds += frame.hpcSeconds;
 	total.seconds += frame.seconds;
-	totalTime = total.seconds;
+	totalTime += deltaTime;
 	total.hpc += frame.hpc;
 	total.ms += frame.ms;
 

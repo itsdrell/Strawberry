@@ -1,7 +1,8 @@
 #include "InputSystem.hpp"
 #include "Engine/ThirdParty/SDL2/SDL.h"
-#include "../Core/Tools/ErrorWarningAssert.hpp"
-#include "../Core/General/EngineCommon.hpp"
+#include "Engine/Core/Tools/ErrorWarningAssert.hpp"
+#include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Core/Tools/Console.hpp"
 
 //===============================================================================================
 InputSystem*		g_theInputSystem = nullptr;
@@ -13,10 +14,17 @@ const KeyCode KEYBOARD_SPACE			= (const KeyCode) SDLK_SPACE;
 const KeyCode KEYBOARD_LSHIFT			= (const KeyCode) SDLK_LSHIFT;
 const KeyCode KEYBOARD_ENTER			= (const KeyCode) SDLK_RETURN;
 const KeyCode KEYBOARD_BACKSPACE		= (const KeyCode) SDLK_BACKSPACE;
-const KeyCode KEYBOARD_LEFT_ARROW		= (const KeyCode) SDLK_LEFT;
-const KeyCode KEYBOARD_RIGHT_ARROW		= (const KeyCode) SDLK_RIGHT;
-const KeyCode KEYBOARD_UP_ARROW			= (const KeyCode) SDLK_UP;
-const KeyCode KEYBOARD_DOWN_ARROW		= (const KeyCode) SDLK_DOWN;
+const KeyCode KEYBOARD_TILDE			= (const KeyCode) SDLK_BACKQUOTE;
+
+
+//===============================================================================================
+// for some reason these are weird :l if I use SDL_Left it's like 12341234134 which makes no sense
+// so im using the scan codes which share a slop with capital P O R Q :l
+//===============================================================================================
+//const KeyCode KEYBOARD_LEFT_ARROW = (const KeyCode)SDLK_LEFT;
+//const KeyCode KEYBOARD_RIGHT_ARROW = (const KeyCode)SDLK_RIGHT;
+//const KeyCode KEYBOARD_UP_ARROW = (const KeyCode)SDLK_UP;
+//const KeyCode KEYBOARD_DOWN_ARROW = (const KeyCode)SDLK_DOWN;
 
 //===============================================================================================
 InputSystem::InputSystem()
@@ -108,14 +116,35 @@ void InputSystem::PollEvents()
 		if (theEvent.type == SDL_KEYDOWN)
 		{
 			//String text = SDL_GetKeyName(theEvent.key.keysym.sym);
-			OnKeyPressed((KeyCode) theEvent.key.keysym.sym);
+			KeyCode theCode = CheckAndCorrectSDLArrowKeys(theEvent.key.keysym.sym);
+			OnKeyPressed(theCode);
+			FilterKeysAndPassToDevConsole(theCode);
 		}
 
 		if (theEvent.type == SDL_KEYUP)
 		{
-			OnKeyReleased((KeyCode)theEvent.key.keysym.sym);
+			KeyCode theCode = CheckAndCorrectSDLArrowKeys(theEvent.key.keysym.sym);
+			OnKeyReleased(theCode);
+		}
+
+		if (theEvent.type == SDL_TEXTINPUT)
+		{
+			// just lettered keys
+			Console::GetInstance()->GetInput((KeyCode)theEvent.key.state);
+
 		}
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void InputSystem::FilterKeysAndPassToDevConsole(int code)
+{
+	if (code == KEYBOARD_ENTER || code == KEYBOARD_BACKSPACE ||
+		code == KEYBOARD_LEFT_ARROW || code == KEYBOARD_RIGHT_ARROW)
+	{
+		Console::GetInstance()->GetInput( (KeyCode) code);
+	}
+
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -127,6 +156,24 @@ void InputSystem::UpdateKeyboard()
 		m_keyStates[keyCode].m_wasJustPressed = false;
 		m_keyStates[keyCode].m_wasJustReleased = false;
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+KeyCode InputSystem::CheckAndCorrectSDLArrowKeys(KeyCode code)
+{
+	if (code > 256)
+	{
+		if (code == SDLK_LEFT)
+			return KEYBOARD_LEFT_ARROW;
+		if (code == SDLK_RIGHT)
+			return KEYBOARD_RIGHT_ARROW;
+		if (code == SDLK_UP)
+			return KEYBOARD_UP_ARROW;
+		if (code == SDLK_DOWN)
+			return KEYBOARD_DOWN_ARROW;
+	}
+
+	return code;
 }
 
 //===============================================================================================

@@ -29,7 +29,9 @@ public:
 	Vector2();
 	Vector2( float theX, float theY );
 
+public:
 	Vector2 operator-() const { return Vector2(-x, -y); }
+	const Vector2 operator+(const Vector2& vecToAdd) const;
 
 public:
 	float x,y;

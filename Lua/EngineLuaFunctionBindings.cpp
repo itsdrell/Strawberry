@@ -9,6 +9,7 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/General/Camera.hpp"
 #include "Engine/Renderer/Images/Sprite.hpp"
+#include "Engine/Core/Tools/Console.hpp"
 
 
 //===============================================================================================
@@ -72,6 +73,8 @@ void BindFunctionToScript(lua_State* theState, FunctionForLua theFunction, const
 //===============================================================================================
 int DrawTestTriangle(lua_State* theState)
 {
+	UNUSED(theState);
+	
 	Renderer* r = Renderer::GetInstance();
 
 	// The code we want
@@ -280,6 +283,12 @@ int LuaSetCameraPosition(lua_State* theState)
 // IsKeyPressed( stringCode )
 int LuaIsKeyPressed(lua_State * theState)
 {
+	if (Console::GetInstance()->m_isOpen == true)
+	{
+		lua_pushboolean(theState, false);
+		return 1;
+	}
+	
 	InputSystem* is = InputSystem::GetInstance();
 	KeyCode keyToCheck = LuaGetKeyCode(theState, 1, 'z');
 
@@ -292,6 +301,12 @@ int LuaIsKeyPressed(lua_State * theState)
 // WasKeyJustPressed( stringCode )
 int LuaWasKeyJustPressed(lua_State * theState)
 {
+	if (Console::GetInstance()->m_isOpen == true)
+	{
+		lua_pushboolean(theState, false);
+		return 1;
+	}
+	
 	InputSystem* is = InputSystem::GetInstance();
 	KeyCode keyToCheck = LuaGetKeyCode(theState, 1, 'z');
 
@@ -304,6 +319,12 @@ int LuaWasKeyJustPressed(lua_State * theState)
 // WasKeyJustReleased( stringCode )
 int LuaWasKeyJustReleased(lua_State * theState)
 {
+	if (Console::GetInstance()->m_isOpen == true)
+	{
+		lua_pushboolean(theState, false);
+		return 1;
+	}
+	
 	InputSystem* is = InputSystem::GetInstance();
 	KeyCode keyToCheck = LuaGetKeyCode(theState, 1, 'z');
 

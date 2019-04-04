@@ -59,10 +59,10 @@ STATIC Rgba Rgba::GetColorByName(const String& name)
 //-----------------------------------------------------------------------------------------------
 STATIC Rgba Rgba::GetRandomColor()
 {
-	int colorIdex = GetRandomIntRange(0, s_defaultColors.size() - 1);
+	int colorIdex = GetRandomIntRange(0, (int)(s_defaultColors.size()) - 1);
 	std::map<String, Rgba>::iterator theIterator = s_defaultColors.begin();
 
-	for (uint i = 0; i < colorIdex; i++)
+	for (int i = 0; i < colorIdex; i++)
 		theIterator++;
 
 	return theIterator->second;
