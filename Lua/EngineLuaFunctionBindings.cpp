@@ -10,6 +10,7 @@
 #include "Engine/Core/General/Camera.hpp"
 #include "Engine/Renderer/Images/Sprite.hpp"
 #include "Engine/Core/Tools/Console.hpp"
+#include "Engine/Renderer/Images/SpriteSheet.hpp"
 
 
 //===============================================================================================
@@ -222,29 +223,31 @@ int LuaDrawAABB2WireFrame(lua_State* theState)
 }
 
 //-----------------------------------------------------------------------------------------------
-// DrawSprite(path, x, y, width, height, rotation, flip X, pixelsPerUnit)
+// DrawSprite(index, x, y, rotation, width, height, flip X, flipY, pixelsPerUnit)
 int LuaDrawSprite(lua_State* theState)
 {
-	String path = LuaGetString(theState, 1, "idk man");
+	int spriteIndex = LuaGetInt(theState, 1, 0);
 	
-	float x = LuaGetFloat(theState, 2, 0);
-	float y = LuaGetFloat(theState, 3, 0);
+	float x = LuaGetFloat(theState, 2, 1);
+	float y = LuaGetFloat(theState, 3, 1);
 	
-	float width = LuaGetFloat(theState, 4, 1.f);
-	float height = LuaGetFloat(theState, 5, 1.f);
+	float rotation = LuaGetFloat(theState, 4, 0.f);
+	
+	float width = LuaGetFloat(theState, 5, 1.f);
+	float height = LuaGetFloat(theState, 6, 1.f);
 
-	float rotation = LuaGetFloat(theState, 6, 0.f);
 	bool flipX = LuaGetBool(theState, 7, false);
 	bool flipY = LuaGetBool(theState, 8, false);
 	
 	float ppu = LuaGetFloat(theState, 9, 1.f);
 
-	Vector2 dimensions = Vector2(width * .5f, height * .5f);
-	Sprite* spriteToDraw = Sprite::CreateOrGetSprite(path, dimensions, ppu);
-
+	Vector2 dimensions = Vector2(width * SPRITE_DIMENSION * .5f, height * SPRITE_DIMENSION * .5f);
+	AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndexAndDimensions(spriteIndex, IntVector2(width, height));
+	Sprite spriteToDraw = Sprite(g_theSpriteSheet->m_texture, dimensions, uvs, ppu);
 
 	Renderer* r = Renderer::GetInstance();
-	r->DrawSpriteRotated2D(Vector3(x,y,0.f), *spriteToDraw, rotation, flipX, flipY);
+	
+	r->DrawSpriteRotated2D(Vector3(x,y,0.f), spriteToDraw, rotation, flipX, flipY);
 
 	return 0;
 }

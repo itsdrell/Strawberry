@@ -33,6 +33,7 @@ public:
 public:
 	AABB2		GetTexCoordsForSpriteCoords(const IntVector2& spriteCoords) const;
 	AABB2		GetTexCoordsForSpriteIndex(int spriteIndex) const;
+	AABB2		GetTexCoordsForSpriteIndexAndDimensions(int spriteIndex, const IntVector2& dimensions) const;
 
 	int			GetIndexFromSpriteCoords(const IntVector2& spriteCoords) const;
 	IntVector2	GetCoordsFromSpriteIndex(int index) const;

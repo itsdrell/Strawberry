@@ -1,5 +1,6 @@
 #include "Sprite.hpp"
-#include "../Renderer.hpp"
+#include "Engine/Renderer/Renderer.hpp"
+#include "Engine/Renderer/Images/Texture.hpp"
 
 //===============================================================================================
 std::map<String, Sprite*> Sprite::s_sprites;
@@ -21,6 +22,16 @@ Sprite::Sprite(const String & path, const Vector2 & dimensions, float pixelsPerU
 	m_uvs = uvs;
 
 	s_sprites.insert(std::pair<String, Sprite*>(m_path, this));
+}
+
+//-----------------------------------------------------------------------------------------------
+Sprite::Sprite(const Texture* theTexture, const Vector2& dimensions, const AABB2& uvs /*= AABB2::ZERO_TO_ONE*/, float pixelsPerUnit /*= 1.f*/, const Vector2& pivot /*= Vector2(.5f, .5f)*/)
+{
+	m_texture = theTexture;
+	m_dimensions = dimensions;
+	m_uvs = uvs;
+	m_pixelsPerUnit = pixelsPerUnit;
+	m_pivot = pivot;
 }
 
 //-----------------------------------------------------------------------------------------------

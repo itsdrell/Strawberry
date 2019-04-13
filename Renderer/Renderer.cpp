@@ -375,7 +375,7 @@ void Renderer::SetShader(Shader* shader /*= nullptr */)
 }
 
 //-----------------------------------------------------------------------------------------------
-void Renderer::SetCurrentTexture(int bindIndex /*= 0*/, Texture* texture /*= nullptr*/)
+void Renderer::SetCurrentTexture(int bindIndex /*= 0*/, const Texture* texture /*= nullptr*/)
 {
 	GL_CHECK_ERROR();
 
@@ -384,7 +384,7 @@ void Renderer::SetCurrentTexture(int bindIndex /*= 0*/, Texture* texture /*= nul
 		texture = m_defaultTexture;
 	}
 
-	m_currentTexture = texture;
+	m_currentTexture = (Texture*) texture;
 
 	// Bind the texture
 #ifdef EMSCRIPTEN_PORT
@@ -612,7 +612,6 @@ void Renderer::DrawTexturedAABB2(const AABB2& bounds, const Texture& texture, co
 	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices, 6);
 }
 
-
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawSpriteRotated2D(const Vector3& position, const Sprite& theSprite, 
 	float rotation /*= Vector2(0.f, 0.f)*/, bool flipX, bool flipY)
@@ -665,13 +664,13 @@ void Renderer::DrawSprite(const Vector3& position, const Sprite& theSprite, bool
 
 	Vertex3D_PCU vertices[] =
 	{
-		Vertex3D_PCU(p0, Rgba(255,255,255,255), bl),
-		Vertex3D_PCU(p1, Rgba(255,255,255,255), br),
-		Vertex3D_PCU(p2, Rgba(255,255,255,255), tr),
-
-		Vertex3D_PCU(p0, Rgba(255,255,255,255), bl),
-		Vertex3D_PCU(p2, Rgba(255,255,255,255), tr),
-		Vertex3D_PCU(p3, Rgba(255,255,255,255), tl)
+		Vertex3D_PCU(p0, Rgba::WHITE, bl),
+		Vertex3D_PCU(p1, Rgba::WHITE, br),
+		Vertex3D_PCU(p2, Rgba::WHITE, tr),
+							 
+		Vertex3D_PCU(p0, Rgba::WHITE, bl),
+		Vertex3D_PCU(p2, Rgba::WHITE, tr),
+		Vertex3D_PCU(p3, Rgba::WHITE, tl)
 	};
 
 	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices, 6);

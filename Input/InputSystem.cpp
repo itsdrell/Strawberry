@@ -10,11 +10,11 @@ InputSystem*		g_theInputSystem = nullptr;
 //-----------------------------------------------------------------------------------------------
 // https://wiki.libsdl.org/SDL_Keycode
 #pragma warning( disable : 4310 ) // weird warning about "cast truncates constant value" should be fine tho :o
-const KeyCode KEYBOARD_SPACE			= (const KeyCode) SDLK_SPACE;
-const KeyCode KEYBOARD_LSHIFT			= (const KeyCode) SDLK_LSHIFT;
-const KeyCode KEYBOARD_ENTER			= (const KeyCode) SDLK_RETURN;
-const KeyCode KEYBOARD_BACKSPACE		= (const KeyCode) SDLK_BACKSPACE;
-const KeyCode KEYBOARD_TILDE			= (const KeyCode) SDLK_BACKQUOTE;
+//const KeyCode KEYBOARD_SPACE			= (const KeyCode) SDLK_SPACE;
+//const KeyCode KEYBOARD_LSHIFT			= (const KeyCode) SDLK_LSHIFT;
+//const KeyCode KEYBOARD_ENTER			= (const KeyCode) SDLK_RETURN;
+//const KeyCode KEYBOARD_BACKSPACE		= (const KeyCode) SDLK_BACKSPACE;
+//const KeyCode KEYBOARD_TILDE			= (const KeyCode) SDLK_BACKQUOTE;
 
 
 //===============================================================================================
@@ -115,15 +115,14 @@ void InputSystem::PollEvents()
 
 		if (theEvent.type == SDL_KEYDOWN)
 		{
-			//String text = SDL_GetKeyName(theEvent.key.keysym.sym);
-			KeyCode theCode = CheckAndCorrectSDLArrowKeys(theEvent.key.keysym.sym);
+			KeyCode theCode = LookUpKeyCodeFromSDLKeySym(theEvent.key.keysym.sym);
 			OnKeyPressed(theCode);
 			FilterKeysAndPassToDevConsole(theCode);
 		}
 
 		if (theEvent.type == SDL_KEYUP)
 		{
-			KeyCode theCode = CheckAndCorrectSDLArrowKeys(theEvent.key.keysym.sym);
+			KeyCode theCode = LookUpKeyCodeFromSDLKeySym(theEvent.key.keysym.sym);
 			OnKeyReleased(theCode);
 		}
 
@@ -131,6 +130,7 @@ void InputSystem::PollEvents()
 		{
 			// just lettered keys
 			Console::GetInstance()->GetInput((KeyCode)theEvent.key.state);
+			theEvent.text.text;
 
 		}
 	}
@@ -174,6 +174,61 @@ KeyCode InputSystem::CheckAndCorrectSDLArrowKeys(KeyCode code)
 	}
 
 	return code;
+}
+
+//-----------------------------------------------------------------------------------------------
+KeyCode InputSystem::LookUpKeyCodeFromSDLKeySym(KeyCode code)
+{
+	// early out for most letter keys
+	if (code < 256)
+		return code;
+
+	if (code == SDLK_SPACE)
+		return KEYBOARD_SPACE;
+	if (code == SDLK_LSHIFT)
+		return KEYBOARD_LSHIFT;
+	if (code == SDLK_RETURN)
+		return KEYBOARD_ENTER;
+	if (code == SDLK_BACKSPACE)
+		return KEYBOARD_BACKSPACE;
+	if (code == SDLK_BACKQUOTE)
+		return KEYBOARD_TILDE;
+
+	if (code == SDLK_LEFT)
+		return KEYBOARD_LEFT_ARROW;
+	if (code == SDLK_RIGHT)
+		return KEYBOARD_RIGHT_ARROW;
+	if (code == SDLK_UP)
+		return KEYBOARD_UP_ARROW;
+	if (code == SDLK_DOWN)
+		return KEYBOARD_DOWN_ARROW;
+
+	if (code == SDLK_F1)
+		return KEYBOARD_F1;
+	if (code == SDLK_F2)
+		return KEYBOARD_F2;
+	if (code == SDLK_F3)
+		return KEYBOARD_F3;
+	if (code == SDLK_F4)
+		return KEYBOARD_F4;
+	if (code == SDLK_F5)
+		return KEYBOARD_F5;
+	if (code == SDLK_F6)
+		return KEYBOARD_F6;
+	if (code == SDLK_F7)
+		return KEYBOARD_F7;
+	if (code == SDLK_F8)
+		return KEYBOARD_F8;
+	if (code == SDLK_F9)
+		return KEYBOARD_F9;
+	if (code == SDLK_F10)
+		return KEYBOARD_F10;
+	if (code == SDLK_F11)
+		return KEYBOARD_F11;
+	if (code == SDLK_F12)
+		return KEYBOARD_F12;
+
+	return 0;
 }
 
 //===============================================================================================

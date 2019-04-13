@@ -60,7 +60,7 @@ public:
 	void SetDefaultDrawColor(const Rgba& theColor);
 	void BindCameraToShader(const Camera& theCamera);
 	void SetShader( Shader* shader = nullptr );
-	void SetCurrentTexture( int bindIndex = 0, Texture* texture = nullptr);
+	void SetCurrentTexture( int bindIndex = 0, const Texture* texture = nullptr);
 	Texture* CreateRenderTarget( int width, int height, eTextureFormat format = TEXTURE_FORMAT_RGBA8 );
 
 public:
@@ -81,6 +81,8 @@ public:
 	void DrawAABB2Filled(const AABB2& bounds, const Rgba& color = Rgba(255, 255, 255, 255));
 	void DrawTexturedAABB2(const AABB2& bounds, const Texture& texture,
 		const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const Rgba& tint );
+
+	//void DrawTexturedOOBB2(const Vector3& position, const Texture& theTexture, const AABB2& uvs, float rotation = 0.f, bool flipX = false, bool flipY = false);
 
 	void DrawSpriteRotated2D(const Vector3& position, const Sprite& theSprite, float rotation = 0.f, bool flipX = false, bool flipY = false);
 

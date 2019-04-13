@@ -37,6 +37,7 @@ AABB2 SpriteSheet::GetTexCoordsForSpriteCoords(const IntVector2 & spriteCoords) 
 	return AABB2(Vector2(minx, 1.f - maxy), Vector2(maxx, 1.f - miny));
 }
 
+//-----------------------------------------------------------------------------------------------
 AABB2 SpriteSheet::GetTexCoordsForSpriteIndex(int spriteIndex) const
 {
 	int indexX = spriteIndex % m_spriteLayout.x;
@@ -45,6 +46,24 @@ AABB2 SpriteSheet::GetTexCoordsForSpriteIndex(int spriteIndex) const
 	return GetTexCoordsForSpriteCoords(IntVector2(indexX, indexY));
 }
 
+//-----------------------------------------------------------------------------------------------
+AABB2 SpriteSheet::GetTexCoordsForSpriteIndexAndDimensions(int spriteIndex, const IntVector2& dimensions) const
+{
+	IntVector2 startingSpriteCoords = GetCoordsFromSpriteIndex(spriteIndex);
+	IntVector2 endingSpriteCoords = startingSpriteCoords + (dimensions - IntVector2(1, 1));
+
+	// drawing just one sprite case
+	if (endingSpriteCoords == startingSpriteCoords)
+		return GetTexCoordsForSpriteCoords(startingSpriteCoords);
+	
+	AABB2 startingUVs = GetTexCoordsForSpriteCoords(startingSpriteCoords);
+	AABB2 endUVs = GetTexCoordsForSpriteCoords(endingSpriteCoords);
+
+	// have to flip the y's since GetTexCoordsForSpriteCoords inverts the Y's
+	return AABB2(startingUVs.mins.x, endUVs.mins.y, endUVs.maxs.x, startingUVs.maxs.y);
+}
+
+//-----------------------------------------------------------------------------------------------
 int SpriteSheet::GetIndexFromSpriteCoords(const IntVector2 & spriteCoords) const
 {
 	// y * width + x
@@ -52,6 +71,7 @@ int SpriteSheet::GetIndexFromSpriteCoords(const IntVector2 & spriteCoords) const
 	return result;
 }
 
+//-----------------------------------------------------------------------------------------------
 IntVector2 SpriteSheet::GetCoordsFromSpriteIndex(int index) const
 {
 	int indexX = index % m_spriteLayout.x;

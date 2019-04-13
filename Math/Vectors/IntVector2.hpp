@@ -30,6 +30,11 @@ public:
 	IntVector2(int theX, int theY);
 
 public:
+	const IntVector2 operator+(const IntVector2& vecToAdd) const;
+	const IntVector2 operator-(const IntVector2& vecToSubtract) const;
+	const bool operator==(const IntVector2& vecToCompare) const;
+
+public:
 	int x,y;
 };
 

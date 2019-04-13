@@ -36,6 +36,9 @@ public:
 	Sprite() {}
 	Sprite(const String& path, const Vector2& dimensions, 
 		float pixelsPerUnit = 1.f, const Vector2& pivot = Vector2(.5f, .5f), const AABB2& uvs = AABB2::ZERO_TO_ONE);
+	Sprite(const Texture* theTexture, const Vector2& dimensions, const AABB2& uvs = AABB2::ZERO_TO_ONE,
+		float pixelsPerUnit = 1.f, const Vector2& pivot = Vector2(.5f, .5f));
+
 
 public:
 	static Sprite* CreateOrGetSprite(const String& path, const Vector2& dimensions,
@@ -48,12 +51,12 @@ private:
 	static void DeleteSprites();
 
 public:
-	Texture*		m_texture = nullptr;
-	AABB2			m_uvs = AABB2::ZERO_TO_ONE;
-	String			m_path;
-	Vector2			m_dimensions;
-	Vector2			m_pivot = Vector2(.5f, .5f);
-	float			m_pixelsPerUnit = 1.f;
+	const Texture*		m_texture = nullptr;
+	AABB2				m_uvs = AABB2::ZERO_TO_ONE;
+	String				m_path;
+	Vector2				m_dimensions;
+	Vector2				m_pivot = Vector2(.5f, .5f);
+	float				m_pixelsPerUnit = 1.f;
 
 private:
 	static std::map<String, Sprite*>			s_sprites;
