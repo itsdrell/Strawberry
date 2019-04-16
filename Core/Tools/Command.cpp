@@ -78,7 +78,16 @@ CommandRegistration::~CommandRegistration()
 //-----------------------------------------------------------------------------------------------
 void CommandRegistration::DeleteAllRegisteredCommands()
 {
-	DeleteAndClearMap(s_callbacks);
+	//DeleteAndClearMap(s_callbacks);
+	std::map<String, CommandRegistration*>::iterator theIterator;
+
+	for (theIterator = s_callbacks.begin(); theIterator != s_callbacks.end(); theIterator++)
+	{
+		delete theIterator->second;
+		theIterator->second = nullptr;
+	}
+
+	s_callbacks.clear();
 }
 
 //-----------------------------------------------------------------------------------------------

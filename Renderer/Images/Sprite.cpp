@@ -8,14 +8,15 @@ std::map<String, Sprite*> Sprite::s_sprites;
 //===============================================================================================
 Sprite::Sprite(const String & path, const Vector2 & dimensions, float pixelsPerUnit, const Vector2 & pivot, const AABB2 & uvs)
 {
+	String fullPath = path;
 #ifdef EMSCRIPTEN_PORT
-	path = "Run_Win32/" + path;
+	fullPath = "Run_Win32/" + path;
 #endif
 
 	Renderer* r = Renderer::GetInstance();
 	m_texture = r->CreateOrGetTexture(path, true);
 
-	m_path = path;
+	m_path = fullPath;
 	m_dimensions = dimensions;
 	m_pixelsPerUnit = pixelsPerUnit;
 	m_pivot = pivot;
@@ -37,15 +38,16 @@ Sprite::Sprite(const Texture* theTexture, const Vector2& dimensions, const AABB2
 //-----------------------------------------------------------------------------------------------
 STATIC Sprite* Sprite::CreateOrGetSprite(const String& path, const Vector2& dimensions, float pixelsPerUnit /*= 1.f*/, const Vector2& pivot /*= Vector2(.5f, .5f)*/, const AABB2& uvs /*= AABB2::ZERO_TO_ONE*/)
 {
+	String fullPath = path;
 #ifdef EMSCRIPTEN_PORT
-	path = "Run_Win32/" + path;
+	fullPath = "Run_Win32/" + path;
 #endif
 
-	Sprite* theSprite = GetSprite(path);
+	Sprite* theSprite = GetSprite(fullPath);
 
 	if (theSprite == nullptr)
 	{
-		theSprite = new Sprite(path, dimensions, pixelsPerUnit, pivot, uvs);
+		theSprite = new Sprite(fullPath, dimensions, pixelsPerUnit, pivot, uvs);
 	}
 
 	return theSprite;

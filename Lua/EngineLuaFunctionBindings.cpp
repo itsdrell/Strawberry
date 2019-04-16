@@ -11,6 +11,8 @@
 #include "Engine/Renderer/Images/Sprite.hpp"
 #include "Engine/Core/Tools/Console.hpp"
 #include "Engine/Renderer/Images/SpriteSheet.hpp"
+#include <cstdlib>
+#include <cmath>
 
 
 //===============================================================================================
@@ -343,13 +345,15 @@ int LuaWasKeyJustReleased(lua_State * theState)
 int LuaPlayOneShot(lua_State * theState)
 {
 	String path = LuaGetString(theState, 1, "idk");
+	String fileLocation = path;
 
 #ifdef EMSCRIPTEN_PORT
-	path = "Run_Win32/" + path;
+	fileLocation = "Run_Win32/" + fileLocation;
 #endif
 
+	// create or get does the append Run_win32 so it is a different string than play sound here
 	AudioSystem::GetInstance()->CreateOrGetSound(path);
-	PlayOneShot(path);
+	PlayOneShot(fileLocation);
 	
 	return 0;
 }
@@ -359,13 +363,15 @@ int LuaPlayOneShot(lua_State * theState)
 int LuaPlayBackgroundMusic(lua_State * theState)
 {
 	String path = LuaGetString(theState, 1, "idk");
+	String fileLocation = path;
 
 #ifdef EMSCRIPTEN_PORT
-	path = "Run_Win32/" + path;
+	fileLocation = "Run_Win32/" + fileLocation;
 #endif
 
+	// create or get does the append Run_win32 so it is a different string than play sound here
 	AudioSystem::GetInstance()->CreateOrGetSound(path);
-	PlayLoopingSound(path);
+	PlayLoopingSound(fileLocation);
 
 	return 0;
 }
@@ -393,7 +399,7 @@ int LuaStopMusic(lua_State * theState)
 int LuaAbsoluteValue(lua_State * theState)
 {
 	float number = LuaGetFloat(theState, 1, 1.0f);
-	float result = abs(number);
+	float result = (float) std::abs((double) number);
 
 	lua_pushnumber(theState, result);
 	

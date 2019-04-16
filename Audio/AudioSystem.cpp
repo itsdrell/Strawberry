@@ -81,17 +81,22 @@ SoundID AudioSystem::CreateOrGetSound(const String & soundFilePath)
 
 #ifdef EMSCRIPTEN_PORT
 	thePath = String("Run_Win32/" + thePath);
+	//PrintLog("Loaded Sound:" + thePath);
 #endif
 
 	std::map< std::string, SoundID >::iterator found = m_registeredSoundIDs.find( thePath );
 	if( found != m_registeredSoundIDs.end() )
 	{
+		PrintLog("Found the sound at" + thePath);
 		return found->second;
 	}
 	else
 	{
+		PrintLog("Creating the sound at" + thePath);
 		FMOD::Sound* newSound = nullptr;
-		m_fmodSystem->createSound( thePath.c_str(), FMOD_DEFAULT, nullptr, &newSound );
+		FMOD_RESULT theResult = m_fmodSystem->createSound( thePath.c_str(), FMOD_DEFAULT, nullptr, &newSound );
+		ValidateResult(theResult);
+
 		if( newSound )
 		{
 			SoundID newSoundID = m_registeredSounds.size();
@@ -146,15 +151,23 @@ AudioSystem * AudioSystem::GetInstance()
 SoundPlaybackID AudioSystem::PlaySound(SoundID soundID, bool isLooped, float volume, float balance, float speed, bool isPaused)
 {
 	size_t numSounds = m_registeredSounds.size();
-	if( soundID < 0 || soundID >= numSounds )
+	if (soundID < 0 || soundID >= numSounds)
+	{
+		PrintLog("Sound ID is invalid");
 		return MISSING_SOUND_ID;
+	}
 
 	FMOD::Sound* sound = m_registeredSounds[ soundID ];
-	if( !sound )
+	if (!sound)
+	{
+		PrintLog("Registered Sound is null");
 		return MISSING_SOUND_ID;
+	}
 
 	FMOD::Channel* channelAssignedToSound = nullptr;
-	m_fmodSystem->playSound( sound, nullptr, isPaused, &channelAssignedToSound );
+	FMOD_RESULT theResult = m_fmodSystem->playSound( sound, nullptr, isPaused, &channelAssignedToSound );
+	ValidateResult(theResult);
+	
 	if( channelAssignedToSound )
 	{
 		int loopCount = isLooped ? -1 : 0;

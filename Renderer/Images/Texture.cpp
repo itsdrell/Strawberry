@@ -5,6 +5,7 @@
 #include "Engine/Core/General/EngineCommon.hpp"
 #include "Engine/Internal/EmscriptenCommon.hpp"
 #include "Engine/ThirdParty/SDL2/SDL.h"
+#include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 
 //===============================================================================================
 Texture::Texture()
@@ -31,6 +32,9 @@ Texture::Texture(const String& filePath, bool flip /*= true*/)
 
 	// Load (and decompress) the image RGB(A) bytes from a file on disk, and create an OpenGL texture instance from it
 	unsigned char* imageData = stbi_load( filePath.c_str(), &m_dimensions.x, &m_dimensions.y, &numComponents, numComponentsRequested );
+
+	if (imageData == nullptr || m_dimensions.x == 0)
+		PrintLog("Could not load texture: " + filePath);
 
 	PopulateFromData( imageData, m_dimensions, numComponents );
 	stbi_image_free( imageData );

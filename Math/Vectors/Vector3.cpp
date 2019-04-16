@@ -1,5 +1,5 @@
 #include "Vector3.hpp"
-#include <corecrt_math.h>
+#include "Engine/Math/MathUtils.hpp"
 
 //===============================================================================================
 const Vector3 Vector3::ZERO = Vector3(0.f, 0.f, 0.f);
@@ -36,7 +36,7 @@ Vector3::Vector3(const Vector2& xy)
 //-----------------------------------------------------------------------------------------------
 float Vector3::GetLength() const
 {
-	return sqrtf((x*x) + y * y + z * z);
+	return SquareRoot((x*x) + y * y + z * z);
 }
 
 //-----------------------------------------------------------------------------------------------

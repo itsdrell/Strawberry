@@ -9,9 +9,9 @@ BlackBoard* g_theGameBlackboard = nullptr;
 BlackBoard::BlackBoard()
 {
 #ifndef EMSCRIPTEN_PORT
-	m_blackboardLuaScript = new LuaScript("GameConfig.lua");
+	m_blackboardLuaScript = new LuaScript("Scripts/GameConfig.lua");
 #else
-	m_blackboardLuaScript = new LuaScript("Run_Win32/GameConfig.lua");
+	m_blackboardLuaScript = new LuaScript("Scripts/GameConfig.lua");
 #endif
 
 	GetAllColorsFromGameConfigColorsTable();

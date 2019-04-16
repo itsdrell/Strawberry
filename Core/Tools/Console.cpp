@@ -8,8 +8,9 @@
 #include "Engine/Core/Tools/EngineConsoleCommands.hpp"
 #include "Engine/Core/Tools/Clock.hpp"
 #include "Engine/Math/MathUtils.hpp"
-#include "ErrorWarningAssert.hpp"
+#include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 
+#include "Engine/ThirdParty/SDL2/SDL_keycode.h"
 
 //===============================================================================================
 Console* Console::s_instance = nullptr;

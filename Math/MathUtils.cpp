@@ -1,7 +1,8 @@
 #include "MathUtils.hpp"
 #include "Engine/Math/Vectors/Vector2.hpp"
-#include <corecrt_math.h>
+//#include <corecrt_math.h>
 #include <stdlib.h>
+#include <cmath>
 
 //===============================================================================================
 float RangeMapFloat(float inValue, float inStart, float inEnd, float outStart, float outEnd)
@@ -126,6 +127,12 @@ float GetFractionOf(float value)
 {
 	double wholeNumber;
 	return (float) modf((double)value, &wholeNumber);
+}
+
+//-----------------------------------------------------------------------------------------------
+float SquareRoot(float value)
+{
+	return sqrtf(value);
 }
 
 //-----------------------------------------------------------------------------------------------

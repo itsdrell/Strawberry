@@ -4,8 +4,8 @@
 //====================================================================================
 // Forward Declare
 //====================================================================================
-template <typename S, typename T>
-void DeleteAndClearMap(std::map<S, T>& themap);
+//template <typename S, typename T>
+//void DeleteAndClearMap(std::map<S, T>& themap);
 
 
 //====================================================================================
@@ -26,19 +26,20 @@ void DeleteAndClearMap(std::map<S, T>& themap);
 //====================================================================================
 // Templates
 //====================================================================================
-template <typename S, typename T>
-void DeleteAndClearMap(std::map<S, T>& themap)
-{
-	std::map<S, T>::iterator theIterator;
-
-	for (theIterator = themap.begin(); theIterator != themap.end(); theIterator++)
-	{
-		delete theIterator->second;
-		theIterator->second = nullptr;
-	}
-
-	themap.clear();
-}
+// emscripten threw errors for this :(
+//template <typename S, typename T>
+//void DeleteAndClearMap(std::map<S, T>& themap)
+//{
+//	std::map<typename S, typename T>::iterator theIterator;
+//
+//	for (theIterator = themap.begin(); theIterator != themap.end(); theIterator++)
+//	{
+//		delete theIterator->second;
+//		theIterator->second = nullptr;
+//	}
+//
+//	themap.clear();
+//}
 
 
 //====================================================================================

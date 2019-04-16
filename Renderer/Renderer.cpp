@@ -155,8 +155,8 @@ void Renderer::RenderPostStartUp()
 	m_defaultDrawColor = Rgba(0, 0, 0, 255);
 	m_clearScreenColor = m_defaultDrawColor;
 
-	//m_defaultFont = CreateOrGetBitmapFont("Images/StrawberryFont.png");
-	m_defaultFont = CreateOrGetBitmapFont("Images/font.png");
+	m_defaultFont = CreateOrGetBitmapFont("Images/StrawberryFont.png");
+	//m_defaultFont = CreateOrGetBitmapFont("Images/font.png");
 
 }
 
@@ -307,10 +307,10 @@ void Renderer::ClearScreen(const Rgba & clearColor)
 //-----------------------------------------------------------------------------------------------
 void Renderer::EnableWireframe(bool check)
 {
-	if (check)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//if (check)
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//else
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -507,7 +507,7 @@ void Renderer::SetUniform(const String& name, const Rgba& uniform)
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawLine2D(const Vector2& start, const Vector2& end, const Rgba& color /*= Rgba(0, 0, 0, 255)*/)
 {
-	m_currentTexture = m_defaultTexture;
+	SetCurrentTexture(0, nullptr);
 
 	// Create the array
 	Vertex3D_PCU vertices[2];
@@ -968,21 +968,23 @@ void Renderer::DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, 
 //-----------------------------------------------------------------------------------------------
 Texture* Renderer::CreateOrGetTexture(const String& path, bool flip /*= true*/)
 {
+	String fullPath = path;
 #ifdef EMSCRIPTEN_PORT
-	path = "Run_Win32/" + path;
+	fullPath = "Run_Win32/" + path;
 #endif
 	
 	std::map<String, Texture*>::iterator textureIterator;
 
 	for (textureIterator = m_createdTextures.begin(); textureIterator != m_createdTextures.end(); textureIterator++)
 	{
-		if (textureIterator->first == path)
+		if (textureIterator->first == fullPath)
 			return textureIterator->second;
 	}
 
 	// need to make it
-	Texture* newTexture = new Texture(path, flip);
-	m_createdTextures.insert(std::pair<String, Texture*>(path, newTexture));
+	PrintLog("Created a texture at address: " + fullPath);
+	Texture* newTexture = new Texture(fullPath, flip);
+	m_createdTextures.insert(std::pair<String, Texture*>(fullPath, newTexture));
 
 	return newTexture;
 }
@@ -990,24 +992,23 @@ Texture* Renderer::CreateOrGetTexture(const String& path, bool flip /*= true*/)
 //-----------------------------------------------------------------------------------------------
 BitmapFont* Renderer::CreateOrGetBitmapFont(const String& path)
 {
-#ifdef EMSCRIPTEN_PORT
-	path = "Run_Win32/" + path;
-#endif
+	String fullPath = path;
 
 	std::map<String, BitmapFont*>::iterator theIterator;
 
 	for (theIterator = m_createdFonts.begin(); theIterator != m_createdFonts.end(); theIterator++)
 	{
-		if (theIterator->first == path)
+		if (theIterator->first == fullPath)
 			return theIterator->second;
 	}
 
+	// create or get texture adds the full path for us 
 	Texture* fontTexture = CreateOrGetTexture(path);
 	SpriteSheet* fontSpriteSheet = new SpriteSheet(fontTexture, 16, 16);
 
-	BitmapFont* newFont = new BitmapFont(path, *fontSpriteSheet, 1.f);
+	BitmapFont* newFont = new BitmapFont(fullPath, *fontSpriteSheet, 1.f);
 
-	m_createdFonts.insert(std::pair<String, BitmapFont*>(path, newFont));
+	m_createdFonts.insert(std::pair<String, BitmapFont*>(fullPath, newFont));
 
 	return newFont;
 }
