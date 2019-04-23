@@ -93,6 +93,9 @@ public:
 	void DrawText2D(const Vector2& drawMins, const String& text, float cellHeight, 
 		const Rgba& tint = Rgba::WHITE, float aspectScale = 1.7f, BitmapFont* font = nullptr);
 
+	void DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, float aspectScale = 1.77f,
+		const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
+
 public:
 	void DrawMeshImmediate( PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices );
 	void DrawMeshImmediate( PrimitiveType thePrimitive, uint vertexCount, Vertex3D_PCU* vertices, uint indicesCount = 0, uint* indices = nullptr );

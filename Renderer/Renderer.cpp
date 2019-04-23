@@ -19,6 +19,7 @@
 #include "Engine/Renderer/Images/Sprite.hpp"
 #include "Engine/Renderer/Images/SpriteSheet.hpp"
 #include "Engine/Renderer/Images/BitmapFont.hpp"
+#include "Engine/Core/Utils/StringUtils.hpp"
 
 
 
@@ -145,6 +146,8 @@ void Renderer::RenderPostStartUp()
 	m_defaultUICamera = new Camera();
 	m_defaultUICamera->SetColorTarget( m_defaultColorTarget );
 	m_defaultUICamera->SetProjectionOrthoByAspect(1.f);
+	m_defaultUICamera->SetProjectionOrtho2D(Vector2(0.f, 0.f), Vector2(Window::GetInstance()->GetAspect(), 1.f));
+	//m_defaultUICamera->m_projectionMatrix = Matrix44::MakeOrtho2D(Vector2(0.f, 0.f), Vector2(Window::GetInstance()->GetAspect(), 1));
 
 	// set our default camera to be our current camera
 	SetCamera(nullptr); 
@@ -155,8 +158,8 @@ void Renderer::RenderPostStartUp()
 	m_defaultDrawColor = Rgba(0, 0, 0, 255);
 	m_clearScreenColor = m_defaultDrawColor;
 
-	m_defaultFont = CreateOrGetBitmapFont("Images/StrawberryFont.png");
-	//m_defaultFont = CreateOrGetBitmapFont("Images/font.png");
+	//m_defaultFont = CreateOrGetBitmapFont("Images/StrawberryFont.png");
+	m_defaultFont = CreateOrGetBitmapFont("Images/font.png");
 
 }
 
@@ -724,6 +727,52 @@ void Renderer::DrawText2D(const Vector2& startPos, const String& text, float cel
 	}
 
 	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices.data(), (int) vertices.size());
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight , float aspectScale, 
+	const Rgba& textColor, BitmapFont* font)
+{
+	if (font == nullptr)
+	{
+		font = m_defaultFont;
+	}
+
+	SetCurrentTexture(0, font->m_spriteSheet->m_texture);
+
+	float width = boxSize.GetWidth();
+	float fontWidth = cellHeight * aspectScale;
+	Vector2 currentPosition = Vector2(boxSize.mins.x + fontWidth, boxSize.maxs.y - (cellHeight * 2.f));
+
+	std::vector<std::string> vectorOfWords = BreakSentenceIntoWords(text);
+
+	for (int i = 0; i < (int)vectorOfWords.size(); i++)
+	{
+		// Get the length of the word
+		String currentWord = vectorOfWords.at(i);
+		float wordSize = ((float)currentWord.size() * fontWidth);
+
+		if (currentWord == "\n")
+		{
+			currentPosition.x = (boxSize.mins.x + fontWidth);
+			currentPosition.y -= cellHeight;
+		}
+		else
+		{
+			float endPos = currentPosition.x + wordSize;
+
+			// WRAP the x
+			if (endPos >= (boxSize.mins.x + width))
+			{
+				currentPosition.x = (boxSize.mins.x + fontWidth);
+				currentPosition.y -= cellHeight;
+			}
+
+			DrawText2D(currentPosition, currentWord, cellHeight, textColor, aspectScale, font);
+
+			currentPosition.x += (wordSize + fontWidth);
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

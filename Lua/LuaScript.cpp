@@ -66,7 +66,7 @@ void LuaScript::AddBindingsToScript()
 //-----------------------------------------------------------------------------------------------
 void LuaScript::LogError()
 {
-	printf("//---------------------------------------------------------------------------- \n");
+	PrintLog("\n//---------------------------------------------------------------------------- \n");
 	
 	String loadErrorMessage = LuaErrorCodeToString(m_errorCode);
 	String msg = lua_tostring(m_state, -1);
@@ -77,12 +77,12 @@ void LuaScript::LogError()
 
 	m_errorMessage = 
 		loadErrorMessage + 
-		"\nOn Line: " + lineNumber + 
+		"\nOn Line: " + lineNumber +  
 		"\nReason: " + String(msg) + "\n";
 	lua_pop(m_state, 1);  /* remove message */
 
-	printf(m_errorMessage.c_str());
-	printf("//---------------------------------------------------------------------------- \n");
+	PrintLog(m_errorMessage.c_str());
+	PrintLog("//---------------------------------------------------------------------------- \n");
 }
 
 //-----------------------------------------------------------------------------------------------

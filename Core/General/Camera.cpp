@@ -2,6 +2,7 @@
 #include "Engine/Math/Matrices/Matrix44.hpp"
 #include "Engine/Math/Vectors/Vector3.hpp"
 
+
 #ifdef EMSCRIPTEN_PORT
 #else
 #include "Engine/Core/Platform/Window.hpp"
@@ -44,6 +45,13 @@ void Camera::SetProjectionOrthoByAspect(float height, float theNear /*= -10.f*/,
 		Vector3(-m_orthoDimensions.x *.5f , -m_orthoDimensions.y *.5f, theNear),
 		Vector3(m_orthoDimensions.x * .5f , m_orthoDimensions.y *.5f,  theFar));
 
+}
+
+//-----------------------------------------------------------------------------------------------
+void Camera::SetProjectionOrtho2D(const Vector2& mins, const Vector2& maxs)
+{
+	m_orthoBounds = AABB2(mins, maxs);
+	m_projectionMatrix = Matrix44::MakeOrtho2D(mins, maxs);
 }
 
 //-----------------------------------------------------------------------------------------------
