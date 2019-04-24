@@ -33,6 +33,14 @@ AABB2 SpriteSheet::GetTexCoordsForSpriteCoords(const IntVector2 & spriteCoords) 
 	float maxx = fractionX;
 	float maxy = fractionY;
 
+	// doing a precision fix
+	float reallySmallNumber = .001f;
+	//minx += reallySmallNumber;
+	miny += reallySmallNumber;
+	//maxx -= reallySmallNumber;
+	maxy -= reallySmallNumber;
+
+
 	// What this does is fix the weird texture flip!
 	return AABB2(Vector2(minx, 1.f - maxy), Vector2(maxx, 1.f - miny));
 }
