@@ -345,14 +345,9 @@ int LuaWasKeyJustReleased(lua_State * theState)
 int LuaPlayOneShot(lua_State * theState)
 {
 	String path = LuaGetString(theState, 1, "idk");
-	String fileLocation = path;
+	String fileLocation = "Projects/" + g_currentProjectName + "/" + path;
 
-#ifdef EMSCRIPTEN_PORT
-	fileLocation = "Run_Win32/" + fileLocation;
-#endif
-
-	// create or get does the append Run_win32 so it is a different string than play sound here
-	AudioSystem::GetInstance()->CreateOrGetSound(path);
+	AudioSystem::GetInstance()->CreateOrGetSound(fileLocation);
 	PlayOneShot(fileLocation);
 	
 	return 0;
@@ -363,14 +358,9 @@ int LuaPlayOneShot(lua_State * theState)
 int LuaPlayBackgroundMusic(lua_State * theState)
 {
 	String path = LuaGetString(theState, 1, "idk");
-	String fileLocation = path;
+	String fileLocation = "Projects/" + g_currentProjectName + "/" + path;
 
-#ifdef EMSCRIPTEN_PORT
-	fileLocation = "Run_Win32/" + fileLocation;
-#endif
-
-	// create or get does the append Run_win32 so it is a different string than play sound here
-	AudioSystem::GetInstance()->CreateOrGetSound(path);
+	AudioSystem::GetInstance()->CreateOrGetSound(fileLocation);
 	PlayLoopingSound(fileLocation);
 
 	return 0;
@@ -381,13 +371,9 @@ int LuaPlayBackgroundMusic(lua_State * theState)
 int LuaStopMusic(lua_State * theState)
 {
 	String path = LuaGetString(theState, 1, "idk");
+	String fileLocation = "Projects/" + g_currentProjectName + "/" + path;
 
-#ifdef EMSCRIPTEN_PORT
-	path = "Run_Win32/" + path;
-#endif
-
-	AudioSystem::GetInstance()->CreateOrGetSound(path);
-	StopSound(path);
+	StopSound(fileLocation);
 
 	return 0;
 }

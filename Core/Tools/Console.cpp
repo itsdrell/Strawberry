@@ -150,6 +150,9 @@ void Console::Close()
 {
 	m_isOpen = false;
 	m_currentEntry.clear();
+
+	Renderer::GetInstance()->m_clearScreen = true;
+	Renderer::GetInstance()->SetCurrentTexture();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -214,7 +217,7 @@ void Console::ConsumeInput()
 	}
 	else
 	{
-		if(m_currentEntry != "clear")
+		if(m_currentEntry != "cls")
 			AddConsoleDialogue(m_currentEntry, Rgba::WHITE);
 	}
 
@@ -248,7 +251,7 @@ void Console::AddConsoleDialogue(const String & dialogue, const Rgba & color)
 //-----------------------------------------------------------------------------------------------
 void Console::AddErrorMessage(const String & message)
 {
-	AddConsoleDialogue(message, Rgba::GetColorByName("red"));
+	AddConsoleDialogue(message, Rgba(255,0,0));
 }
 
 //-----------------------------------------------------------------------------------------------

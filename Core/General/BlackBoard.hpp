@@ -15,7 +15,12 @@ class Rgba;
 //====================================================================================
 // ENUMS
 //====================================================================================
-
+enum eBlackboardTypes
+{
+	GAME_BLACKBOARD,
+	ENGINE_BLACKBOARD,
+	DATA_BLACKBOARD
+};
 
 //====================================================================================
 // Structs
@@ -29,6 +34,12 @@ class BlackBoard
 {
 public:
 	BlackBoard();
+	BlackBoard(const String& thePath, eBlackboardTypes type);
+
+public:
+	void CreateDataBlackboard();
+	void CreateEngineBlackboard();
+	void CreateGameBlackboard();
 
 public:
 	float GetValue(const String& name, float defaultValue) const;
@@ -55,6 +66,7 @@ private:
 // Externs
 //====================================================================================
 extern BlackBoard* g_theGameBlackboard;
+extern BlackBoard* g_theEngineBlackboard;
 
 //====================================================================================
 // Written by Zachary Bracken : [3/27/2019]

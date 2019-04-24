@@ -18,18 +18,20 @@ constexpr KeyCode KEYBOARD_RIGHT_ARROW = 0x27;
 constexpr KeyCode KEYBOARD_UP_ARROW =	0x26;
 constexpr KeyCode KEYBOARD_DOWN_ARROW =	0x28;
 
-constexpr KeyCode KEYBOARD_F1 = 0x70;
-constexpr KeyCode KEYBOARD_F2 = 0x71;
-constexpr KeyCode KEYBOARD_F3 = 0x72;
-constexpr KeyCode KEYBOARD_F4 = 0x73;
-constexpr KeyCode KEYBOARD_F5 = 0x74;
-constexpr KeyCode KEYBOARD_F6 = 0x75;
-constexpr KeyCode KEYBOARD_F7 = 0x76;
-constexpr KeyCode KEYBOARD_F8 = 0x77;
-constexpr KeyCode KEYBOARD_F9 = 0x78;
-constexpr KeyCode KEYBOARD_F10 = 0x79;
-constexpr KeyCode KEYBOARD_F11 = 0x7A;
-constexpr KeyCode KEYBOARD_F12 = 0x7B;
+// this is SDL2 look up https://wiki.libsdl.org/SDLKeycodeLookup
+// all the f1 are max int numbers so I am making my own : (
+constexpr KeyCode KEYBOARD_F1 = 0x80; // started at 0x70 but was bad so i am going up 1
+constexpr KeyCode KEYBOARD_F2 = 0x81;
+constexpr KeyCode KEYBOARD_F3 = 0x82;
+constexpr KeyCode KEYBOARD_F4 = 0x83;
+constexpr KeyCode KEYBOARD_F5 = 0x84;
+constexpr KeyCode KEYBOARD_F6 = 0x85;
+constexpr KeyCode KEYBOARD_F7 = 0x86;
+constexpr KeyCode KEYBOARD_F8 = 0x87;
+constexpr KeyCode KEYBOARD_F9 = 0x88;
+constexpr KeyCode KEYBOARD_F10 = 0x89;
+constexpr KeyCode KEYBOARD_F11 = 0x8A;
+constexpr KeyCode KEYBOARD_F12 = 0x8B;
 
 constexpr KeyCode KEYBOARD_SPACE = 0x20;
 constexpr KeyCode KEYBOARD_LSHIFT = 0xA0;

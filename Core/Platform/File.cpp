@@ -7,6 +7,7 @@
 //#include "Engine/Core/Platform/Window.hpp"
 #include <windows.h>
 
+
 #endif
 
 
@@ -58,6 +59,7 @@ String RemoveFileFromDirectoryPath(const char* filepath)
 //-----------------------------------------------------------------------------------------------
 bool DoesDirectoryExist(const char* path)
 {
+#ifndef EMSCRIPTEN_PORT
 	// https://stackoverflow.com/questions/8233842/how-to-check-if-directory-exist-using-c-and-winapi/8233867
 	DWORD ftyp = GetFileAttributesA(path);
 	if (ftyp == INVALID_FILE_ATTRIBUTES)
@@ -65,8 +67,46 @@ bool DoesDirectoryExist(const char* path)
 
 	if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
 		return true;   // this is a directory!
+#endif
 
 	return false;    // this is not a directory!
+}
+
+//-----------------------------------------------------------------------------------------------
+Strings GetAllFoldersInADirectory(const char* directoryPath)
+{
+	Strings results;
+
+	// http://www.martinbroadhurst.com/list-the-files-in-a-directory-in-c.html
+	
+	//std::string pattern(directoryPath);
+	//pattern.append("\\*");
+	////WIN32_FIND_DATA data;
+	//LPWIN32_FIND_DATAA data = NULL;
+	//
+	//HANDLE hFind;
+	//if ((hFind = FindFirstFileA(directoryPath, data)) != INVALID_HANDLE_VALUE) {
+	//	do {
+	//		results.push_back(data->cFileName);
+	//	} while (FindNextFileA(hFind, data) != 0);
+	//	FindClose(hFind);
+	//}
+
+	//std::string pattern(directoryPath);
+	//pattern.append("\\*");
+	//WIN32_FIND_DATA data;
+	//HANDLE hFind;
+	//if ((hFind = FindFirstFile( (LPCWSTR) directoryPath, &data)) != INVALID_HANDLE_VALUE) {
+	//	do {
+	//		results.push_back(String((unsigned char*) data.cFileName[0]));
+	//	} while (FindNextFile(hFind, &data) != 0);
+	//	FindClose(hFind);
+	//}
+	//
+	
+	// TODO
+	results.push_back("Pls do this zac");
+	return results;
 }
 
 //-----------------------------------------------------------------------------------------------

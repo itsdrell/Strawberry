@@ -46,6 +46,7 @@ public:
 	void Advance(uint64_t elapsed);
 
 	void AddChild(Clock *child);
+	void RemoveChild(Clock* child);
 
 public:
 	time_unit_t			frame;

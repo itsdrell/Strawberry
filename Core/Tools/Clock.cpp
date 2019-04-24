@@ -30,6 +30,9 @@ Clock::Clock(Clock * parent)
 //-----------------------------------------------------------------------------------------------
 Clock::~Clock()
 {
+	if(m_parent)
+		m_parent->RemoveChild(this);
+	
 	// you don't delete the parent, just the children
 	for (uint i = 0; i < m_children.size(); i++)
 	{
@@ -101,6 +104,16 @@ void Clock::Advance(uint64_t elapsed)
 void Clock::AddChild(Clock *child)
 {
 	m_children.push_back(child);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Clock::RemoveChild(Clock* child)
+{
+	for (uint i = 0; i < m_children.size(); i++)
+	{
+		if (child == m_children.at(i))
+			RemoveFast(i, m_children);
+	}
 }
 
 //===============================================================================================

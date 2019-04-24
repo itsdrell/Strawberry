@@ -9,6 +9,7 @@ void CreateADirectory(const char* filename);
 void LogStringToFile(const char* filename, const char* text, bool overwrite = false);
 String RemoveFileFromDirectoryPath(const char* filepath);
 bool DoesDirectoryExist(const char* path);
+Strings GetAllFoldersInADirectory(const char* directoryPath);
 
 
 //====================================================================================

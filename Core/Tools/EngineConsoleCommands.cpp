@@ -13,6 +13,8 @@ void BindAllEngineCommands()
 	CommandRegister("quit", "quit", "quit app", QuitApp, false);
 	CommandRegister("create", "create <projectName>", "create new project", CreateNewProject, false);
 	CommandRegister("load", "load <projectName>", "loads project", LoadProject, false);
+	CommandRegister("projects", "projects", "shows all projects", ShowAllProjectNames, false);
+	CommandRegister("folder", "folder", "opens folder to project in explorer", OpenFolder, false);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -97,5 +99,25 @@ void LoadProject(Command & command)
 	{
 		AddConsoleErrorMessage("Could not find: " + projectNameToLoad);
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void ShowAllProjectNames(Command& command)
+{
+	UNUSED(command);
+	Strings allFolders = GetAllFoldersInADirectory("Projects");
+
+	for (uint i = 0; i < allFolders.size(); i++)
+	{
+		AddConsoleDialogue(allFolders.at(i));
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void OpenFolder(Command& command)
+{
+	UNUSED(command);
+
+	AddConsoleErrorMessage("Pls do this zac");
 }
 

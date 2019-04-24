@@ -80,7 +80,7 @@ SoundID AudioSystem::CreateOrGetSound(const String & soundFilePath)
 	String thePath = soundFilePath;
 
 #ifdef EMSCRIPTEN_PORT
-	thePath = String("Run_Win32/" + thePath);
+	//thePath = String("Run_Win32/" + thePath);
 	//PrintLog("Loaded Sound:" + thePath);
 #endif
 

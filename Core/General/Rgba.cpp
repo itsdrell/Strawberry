@@ -5,6 +5,7 @@
 std::map<String, Rgba> Rgba::s_defaultColors;
 
 Rgba Rgba::WHITE = Rgba(255, 255, 255, 255);
+Rgba Rgba::STRAWBERRY_RED = Rgba(210, 74, 97, 255);
 
 //===============================================================================================
 Rgba::Rgba()

@@ -158,8 +158,8 @@ void Renderer::RenderPostStartUp()
 	m_defaultDrawColor = Rgba(0, 0, 0, 255);
 	m_clearScreenColor = m_defaultDrawColor;
 
-	//m_defaultFont = CreateOrGetBitmapFont("Images/StrawberryFont.png");
-	m_defaultFont = CreateOrGetBitmapFont("Images/font.png");
+	//m_defaultFont = CreateOrGetBitmapFont("Data/StrawberryFont.png");
+	m_defaultFont = CreateOrGetBitmapFont("Data/font.png");
 
 }
 

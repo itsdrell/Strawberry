@@ -51,6 +51,7 @@ public:
 
 public:
 	static Rgba WHITE;
+	static Rgba STRAWBERRY_RED;
 };
 
 

@@ -4,6 +4,7 @@
 
 //===============================================================================================
 BlackBoard* g_theGameBlackboard = nullptr;
+BlackBoard* g_theEngineBlackboard = nullptr;
 
 //===============================================================================================
 BlackBoard::BlackBoard()
@@ -16,6 +17,47 @@ BlackBoard::BlackBoard()
 
 	GetAllColorsFromGameConfigColorsTable();
 
+	g_theGameBlackboard = this;
+}
+
+//-----------------------------------------------------------------------------------------------
+BlackBoard::BlackBoard(const String& thePath, eBlackboardTypes type)
+{
+	m_blackboardLuaScript = new LuaScript(thePath);
+
+	switch (type)
+	{
+	case GAME_BLACKBOARD:
+		CreateGameBlackboard();
+		break;
+	case ENGINE_BLACKBOARD:
+		CreateEngineBlackboard();
+		break;
+	case DATA_BLACKBOARD:
+		CreateDataBlackboard();
+		break;
+	default:
+		break;
+	}
+		
+}
+
+//-----------------------------------------------------------------------------------------------
+void BlackBoard::CreateDataBlackboard()
+{
+	// ta do
+}
+
+//-----------------------------------------------------------------------------------------------
+void BlackBoard::CreateEngineBlackboard()
+{
+	g_theEngineBlackboard = this;
+}
+
+//-----------------------------------------------------------------------------------------------
+void BlackBoard::CreateGameBlackboard()
+{
+	GetAllColorsFromGameConfigColorsTable();
 	g_theGameBlackboard = this;
 }
 
@@ -59,6 +101,8 @@ Rgba BlackBoard::GetValue(const String& name, const Rgba& defaultValue) const
 //-----------------------------------------------------------------------------------------------
 void BlackBoard::GetAllColorsFromGameConfigColorsTable()
 {
+	Rgba::s_defaultColors.clear();
+	
 	lua_State* L = m_blackboardLuaScript->GetLuaState();
 	
 	// us finding the global table and putting it on the stack
