@@ -97,6 +97,7 @@ void RemoveFast( uint& idx, std::vector<T>& theVector )
 // Externs
 //====================================================================================
 extern SpriteSheet*			g_theSpriteSheet;
+extern String				g_currentProjectName;
 
 //====================================================================================
 // Written by Zachary Bracken : [1/29/2019]

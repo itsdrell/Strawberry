@@ -1,21 +1,18 @@
 #pragma once
+#include "Engine/Core/General/EngineCommon.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class Command;
+
 
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-void BindAllEngineCommands();
-
-//-----------------------------------------------------------------------------------------------
-void ClearConsole(Command& command);
-void PrintHelp(Command& command);
-void QuitApp(Command& command);
-void CreateNewProject(Command& command);
-void LoadProject(Command& command);
+String GetMainLuaFileAsString();
+String GetLuaGameConfigString();
+String GetMusicTextString();
+String GetSFXTextString();
 
 //====================================================================================
 // Externs
@@ -23,5 +20,5 @@ void LoadProject(Command& command);
 
 
 //====================================================================================
-// Written by Zachary Bracken : [4/3/2019]
+// Written by Zachary Bracken : [4/23/2019]
 //====================================================================================

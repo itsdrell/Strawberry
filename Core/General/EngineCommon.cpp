@@ -12,7 +12,8 @@
 #endif
 
 //===============================================================================================
-SpriteSheet* g_theSpriteSheet = nullptr;
+SpriteSheet*	g_theSpriteSheet = nullptr;
+String			g_currentProjectName = "";
 
 //===============================================================================================
 void EngineStartUp()

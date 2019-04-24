@@ -742,9 +742,11 @@ void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, 
 
 	float width = boxSize.GetWidth();
 	float fontWidth = cellHeight * aspectScale;
-	Vector2 currentPosition = Vector2(boxSize.mins.x + fontWidth, boxSize.maxs.y - (cellHeight * 2.f));
+	float fontHeightSpace = cellHeight * 2.f;
+	Vector2 currentPosition = Vector2(boxSize.mins.x + fontWidth, boxSize.maxs.y - (fontHeightSpace));
 
-	std::vector<std::string> vectorOfWords = BreakSentenceIntoWords(text);
+	// this gets the \n character
+	Strings vectorOfWords = SplitString(text, " ");
 
 	for (int i = 0; i < (int)vectorOfWords.size(); i++)
 	{
@@ -755,7 +757,7 @@ void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, 
 		if (currentWord == "\n")
 		{
 			currentPosition.x = (boxSize.mins.x + fontWidth);
-			currentPosition.y -= cellHeight;
+			currentPosition.y -= fontHeightSpace;
 		}
 		else
 		{
@@ -765,7 +767,7 @@ void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, 
 			if (endPos >= (boxSize.mins.x + width))
 			{
 				currentPosition.x = (boxSize.mins.x + fontWidth);
-				currentPosition.y -= cellHeight;
+				currentPosition.y -= fontHeightSpace;
 			}
 
 			DrawText2D(currentPosition, currentWord, cellHeight, textColor, aspectScale, font);

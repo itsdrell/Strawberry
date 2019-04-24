@@ -77,8 +77,8 @@ void LuaScript::LogError()
 
 	m_errorMessage = 
 		loadErrorMessage + 
-		"\nOn Line: " + lineNumber +  
-		"\nReason: " + String(msg) + "\n";
+		" \n On Line: " + lineNumber +  
+		" \n Reason: " + String(msg) + " \n";
 	lua_pop(m_state, 1);  /* remove message */
 
 	PrintLog(m_errorMessage.c_str());

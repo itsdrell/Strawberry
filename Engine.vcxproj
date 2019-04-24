@@ -228,9 +228,11 @@
   <ItemGroup>
     <ClInclude Include="Audio\AudioSystem.hpp" />
     <ClInclude Include="Core\General\BlackBoard.hpp" />
+    <ClInclude Include="Core\General\BuiltInAssets.hpp" />
     <ClInclude Include="Core\General\Camera.hpp" />
     <ClInclude Include="Core\General\EngineCommon.hpp" />
     <ClInclude Include="Core\General\Rgba.hpp" />
+    <ClInclude Include="Core\Platform\File.hpp" />
     <ClInclude Include="Core\Platform\Time.hpp" />
     <ClInclude Include="Core\Platform\Window.hpp" />
     <ClInclude Include="Core\Tools\Clock.hpp" />
@@ -395,9 +397,11 @@
   <ItemGroup>
     <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Core\General\BlackBoard.cpp" />
+    <ClCompile Include="Core\General\BuiltInAssets.cpp" />
     <ClCompile Include="Core\General\Camera.cpp" />
     <ClCompile Include="Core\General\EngineCommon.cpp" />
     <ClCompile Include="Core\General\Rgba.cpp" />
+    <ClCompile Include="Core\Platform\File.cpp" />
     <ClCompile Include="Core\Platform\Time.cpp" />
     <ClCompile Include="Core\Platform\Window.cpp" />
     <ClCompile Include="Core\Tools\Clock.cpp" />

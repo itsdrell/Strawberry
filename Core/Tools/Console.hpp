@@ -106,7 +106,8 @@ private:
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-
+void AddConsoleDialogue(const String& message, const Rgba& color = Rgba::WHITE);
+void AddConsoleErrorMessage(const String& message);
 
 //====================================================================================
 // Externs

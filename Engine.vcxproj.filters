@@ -172,6 +172,8 @@
     <ClInclude Include="Core\Utils\GeneralUtils.hpp" />
     <ClInclude Include="Core\Tools\Console.hpp" />
     <ClInclude Include="Core\Tools\EngineConsoleCommands.hpp" />
+    <ClInclude Include="Core\General\BuiltInAssets.hpp" />
+    <ClInclude Include="Core\Platform\File.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -400,6 +402,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Tools\EngineConsoleCommands.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\General\BuiltInAssets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Platform\File.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,21 +1,15 @@
 #pragma once
-
-//====================================================================================
-// Forward Declare
-//====================================================================================
-class Command;
+#include "Engine/Core/Utils/StringUtils.hpp"
 
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-void BindAllEngineCommands();
+void CreateAndLogStringToFile(const char* filename, const char* text);
+void CreateADirectory(const char* filename);
+void LogStringToFile(const char* filename, const char* text, bool overwrite = false);
+String RemoveFileFromDirectoryPath(const char* filepath);
+bool DoesDirectoryExist(const char* path);
 
-//-----------------------------------------------------------------------------------------------
-void ClearConsole(Command& command);
-void PrintHelp(Command& command);
-void QuitApp(Command& command);
-void CreateNewProject(Command& command);
-void LoadProject(Command& command);
 
 //====================================================================================
 // Externs
@@ -23,5 +17,5 @@ void LoadProject(Command& command);
 
 
 //====================================================================================
-// Written by Zachary Bracken : [4/3/2019]
+// Written by Zachary Bracken : [4/23/2019]
 //====================================================================================

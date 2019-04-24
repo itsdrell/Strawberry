@@ -131,7 +131,8 @@ void Console::RenderHistory() const
 	Vector2 startPos = m_historyStartAnchor;
 	for (int i = amountToPrint; i > 0; i--)
 	{
-		r->DrawText2D(startPos, m_history.at(i - 1).m_text, m_fontSize);
+		ConsoleDialogue current = m_history.at(i - 1);
+		r->DrawText2D(startPos, current.m_text, m_fontSize, current.m_color);
 
 		startPos.y += (m_fontSize + (m_fontSize * .1f));
 	}
@@ -239,9 +240,9 @@ void Console::DeleteKey()
 //-----------------------------------------------------------------------------------------------
 void Console::AddConsoleDialogue(const String & dialogue, const Rgba & color)
 {
-	ConsoleDialogue errorMessage = ConsoleDialogue(dialogue, color);
+	ConsoleDialogue message = ConsoleDialogue(dialogue, color);
 	
-	m_history.push_back(errorMessage);
+	m_history.push_back(message);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -262,4 +263,18 @@ void Console::AddACommandToHistory()
 void Console::ClearHistory()
 {
 	m_history.clear();
+}
+
+//===============================================================================================
+// c functions
+//===============================================================================================
+void AddConsoleDialogue(const String & message, const Rgba & color)
+{
+	Console::GetInstance()->AddConsoleDialogue(message, color);
+}
+
+//-----------------------------------------------------------------------------------------------
+void AddConsoleErrorMessage(const String & message)
+{
+	Console::GetInstance()->AddErrorMessage(message);
 }
