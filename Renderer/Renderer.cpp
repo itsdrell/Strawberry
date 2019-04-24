@@ -172,6 +172,7 @@ void Renderer::BeginFrame()
 	// if we had our own we could just use the shader and it would be fine 
 	// but nooooooooooo we gotta do this cause we are't using our own
 	glDisable(GL_FRAMEBUFFER_SRGB);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);								GL_CHECK_ERROR();
 
 	if (m_clearScreen)
 	{

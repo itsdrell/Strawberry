@@ -105,6 +105,7 @@ int PrintString(lua_State* theState)
 {
 	String value = "\n" + LuaGetString(theState, 1, "idk man");
  	PrintLog(value.c_str()); // calling C++ function with this argument...
+	AddConsoleDialogue(value, Rgba::WHITE);
 	return 0; // nothing to return!
 }
 
