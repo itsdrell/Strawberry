@@ -1,0 +1,175 @@
+-------------------------------------------------------------------------------------------
+Strawberry:
+-------------------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------------------
+Console Commands:
+-------------------------------------------------------------------------------------------
+    
+` Toggles the console!
+- When a project is loaded, F5 is a quick reload
+
+    help
+        - Shows all the commands
+
+    cls
+        - Clears the console text
+
+    quit
+        - Closes Strawberry (does not save)
+
+    create <ProjectName>
+        - Creates a new project and all the defaul assets
+        - Lives under "Projects/ProjectName"
+        - Do not use a directory, it will handle it for you :)
+
+    load <ProjectName>
+        - Loads the project by name
+
+    projects
+        - Shows all the projects that have been created
+
+    folder
+        - Opens the file explorer in the project folder
+
+-------------------------------------------------------------------------------------------
+Functions:
+-------------------------------------------------------------------------------------------
+
+General:
+
+    Print(string)
+        - Prints a String to the debugger, Web browser dev console, as well as the in
+            in game console.
+
+    Cls(r,g,b,a) or Cls("nameOfColor")
+        - Clears the Screen. 
+        - Currently does not do it immediately, just informs the renderer to clear the Screen
+            before rendering
+    
+    SetColor(r,g,b,a) or SetColor("nameOfColor")
+        - Sets the default color to use if no color given in a function that takes a color
+
+    Camera(x , y)
+        - Moves the Cameras position
+
+-------------------------------------------------------------------------------------------
+Draw Functions
+
+- All functions that take a color can be specified by:
+    1. pass in a (r, g, b, a)
+    2. pass in a "name" of a color that can be found in the GameConfig.lua
+    3. Don't pass one and the default color (set by SetColor) will be used instead
+
+
+    DrawLine ( startX, startY, endX, endY, color)
+
+    DrawCircle ( centerX, centerY, radius, color);
+
+    DrawCircleFill ( centerX, centerY, radius, color )
+
+    DrawAABB2Fill ( minX, minY, maxX, maxY, color )
+
+    DrawAABB2 ( minX, minY, maxX, maxY, color )
+
+    DrawSprite (index, x, y, rotation, width, height, flipX, flipY, ppu)
+
+    DrawText ( x, y, height, color)
+
+-------------------------------------------------------------------------------------------
+Input
+
+- Input takes a Keycode. A keycode can be:
+    1. A character. An example "a"
+    2. Name of a key. Example "space"
+
+Current Named Keys are:
+    Space Key is:           "space"
+    Left Shift Key is:      "lshift
+    Enter Key is:           "enter"
+    BackSpace Key is:       "backspace"
+    Left Arrow Key is:      "left"
+    Right Arrow Key is:     "right"
+    Up Arrow Key is:        "up"
+    Down Key is:            "down"
+
+- Input currently only supports the named keys listed above as well as any letter key 
+
+
+    IsKeyPressed ( KeyCode )
+        - Checks if a key is being held down
+
+    WasKeyJustPressed ( KeyCode )
+        - Checks if the key was just pressed down during that frame
+
+    WasKeyJustReleased ( KeyCode )
+        - Checks if the key was just relased during that frame
+
+
+-------------------------------------------------------------------------------------------
+Music/SFX
+
+Music supports all audio types but .wav and .mp3 are ideal! 
+This is for songs you want to have looped!
+
+You can create subfolders in here but in lua you will have to 
+add the folders to the path when using the lua functions
+
+    Ex. You made a folder call PlayerSounds
+    Music/PlayerSounds/theCoolSound.wav
+
+    In Lua you would call the sounds like:
+    PlayMusic("PlayerSounds/theCoolSound.wav")
+
+    instead of 
+    PlayMusic("theCoolSound.wav") -- DOES NOT WORK
+
+Audio Functions:
+
+    PlayOneShot ( nameOfFile )
+        - Plays a SFX (or music!) ONCE. This is non looping
+
+    PlayMusic ( nameOfFile )
+        - Plays music that is looped
+
+    StopMusic ( nameOfFile )
+        - Stops the music from playing it's loop
+
+-------------------------------------------------------------------------------------------
+Math
+    Abs
+
+    ATan2
+
+    CosDegrees
+
+    SinDegrees
+
+    Floor
+
+    Ceil
+
+    Min
+
+    Max
+
+    Sqrt
+
+    Clamp
+
+    RandomRange
+
+    Dot
+
+    Lerp
+
+    Chance
+
+    Fract
+-------------------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------------------
+Porting To Web:
+-------------------------------------------------------------------------------------------

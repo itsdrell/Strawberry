@@ -1,0 +1,31 @@
+#include "Playground.hpp"
+#include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Core/General/BlackBoard.hpp"
+#include "Engine/Core/General/Rgba.hpp"
+#include "Engine/Renderer/Images/Sprite.hpp"
+#include "Engine/Renderer/Renderer.hpp"
+#include "Engine/Core/Tools/Command.hpp"
+
+// turn off unused variable warnings
+#pragma warning( disable : 4189 )
+
+//===============================================================================================
+void Playground::RunTestOnce()
+{
+	//Command newCommand = Command("help idk how to help you_duh");
+
+
+}
+
+//-----------------------------------------------------------------------------------------------
+void Playground::RunTestOnUpdate()
+{
+}
+
+//-----------------------------------------------------------------------------------------------
+void Playground::RenderTest()
+{
+	Renderer* r = Renderer::GetInstance();
+
+}
+

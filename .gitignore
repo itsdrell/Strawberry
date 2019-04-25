@@ -103,3 +103,6 @@ data/config/user.config
 **/Temporary/
 **/.vs/
 !**/ThirdParty/**/*.*
+
+# visual studio settings?
+*.user
