@@ -1,5 +1,6 @@
 #include "GLFunctions.hpp"
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
+#include "Engine/Core/General/EngineCommon.hpp"
 
 
 //===============================================================================================
@@ -216,6 +217,9 @@ void GLCheckErrorAndDie(char const * file, char const * function, int line)
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR) 
 	{
+		UNUSED(file);
+		UNUSED(function);
+		UNUSED(line);
 		//ERROR_RECOVERABLE( Stringf("\nGL ERROR [0x%04x] in [%s] at [%s(%i)] \n", error, function, file, line).c_str() );
 	}
 	#endif

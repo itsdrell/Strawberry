@@ -200,6 +200,9 @@ bool Renderer::CopyFrameBuffer(FrameBuffer* dst, FrameBuffer* src)
 {
 	GL_CHECK_ERROR();
 
+	UNUSED(dst);
+	UNUSED(src);
+
 	// we need at least the src.
 	//if (src == nullptr) {
 	//	return false; 
@@ -311,6 +314,7 @@ void Renderer::ClearScreen(const Rgba & clearColor)
 //-----------------------------------------------------------------------------------------------
 void Renderer::EnableWireframe(bool check)
 {
+	UNUSED(check);
 	//if (check)
 	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	//else
@@ -923,11 +927,6 @@ void Renderer::DrawMeshImmediate(PrimitiveType primitiveType, Vertex3D_PCU* vert
 	GLenum glPrimitiveType = g_openGlPrimitiveTypes[ primitiveType ];
 	glDrawArrays(glPrimitiveType, 0, numOfVertices );							GL_CHECK_ERROR();
 
-}
-
-//-----------------------------------------------------------------------------------------------
-void Renderer::DrawMeshImmediate(PrimitiveType thePrimitive, uint vertexCount, Vertex3D_PCU * vertices, uint indicesCount, uint * indices)
-{
 }
 
 //-----------------------------------------------------------------------------------------------

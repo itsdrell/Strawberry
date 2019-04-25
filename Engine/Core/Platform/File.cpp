@@ -6,7 +6,8 @@
 
 //#include "Engine/Core/Platform/Window.hpp"
 #include <windows.h>
-
+#include <filesystem>
+namespace fs = std::filesystem;
 
 #endif
 
@@ -77,36 +78,19 @@ Strings GetAllFoldersInADirectory(const char* directoryPath)
 {
 	Strings results;
 
-	// http://www.martinbroadhurst.com/list-the-files-in-a-directory-in-c.html
-	
-	//std::string pattern(directoryPath);
-	//pattern.append("\\*");
-	////WIN32_FIND_DATA data;
-	//LPWIN32_FIND_DATAA data = NULL;
-	//
-	//HANDLE hFind;
-	//if ((hFind = FindFirstFileA(directoryPath, data)) != INVALID_HANDLE_VALUE) {
-	//	do {
-	//		results.push_back(data->cFileName);
-	//	} while (FindNextFileA(hFind, data) != 0);
-	//	FindClose(hFind);
-	//}
-
-	//std::string pattern(directoryPath);
-	//pattern.append("\\*");
-	//WIN32_FIND_DATA data;
-	//HANDLE hFind;
-	//if ((hFind = FindFirstFile( (LPCWSTR) directoryPath, &data)) != INVALID_HANDLE_VALUE) {
-	//	do {
-	//		results.push_back(String((unsigned char*) data.cFileName[0]));
-	//	} while (FindNextFile(hFind, &data) != 0);
-	//	FindClose(hFind);
-	//}
-	//
-	
-	// TODO
-	results.push_back("Pls do this zac");
+#ifndef EMSCRIPTEN_PORT
+	std::string path = directoryPath;
+	for (const auto & entry : fs::directory_iterator(path))
+		results.push_back((String)entry.path().string() );
+#endif
 	return results;
+}
+
+//-----------------------------------------------------------------------------------------------
+String GetWorkingDirectoryPath()
+{
+	std::filesystem::path cwd = std::filesystem::current_path();
+	return cwd.string();
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -10,6 +10,7 @@ void LogStringToFile(const char* filename, const char* text, bool overwrite = fa
 String RemoveFileFromDirectoryPath(const char* filepath);
 bool DoesDirectoryExist(const char* path);
 Strings GetAllFoldersInADirectory(const char* directoryPath);
+String GetWorkingDirectoryPath();
 
 
 //====================================================================================

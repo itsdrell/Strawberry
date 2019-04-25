@@ -215,7 +215,7 @@ SDL_Surface* Texture::GetSDLSurfaceFromGLTexture()
 	int req_format = STBI_rgb_alpha;
 	int width = m_dimensions.x; 
 	int height = m_dimensions.y; 
-	int orig_format, depth, pitch;
+	int /*orig_format*/ depth, pitch;
 	Uint32 pixel_format;
 	if (req_format == STBI_rgb) {
 		depth = 24;

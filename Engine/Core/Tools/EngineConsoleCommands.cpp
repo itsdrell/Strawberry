@@ -5,6 +5,11 @@
 #include "Engine/Core/General/BuiltInAssets.hpp"
 #include "Engine/Renderer/Images/Image.hpp"
 
+
+#ifndef EMSCRIPTEN_PORT
+	#include <stdlib.h>
+#endif
+
 //===============================================================================================
 void BindAllEngineCommands()
 {
@@ -27,6 +32,8 @@ void ClearConsole(Command & command)
 //-----------------------------------------------------------------------------------------------
 void PrintHelp(Command & command)
 {
+	UNUSED(command);
+	
 	//Strings textToShow = CommandRegistration::GetAllCommandsAndTheirHelp();
 	Strings textToShow = CommandRegistration::GetAllTheCommandsNames();
 
@@ -109,7 +116,10 @@ void ShowAllProjectNames(Command& command)
 
 	for (uint i = 0; i < allFolders.size(); i++)
 	{
-		AddConsoleDialogue(allFolders.at(i));
+		String current = allFolders.at(i);
+		String theText = String(current, 9);
+		
+		AddConsoleDialogue(theText);
 	}
 }
 
@@ -117,7 +127,19 @@ void ShowAllProjectNames(Command& command)
 void OpenFolder(Command& command)
 {
 	UNUSED(command);
+	String currentPath = GetWorkingDirectoryPath() + "\\Projects\\";
 
-	AddConsoleErrorMessage("Pls do this zac");
+	// this is a check to see if a project is loaded. We would rather go there!
+	if (g_currentProjectName != "")
+		currentPath += (g_currentProjectName + "\\");
+
+	String theTextCommand = "explorer /e," + currentPath;
+
+#ifndef EMSCRIPTEN_PORT
+	
+	// this creates a command line which is shady... but it works!
+	system(theTextCommand.c_str());
+
+#endif
 }
 
