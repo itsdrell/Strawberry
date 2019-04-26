@@ -138,6 +138,7 @@ void OpenFolder(Command& command)
 #ifndef EMSCRIPTEN_PORT
 	
 	// this creates a command line which is shady... but it works!
+	// squirrel says you can use a "." to get the current directory
 	system(theTextCommand.c_str());
 
 #endif

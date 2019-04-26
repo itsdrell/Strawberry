@@ -21,6 +21,7 @@
 #include "Engine/Core/Tools/Clock.hpp"
 #include "Engine/Core/Tools/Console.hpp"
 #include "Engine/Core/Tools/Command.hpp"
+#include "Engine/Core/Platform/File.hpp"
 
 
 //===============================================================================================
@@ -75,7 +76,14 @@ void App::StartUp()
 
 	Playground::RunTestOnce();
 
+#ifndef EMSCRIPTEN_PORT
 	Console::GetInstance()->Open();
+#else
+	BlackBoard temp = BlackBoard("Data/Web/NameOfGame.lua", DATA_BLACKBOARD);
+	g_currentProjectName = temp.GetValue("webName", "idk");
+	PrintLog("Project Name is: " + g_currentProjectName);
+	ReloadAndRunGame();
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -142,11 +150,15 @@ void App::Render() const
 void App::ReloadAndRunGame()
 {
 	// Later it might save the editor and things like that :o 
-	delete g_theGame;
+	if(g_theGame != nullptr)
+		delete g_theGame;
+	
 	g_theGame = new Game(); 
 	g_theGame->StartUp();
 
 	Console::GetInstance()->Close();
+
+	PrintLog("New game created!");
 }
 
 void App::TestTexture()

@@ -53,8 +53,8 @@ private:
 	lua_State*		m_state;
 	String			m_filePath;
 	
-	int				m_errorCode; // uses LUA defines
-	String			m_errorMessage;
+	int				m_errorCode = 0; // uses LUA defines
+	String			m_errorMessage = "no errors";
 };
 
 //====================================================================================

@@ -1020,9 +1020,6 @@ void Renderer::DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, 
 Texture* Renderer::CreateOrGetTexture(const String& path, bool flip /*= true*/)
 {
 	String fullPath = path;
-#ifdef EMSCRIPTEN_PORT
-	fullPath = "Run_Win32/" + path;
-#endif
 	
 	std::map<String, Texture*>::iterator textureIterator;
 

@@ -49,7 +49,9 @@ String RemoveFileFromDirectoryPath(const char* filepath)
 	{
 		currentPath += seperateDirectories.at(i);
 
+#ifndef EMSCRIPTEN_PORT
 		CreateDirectoryA(currentPath.c_str(), NULL);
+#endif
 
 		currentPath += "/";
 	}
@@ -70,7 +72,8 @@ bool DoesDirectoryExist(const char* path)
 		return true;   // this is a directory!
 #endif
 
-	return false;    // this is not a directory!
+	// for web, just return true okay
+	return true;   
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -89,8 +92,12 @@ Strings GetAllFoldersInADirectory(const char* directoryPath)
 //-----------------------------------------------------------------------------------------------
 String GetWorkingDirectoryPath()
 {
+#ifndef EMSCRIPTEN_PORT
 	std::filesystem::path cwd = std::filesystem::current_path();
 	return cwd.string();
+#else
+	return "";
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -124,4 +131,20 @@ void CreateADirectory(const char* filename)
 	}
 
 #endif
+}
+
+//-----------------------------------------------------------------------------------------------
+Strings GetAllLinesFromFile(char const* filename)
+{
+	Strings result;
+
+	std::ifstream infile(filename);
+
+	std::string line;
+	while (std::getline(infile, line))
+	{
+		result.push_back(line);
+	}
+
+	return result;
 }

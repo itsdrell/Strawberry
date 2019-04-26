@@ -11,6 +11,7 @@ String RemoveFileFromDirectoryPath(const char* filepath);
 bool DoesDirectoryExist(const char* path);
 Strings GetAllFoldersInADirectory(const char* directoryPath);
 String GetWorkingDirectoryPath();
+Strings GetAllLinesFromFile(char const* filename);
 
 
 //====================================================================================

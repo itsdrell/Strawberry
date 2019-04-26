@@ -5,12 +5,7 @@
 //===============================================================================================
 LuaScript::LuaScript(const String & path)
 {
-
-#ifdef EMSCRIPTEN_PORT
-	m_filePath = "Run_Win32/" + path;
-#else
 	m_filePath = path;
-#endif
 
 	m_state = luaL_newstate();
 	if(m_state == NULL)
