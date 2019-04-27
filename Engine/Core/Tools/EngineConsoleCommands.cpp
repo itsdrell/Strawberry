@@ -20,6 +20,7 @@ void BindAllEngineCommands()
 	CommandRegister("load", "load <projectName>", "loads project", LoadProject, false);
 	CommandRegister("projects", "projects", "shows all projects", ShowAllProjectNames, false);
 	CommandRegister("folder", "folder", "opens folder to project in explorer", OpenFolder, false);
+	CommandRegister("web", "", "", BuildForWeb);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -144,3 +145,24 @@ void OpenFolder(Command& command)
 #endif
 }
 
+//-----------------------------------------------------------------------------------------------
+void BuildForWeb(Command& command)
+{
+	if (command.m_commandArguements.size() != 0)
+		g_currentProjectName = command.m_commandArguements.at(0);
+
+	// you need a name!
+	if (g_currentProjectName == "")
+		return;
+
+	String workingDirectory = GetWorkingDirectoryPath();
+	String fullPath = workingDirectory + "/" + "Projects/" + g_currentProjectName;
+
+	if (!DoesDirectoryExist(fullPath.c_str()))
+		return;
+
+	// Do the batch file
+	LogStringToFile("BuildWeb.bat", GetWebBatchFile().c_str(), true);
+
+	system("BuildWeb.bat");
+}

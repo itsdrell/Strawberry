@@ -13,6 +13,7 @@ String GetMainLuaFileAsString();
 String GetLuaGameConfigString();
 String GetMusicTextString();
 String GetSFXTextString();
+String GetWebBatchFile();
 
 //====================================================================================
 // Externs

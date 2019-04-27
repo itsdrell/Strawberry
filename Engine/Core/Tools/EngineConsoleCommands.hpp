@@ -18,6 +18,7 @@ void CreateNewProject(Command& command);
 void LoadProject(Command& command);
 void ShowAllProjectNames(Command& command);
 void OpenFolder(Command& command);
+void BuildForWeb(Command& command);
 
 //====================================================================================
 // Externs
