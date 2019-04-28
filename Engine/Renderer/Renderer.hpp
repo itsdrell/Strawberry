@@ -104,6 +104,7 @@ public:
 
 public:
 	Texture* CreateOrGetTexture(const String& path, bool flip = true);
+	bool DeleteTexture(const String& path);
 	BitmapFont* CreateOrGetBitmapFont(const String& path);
 
 public:

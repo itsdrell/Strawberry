@@ -218,7 +218,7 @@ int LuaDrawAABB2WireFrame(lua_State* theState)
 	float maxX = LuaGetFloat(theState, 3, 0.f);
 	float maxY = LuaGetFloat(theState, 4, 0.f);
 
-	Rgba color = LuaGetRgba(theState, 4, r->m_defaultDrawColor);
+	Rgba color = LuaGetRgba(theState, 5, r->m_defaultDrawColor);
 
 	Renderer::GetInstance()->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), color);
 

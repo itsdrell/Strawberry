@@ -1038,6 +1038,23 @@ Texture* Renderer::CreateOrGetTexture(const String& path, bool flip /*= true*/)
 }
 
 //-----------------------------------------------------------------------------------------------
+bool Renderer::DeleteTexture(const String& path)
+{
+	std::map<String, Texture*>::iterator textureIterator;
+
+	textureIterator = m_createdTextures.find(path);
+
+	if (textureIterator != m_createdTextures.end())
+	{
+		delete textureIterator->second;
+		m_createdTextures.erase(textureIterator);
+		return true;
+	}
+
+	return false;
+}
+
+//-----------------------------------------------------------------------------------------------
 BitmapFont* Renderer::CreateOrGetBitmapFont(const String& path)
 {
 	String fullPath = path;

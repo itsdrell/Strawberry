@@ -25,11 +25,15 @@ Game::Game()
 	
 	m_mainLuaScript = new LuaScript(path + "/Scripts/Main.lua");
 
-	g_theSpriteSheet = new SpriteSheet(Renderer::GetInstance()->CreateOrGetTexture(path + "/Images/SpriteSheet.png"), 16, 16);
+	Renderer* r = Renderer::GetInstance();
+	String texturePath = path + "/Images/SpriteSheet.png";
+	
+	// make sure the sprite doesn't already exist from previous runs
+	r->DeleteTexture(texturePath);
+	g_theSpriteSheet = new SpriteSheet(r->CreateOrGetTexture(texturePath), 16, 16);
 
-	//g_theGameCamera = Renderer::GetInstance()->m_defaultCamera;
 	g_theGameCamera = new Camera();
-	g_theGameCamera->SetColorTarget(Renderer::GetInstance()->m_defaultColorTarget);
+	g_theGameCamera->SetColorTarget(r->m_defaultColorTarget);
 
 	g_theGameClock = new Clock(g_theMasterClock);
 
