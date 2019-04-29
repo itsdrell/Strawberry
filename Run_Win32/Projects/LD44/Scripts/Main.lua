@@ -1,24 +1,36 @@
+
 -------------------------------------------------------------
--- GLOBAL Variables
+-- Constants
 -------------------------------------------------------------
-maxHealth = 100;
-currentHealth = maxHealth;
 BOARD_WIDTH = 7;
 BOARD_HEIGHT = 6;
 TILE_DIMENSION = 16;
 CURSOR_COOLDOWN_LENGTH = .1;
 COST_PER_MOVE = 1;
 COST_PER_SWAP = 5;
+POP_COOLDOWN_LENGTH = .1;
+CULUMN_COOLDOWN_LENGTH = .3;
+
+-------------------------------------------------------------
+-- GLOBAL Variables
+-------------------------------------------------------------
+maxHealth = 100;
+currentHealth = maxHealth;
+currentPopCooldown = POP_COOLDOWN_LENGTH;
+currentColumnCooldown = CULUMN_COOLDOWN_LENGTH;
+justFinishedPopping = true;
+deltaSeconds = 0;
 
 -------------------------------------------------------------
 -- Enums
 -------------------------------------------------------------
 TypesOfTiles =
 {
+    NOTHING = -1;
     HEALTH = 0;
     HEALTHY_FOOD = 1;
     JUNK = 2;
-    EMPTY = 3;
+    FILLER = 3;
     
     NUMBER_OF_TILES = 4;
     TILE_TYPE_ERROR = 69;
@@ -75,6 +87,7 @@ theBoard =
 -- Global Tables
 -------------------------------------------------------------
 tiles = {}
+combos = {}
 
 -------------------------------------------------------------
 -- Called once at the start
@@ -95,7 +108,7 @@ end
 ------------------------------------------------------------
 -- called every frame
 function Update(ds)
-
+    deltaSeconds = ds;
     if(eCurrentMode == GameStates.ATTRACT) then UpdateAttract(ds) end
     if(eCurrentMode == GameStates.GAME) then UpdateGame(ds) end
     if(eCurrentMode == GameStates.VICTORY) then UpdateAttract() end
@@ -114,8 +127,23 @@ end
 
 ------------------------------------------------------------
 function UpdateGame(ds) 
-    UpdateCursor(ds);
-    CheckForDefeat();
+    if #combos > 0 then 
+        justFinishedPopping = false;
+        CheckToPopCombo(ds);
+    else
+        if justFinishedPopping == false then
+            FillEmptySpotsInBoard();
+            --justFinishedPopping = true;
+        else
+            UpdateCursor(ds);
+            CheckForDefeat();
+        end
+        
+    end
+
+    if WasKeyJustPressed("z") then
+        CheckForCombos();
+    end
 end
 
 ------------------------------------------------------------
@@ -124,6 +152,95 @@ function UpdateDeath()
     if WasKeyJustReleased("space") then
         eCurrentMode = GameStates.ATTRACT;
     end
+end
+
+
+------------------------------------------------------------
+function PopCombos(ds)
+    for i = 0, #combos do
+       local poppedCombo = table.remove(combos);
+       poppedCombo.tile.tileType = TypesOfTiles.TILE_TYPE_ERROR;
+    end
+
+    --while(#combos ~= 0) do
+    --    if currentPopCooldown < 0 then
+    --        local poppedCombo = table.remove(combos);
+    --        poppedCombo.tile.tileType = TypesOfTiles.NOTHING;
+--
+    --        currentPopCooldown = POP_COOLDOWN_LENGTH;
+    --    else
+    --        currentPopCooldown = currentPopCooldown - ds;
+    --    end
+--
+    --end
+end
+
+------------------------------------------------------------
+function CheckToPopCombo(ds)
+    if currentPopCooldown < 0 then
+        local poppedCombo = table.remove(combos);
+        poppedCombo.tile.tileType = TypesOfTiles.NOTHING;
+    
+        currentPopCooldown = POP_COOLDOWN_LENGTH;
+    else
+        currentPopCooldown = currentPopCooldown - ds;
+    end
+end
+
+------------------------------------------------------------
+function FillEmptySpotsInBoard()
+    
+    -- do this once per frame
+    UpdateColumns();
+    
+end
+
+------------------------------------------------------------
+function UpdateColumns()
+    
+    if currentColumnCooldown <= 0 then
+        local columsAreDone = false;
+        for i = 0, BOARD_WIDTH do
+            columsAreDone = UpdateColumn(i);
+        end
+
+        if columsAreDone == true then
+            justFinishedPopping = true;
+        end
+
+        currentColumnCooldown = CULUMN_COOLDOWN_LENGTH;
+    else
+        currentColumnCooldown = currentColumnCooldown - deltaSeconds;
+    end
+
+end
+
+------------------------------------------------------------
+function UpdateColumn(x)
+    local didSomething = false;
+
+    for currentHeight = 1, BOARD_HEIGHT + 1 do
+        local currentType = GetTileType(x, currentHeight);
+        local belowType = GetTileType(x, currentHeight - 1);
+
+        if belowType == TypesOfTiles.NOTHING and currentType ~= TypesOfTiles.NOTHING then
+            SetTileType(x, currentHeight, TypesOfTiles.NOTHING);
+            SetTileType(x, currentHeight - 1, currentType);
+            
+            didSomething = true;
+
+        elseif currentType == TypesOfTiles.TILE_TYPE_ERROR then
+            SetTileType(x, currentHeight, TypesOfTiles.NOTHING);
+            didSomething = true;
+        end
+
+        -- add a tile to the top!
+        if currentHeight == BOARD_HEIGHT - 1 and didSomething == true then
+            SetTileType(x, currentHeight, GetRandomTileType());
+        end
+    end
+
+    return not didSomething;
 end
 
 ------------------------------------------------------------
@@ -207,6 +324,7 @@ end
 function FinishSwapTile()
     theCursor.movementType = CursorMovementType.MOVING;
     theCursor.movementCooldown = CURSOR_COOLDOWN_LENGTH * 2; 
+    CheckForCombos();
 end
 
 -------------------------------------------------------------
@@ -383,8 +501,93 @@ end
 -- General Functions
 ------------------------------------------------------------
 function CheckForCombos()
+    for gridY = 0, BOARD_HEIGHT - 1 do
+        for gridX = 0, BOARD_WIDTH - 1 do
+            -- Get amount in direction
+            local leftAmount = GetHowManyCombosFromTileInDirection(gridX, gridY, -1, 0);
+            local rightAmount = GetHowManyCombosFromTileInDirection(gridX, gridY, 1, 0);
+            local upAmount = GetHowManyCombosFromTileInDirection(gridX, gridY, 0, 1);
+            local downAmount = GetHowManyCombosFromTileInDirection(gridX, gridY, 0, -1);
 
+            -- Create Combos
+            if leftAmount > 2 then CreateCombo(gridX, gridY, -1, 0, leftAmount) end
+            if rightAmount > 2 then CreateCombo(gridX, gridY, 1, 0, rightAmount) end
+            if upAmount > 2 then CreateCombo(gridX, gridY, 0, 1, upAmount) end
+            if downAmount > 2 then CreateCombo(gridX, gridY, 0, -1, downAmount) end
 
+        end
+    end
+end
+
+------------------------------------------------------------
+function GetHowManyCombosFromTileInDirection(startX, startY, dirX, dirY)
+
+    local count = 1; -- cause we start with 1
+    local type = GetTileType(startX, startY);
+    
+    for i=1, BOARD_WIDTH do
+
+        local theX = startX + (dirX * i);
+        local theY = startY + (dirY * i);
+        local currentTileType = GetTileType(theX, theY);
+
+        if currentTileType ~= type or type == TypesOfTiles.TILE_TYPE_ERROR then
+            return count;
+        end
+
+        -- valid type ++
+        count = count + 1;
+
+        -- if we are moving up see if we hit top or bottom
+        if dirY ~= 0 then
+            local index = GetIndexFromCoords(theX, theY);
+            if index == 0 or index == BOARD_HEIGHT then
+                return count;
+            end
+        end
+
+        -- if we are moving horizontal see if we hit a side
+        if dirX ~= 0 then
+            if IsTileCoordsOnLeftEdge(theX, theY) or IsTileCoordsOnRightEdge(theX, theY) then
+                return count;
+            end
+        end
+    end
+
+    return count;
+
+end
+
+------------------------------------------------------------
+function CreateCombo(startX, startY, dirX, dirY, count)
+
+    local type = GetTileType(startX, startY);
+    
+    for i = 0, count - 1 do
+        local theX = startX + (dirX * i);
+        local theY = startY + (dirY * i);
+        
+        combo = {};
+        combo.tile = GetTile(theX, theY);
+        combo.type = type;
+
+        if CheckIfComboIsAlreadyListed(combo) == false then
+            table.insert(combos, combo);
+        end
+    end
+
+end
+
+------------------------------------------------------------
+function CheckIfComboIsAlreadyListed(theCombo)
+
+    for i=1, #combos do
+        if combos[i].tile == theCombo.tile then
+            return true;
+        end
+    end
+
+    return false;
 end
 
 
@@ -394,9 +597,10 @@ function GetTileRepresentationForType(tileType)
     if(tileType == TypesOfTiles.HEALTH) then return 2 end
     if(tileType == TypesOfTiles.JUNK) then return 4 end
     if(tileType == TypesOfTiles.HEALTHY_FOOD) then return 6 end
-    if(tileType == TypesOfTiles.EMPTY) then return 8 end
+    if(tileType == TypesOfTiles.FILLER) then return 8 end
+    if(tileType == TypesOfTiles.NOTHING) then return 12 end
 
-    return "magenta";
+    return 10;
 
 end
 
@@ -406,11 +610,16 @@ function GetTileType(x,y)
 end
 
 ------------------------------------------------------------
+function SetTileType(x,y, theType)
+    GetTile(x,y).tileType = theType;
+end
+
+------------------------------------------------------------
 function GetTile(x,y)
     local index = GetIndexFromCoords(x,y);
     local maxIndex = BOARD_WIDTH * BOARD_HEIGHT
 
-    -- Rizzo says this is gonna be a bug, but she is wrong!
+    -- Rizzo says this is gonna be a bug, but she is wrong! (she was right)
     if index > 0 and index <= maxIndex then
         return tiles[index];
     else
@@ -458,8 +667,14 @@ function IsTileCoordsOnEdge(tileX, tileY)
     local index = GetIndexFromCoords(tileX, tileY) - 1;
     local modResult = index % BOARD_WIDTH;
 
+    -- left and right
     if modResult == 0 or modResult == BOARD_WIDTH - 1 then
         return true;
+    end
+
+    -- top and bottom
+    if tileY == 0 or tileY == BOARD_HEIGHT then
+      return true
     end
     
     return false;
@@ -491,6 +706,11 @@ function IsTileCoordsOnRightEdge(tileX, tileY)
     end
     
     return false;
+end
+
+------------------------------------------------------------
+function GetRandomTileType()
+    return Floor(RandomRange(0, TypesOfTiles.NUMBER_OF_TILES));
 end
 
 -- Good luck <3
