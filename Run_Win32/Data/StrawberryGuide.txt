@@ -127,10 +127,10 @@ add the folders to the path when using the lua functions
 
 Audio Functions:
 
-    PlayOneShot ( nameOfFile )
+    PlayOneShot ( nameOfFile, volume )
         - Plays a SFX (or music!) ONCE. This is non looping
 
-    PlayMusic ( nameOfFile )
+    PlayMusic ( nameOfFile, volume )
         - Plays music that is looped
 
     StopMusic ( nameOfFile )

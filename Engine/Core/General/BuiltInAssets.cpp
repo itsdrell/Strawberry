@@ -153,11 +153,11 @@ REM ---------------------------------------------
 SET myPath=%cd%
 
 SET engineBinaries="Data\Web\Resources\Engine.bc"
-SET whereToPutIt=Data\Web\Builds\%nameOfGame%\
+SET whereToPutIt=WebBuilds\%nameOfGame%\
 REM SET nameOfGameTextFile="%cd%/Data/Web/NameOfGame.txt"
 SET nameOfGameFile="%cd%/Data/Web/NameOfGame.lua"
 
-SET htmlFileLocation="%myPath%/Data/Web/Resources/index.html"
+SET htmlFileLocation="%myPath%/Data/Web/Resources/WebPage/index.html"
 
 
 REM ---------------------------------------------
@@ -166,7 +166,7 @@ echo webName="%nameOfGame%" > %nameOfGameFile%
 
 REM ---------------------------------------------
 
-REM Set the paths for all assets. Engine programmer will need to include Run_Win32 in path when loading
+REM Set the paths for all assets.
 SET imageFiles= --preload-file Projects/%nameOfGame%/Images
 SET scriptFiles= --preload-file Projects/%nameOfGame%/Scripts
 SET audioFiles= --preload-file Projects/%nameOfGame%/Audio
@@ -180,19 +180,19 @@ REM ---------------------------------------------
 REM ---------------------------------------------
 REM |	Moving index.html over
 REM ---------------------------------------------
-COPY "Data/Web/Resources/WebPage/" "Data\Web\Builds\%nameOfGame%\"
+COPY "Data/Web/Resources/WebPage/" "Builds\%nameOfGame%\"
 
 @echo on
 REM ---------------------------------------------
 REM |	Delete old files to prevent garbage (trust nothing)
 REM ---------------------------------------------
 cd %myPath%
-del %whereToPutIt%%nameOfGame%.html 
-del %whereToPutIt%%nameOfGame%.js 
-del %whereToPutIt%%nameOfGame%.wasm 
-del %whereToPutIt%%nameOfGame%.wasm.map
-del %whereToPutIt%%nameOfGame%.wast
-del %whereToPutIt%%nameOfGame%.data
+del %whereToPutIt%"%nameOfGame%.html"
+del %whereToPutIt%"%nameOfGame%.js"
+del %whereToPutIt%"%nameOfGame%.wasm"
+del %whereToPutIt%"%nameOfGame%.wasm.map"
+del %whereToPutIt%"%nameOfGame%.wast"
+del %whereToPutIt%"%nameOfGame%.data"
 
 
 REM ---------------------------------------------
@@ -203,8 +203,6 @@ if not exist %whereToPutIt% mkdir %whereToPutIt%
 REM ---------------------------------------------
 REM |	Compile the Game and the Engine
 REM ---------------------------------------------
-REM cmd.exe /c em++ -std=c++14 %thirdPartySource% %allEngineAndGameCpps% %allAssetFiles% -s FULL_ES2=1 -DEMSCRIPTEN_PORT=1 --memory-init-file 0 -O0 -o Web/ProtoGame.js -v -g -I%myPath% -s ASSERTIONS=2 -s USE_SDL=2 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap']" -s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s USE_WEBGL2=1
-
 cmd.exe /c em++ -std=c++14 %engineBinaries% %allAssetFiles% -s FULL_ES2=1 --memory-init-file 0 -O0 -o %whereToPutIt%Game.js -v -g -I%myPath% -s ASSERTIONS=2 -s USE_SDL=2 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap']" -s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s USE_WEBGL2=1
 
 
@@ -228,6 +226,7 @@ DEL "%~f0"
 pause 
 
 @echo off
+REM cmd.exe /c em++ -std=c++14 %allEngineAndGameCpps% %allAssetFiles% -s FULL_ES2=1 -DEMSCRIPTEN_PORT=1 --memory-init-file 0 -O0 -o Web/ProtoGame.js -v -g -I%myPath% -s ASSERTIONS=2 -s USE_SDL=2 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap']" -s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s USE_WEBGL2=1
 REM if you are having weird linker errors (for your functions), make sure you didn't forget to include the cpp
 REM using -s FULL_ES2=1 instead of -s FULL_ES3=1 because i am targetting 2
 REM -s ERROR_ON_UNDEFINED_SYMBOLS=0 disables erros from linker erros so you can open it in the web and see whats causing them

@@ -201,6 +201,16 @@ void AudioSystem::StopSound(SoundPlaybackID soundPlaybackID)
 }
 
 //-----------------------------------------------------------------------------------------------
+void AudioSystem::StopAllSounds()
+{
+	for (uint i = 0; i < m_audioClips.size(); i++)
+	{
+		AudioClip* current = m_audioClips.at(i);
+		StopSound(current->m_playbackID);
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
 void AudioSystem::SetSoundPlaybackVolume(SoundPlaybackID soundPlaybackID, float volume)
 {
 	// 0 - 1

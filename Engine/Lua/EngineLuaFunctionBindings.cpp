@@ -342,27 +342,31 @@ int LuaWasKeyJustReleased(lua_State * theState)
 //===============================================================================================
 // Audio
 //===============================================================================================
-// PlayOneShot( stringPath )
+// PlayOneShot( stringPath, volume )
 int LuaPlayOneShot(lua_State * theState)
 {
 	String path = LuaGetString(theState, 1, "idk");
-	String fileLocation = "Projects/" + g_currentProjectName + "/" + path;
+	String fileLocation = "Projects/" + g_currentProjectName + "/Audio/SFX/" + path;
+	
+	float volume = LuaGetFloat(theState, 2, 1.f);
 
 	AudioSystem::GetInstance()->CreateOrGetSound(fileLocation);
-	PlayOneShot(fileLocation);
+	PlayOneShot(fileLocation, volume);
 	
 	return 0;
 }
 
 //-----------------------------------------------------------------------------------------------
-// PlayMusic( stringPath, bool loops )
+// PlayMusic( stringPath, volume, bool loops )
 int LuaPlayBackgroundMusic(lua_State * theState)
 {
 	String path = LuaGetString(theState, 1, "idk");
-	String fileLocation = "Projects/" + g_currentProjectName + "/" + path;
+	String fileLocation = "Projects/" + g_currentProjectName + "/Audio/Music/" + path;
+
+	float volume = LuaGetFloat(theState, 2, 1.f);
 
 	AudioSystem::GetInstance()->CreateOrGetSound(fileLocation);
-	PlayLoopingSound(fileLocation);
+	PlayLoopingSound(fileLocation, volume);
 
 	return 0;
 }
@@ -372,7 +376,7 @@ int LuaPlayBackgroundMusic(lua_State * theState)
 int LuaStopMusic(lua_State * theState)
 {
 	String path = LuaGetString(theState, 1, "idk");
-	String fileLocation = "Projects/" + g_currentProjectName + "/" + path;
+	String fileLocation = "Projects/" + g_currentProjectName + "/Audio/Music/" + path;
 
 	StopSound(fileLocation);
 

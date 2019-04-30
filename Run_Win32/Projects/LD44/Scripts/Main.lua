@@ -6,10 +6,23 @@ BOARD_WIDTH = 7;
 BOARD_HEIGHT = 6;
 TILE_DIMENSION = 16;
 CURSOR_COOLDOWN_LENGTH = .1;
+START_POP_COOLDOWN_LENGTH = 0;
+GAME_POP_COOLDOWN_LENGTH = .3;
+POP_COOLDOWN_LENGTH = START_POP_COOLDOWN_LENGTH; -- start at zero for tiles to fall
+CULUMN_COOLDOWN_LENGTH = .2;
+
+-- These are in percent
 COST_PER_MOVE = 1;
-COST_PER_SWAP = 5;
-POP_COOLDOWN_LENGTH = .1;
-CULUMN_COOLDOWN_LENGTH = .3;
+COST_PER_SWAP = 5 * COST_PER_MOVE;
+HEALTH_SCORE = (2 * COST_PER_SWAP) * .3;
+HEALTH_FOOD_SCORE = (COST_PER_SWAP + COST_PER_MOVE) * .3;
+JUNK_FOOD_SCORE = (HEALTH_FOOD_SCORE * 2);
+FILLER_SPACE_SCORE = COST_PER_SWAP - (3 * COST_PER_MOVE);
+
+KID_THRESHOLD = 10;
+TEEN_THRESHOLD = 20;
+ADULT_THRESHOLD = 30;
+OLD_THRESHOLD = 50;
 
 -------------------------------------------------------------
 -- GLOBAL Variables
@@ -20,6 +33,14 @@ currentPopCooldown = POP_COOLDOWN_LENGTH;
 currentColumnCooldown = CULUMN_COOLDOWN_LENGTH;
 justFinishedPopping = true;
 deltaSeconds = 0;
+currentDay = 1;
+
+
+bgMusic = "bg.wav";
+cursorMovementSFX = "cursor.wav"
+swapSFX = "swap.wav"
+popSFX = "pop.wav"
+ggSFX = "gg.wav"
 
 -------------------------------------------------------------
 -- Enums
@@ -92,16 +113,20 @@ combos = {}
 -------------------------------------------------------------
 -- Called once at the start
 function StartUp()
-    InitGame();    
-
+    PlayMusic(bgMusic, .05);   
+    InitGame(); 
 end
 
 -------------------------------------------------------------
 function InitGame()
-    currentHealth = maxHealth;
     CreateTileBoard();
+    POP_COOLDOWN_LENGTH = START_POP_COOLDOWN_LENGTH;
+    currentHealth = maxHealth;
+    currentDay = 1;
     cursor.x = 0;
     cursor.y = 0;
+    currentDay = 0;
+    combos = {};
     
 end
 
@@ -133,16 +158,25 @@ function UpdateGame(ds)
     else
         if justFinishedPopping == false then
             FillEmptySpotsInBoard();
-            --justFinishedPopping = true;
         else
+            CheckForCombos();
             UpdateCursor(ds);
             CheckForDefeat();
+        end
+
+        if GetNumberOfBlankTilesOnBoard() == 0 then
+            justFinishedPopping = true;
+            POP_COOLDOWN_LENGTH = GAME_POP_COOLDOWN_LENGTH;
         end
         
     end
 
     if WasKeyJustPressed("z") then
-        CheckForCombos();
+        currentDay = currentDay + 1;
+    end
+
+    if WasKeyJustPressed("x") then
+        currentHealth = 0;
     end
 end
 
@@ -151,6 +185,7 @@ function UpdateDeath()
 
     if WasKeyJustReleased("space") then
         eCurrentMode = GameStates.ATTRACT;
+        PlayMusic(bgMusic, .05);
     end
 end
 
@@ -161,30 +196,30 @@ function PopCombos(ds)
        local poppedCombo = table.remove(combos);
        poppedCombo.tile.tileType = TypesOfTiles.TILE_TYPE_ERROR;
     end
-
-    --while(#combos ~= 0) do
-    --    if currentPopCooldown < 0 then
-    --        local poppedCombo = table.remove(combos);
-    --        poppedCombo.tile.tileType = TypesOfTiles.NOTHING;
---
-    --        currentPopCooldown = POP_COOLDOWN_LENGTH;
-    --    else
-    --        currentPopCooldown = currentPopCooldown - ds;
-    --    end
---
-    --end
 end
 
 ------------------------------------------------------------
 function CheckToPopCombo(ds)
     if currentPopCooldown < 0 then
         local poppedCombo = table.remove(combos);
+        AddComboToScore(poppedCombo.tile.tileType);
+        
         poppedCombo.tile.tileType = TypesOfTiles.NOTHING;
-    
         currentPopCooldown = POP_COOLDOWN_LENGTH;
+
+        if POP_COOLDOWN_LENGTH ~= 0 then PlayOneShot(popSFX) end
     else
         currentPopCooldown = currentPopCooldown - ds;
     end
+end
+
+------------------------------------------------------------
+function AddComboToScore(tileType)
+
+    if tileType == TypesOfTiles.HEALTH then ChangeScore(HEALTH_SCORE) end
+    if tileType == TypesOfTiles.HEALTHY_FOOD then ChangeScore(-HEALTH_FOOD_SCORE) end
+    if tileType == TypesOfTiles.JUNK then ChangeScore(JUNK_FOOD_SCORE) end
+    --if tileType == TypesOfTiles.FILLER then ChangeScore(HEALTH_SCORE) end
 end
 
 ------------------------------------------------------------
@@ -206,6 +241,8 @@ function UpdateColumns()
 
         if columsAreDone == true then
             justFinishedPopping = true;
+        else
+            PlayOneShot(swapSFX)
         end
 
         currentColumnCooldown = CULUMN_COOLDOWN_LENGTH;
@@ -240,6 +277,13 @@ function UpdateColumn(x)
         end
     end
 
+    -- fix for getting error tiles sometimes : (
+    for currentHeight = 1, BOARD_HEIGHT do
+        if GetTileType(x, currentHeight) == TypesOfTiles.TILE_TYPE_ERROR then
+            SetTileType(x, currentHeight, GetRandomTileType());
+        end
+    end
+
     return not didSomething;
 end
 
@@ -247,6 +291,8 @@ end
 function CheckForDefeat()
     if currentHealth <= 0 then
         eCurrentMode = GameStates.DEATH;
+        StopMusic(bgMusic);
+        PlayOneShot(ggSFX);
     end
 end
 
@@ -293,6 +339,7 @@ end
 function DoStuffAfterCursorMoves()
     theCursor.movementCooldown = CURSOR_COOLDOWN_LENGTH;
     currentHealth = currentHealth - COST_PER_MOVE;
+    PlayOneShot(cursorMovementSFX);
 end
 
 ------------------------------------------------------------
@@ -325,6 +372,9 @@ function FinishSwapTile()
     theCursor.movementType = CursorMovementType.MOVING;
     theCursor.movementCooldown = CURSOR_COOLDOWN_LENGTH * 2; 
     CheckForCombos();
+    ChangeScore(-COST_PER_SWAP);
+    currentDay = currentDay + 1;
+    PlayOneShot(swapSFX);
 end
 
 -------------------------------------------------------------
@@ -346,13 +396,14 @@ end
 
 -------------------------------------------------------------
 function CreateTileBoard()
+    tiles = {} -- empty board
+    -- starts empty, lets them F A L L
     for tileY = 0, BOARD_HEIGHT do
         for tileX = 0, BOARD_WIDTH do
             local tile = {}
-            tile.tileType = Floor(RandomRange(0, TypesOfTiles.NUMBER_OF_TILES));
+            tile.tileType = TypesOfTiles.NOTHING;
             local index = (tileY * BOARD_WIDTH) + tileX;
             tiles[index] = tile;
-            --table.insert(tiles, tile);
         end
     end 
 end
@@ -372,8 +423,23 @@ end
 
 ------------------------------------------------------------
 function RenderAttract()
-    DrawText("Attract", -64, 32, 8, "white");
-    DrawAABB2(-32,-32,32,32,"white");
+    DrawAABB2Fill(-100, -100, 100, 100, "navy");    
+    DrawText("Untitled 1", -68, 48, 8, "white");
+    
+    DrawText("Try and match good tiles and", -80, 32, 3, "white");
+    DrawText("see how many days you can live!", -80, 28, 3, "white");
+    
+    DrawText("Controls: ", -80, 16, 4, "white");
+    DrawText("WASD cursor movement ", -60, 8, 4, "white");
+    DrawText("Enter to start swap ", -60, 2, 4, "white");
+
+    DrawText("Rules: ", -80, -12, 4, "white");
+    DrawText("Movement cost life", -60, -18, 4, "white");
+    DrawText("0 life == game over", -60, -24, 4, "white");
+
+
+
+    DrawText("Hit Space to Start", -92, -50, 6, "white");
 end
 
 ------------------------------------------------------------
@@ -381,23 +447,28 @@ function RenderGame()
     DrawBackground();
     DrawGrid();
     DrawPlayer();
-    DrawDay();
 
     RenderCursor();
+    DrawUI();
+
 end
 
 ------------------------------------------------------------
 function RenderDeath()
+    DrawAABB2Fill(-100, -100, 100, 100, "darkGrey");
     DrawText("D E A T H", -64, 32, 8, "white");
-    DrawAABB2(-100, -100, 100, 100, "green");
+    DrawText("You lasted: " .. currentDay .. " day!", -64, 0, 4, "white");
+    DrawText("Hit Space to Continue", -72, -32, 4, "white");
 end
 
 ------------------------------------------------------------
 function DrawBackground()
-    local maxScreenHeight = 64;
+    local maxScreenHeight = 62;
     local currentScreenHeight = Lerp(-maxScreenHeight, maxScreenHeight, (currentHealth / maxHealth));
 
-    DrawAABB2Fill(-96 , -maxScreenHeight, 96, currentScreenHeight, "orangeRed");
+    DrawAABB2Fill(-96, -64, 96, 64, "darkGrey");
+    DrawAABB2Fill(-94 , -maxScreenHeight, 94, maxScreenHeight, "black");
+    DrawAABB2Fill(-94 , -maxScreenHeight, 94, currentScreenHeight, "orangeRed");
 end
 
 ------------------------------------------------------------
@@ -484,16 +555,41 @@ function DrawPlayer()
     local width = 16;
     local height = 32;
 
-    DrawAABB2Fill(startX, startY, startX + width, startY + height, "Red");
+    --DrawAABB2Fill(startX, startY, startX + width, startY + height, "Red");
+
+    if currentDay <= KID_THRESHOLD then 
+        DrawSprite(32, -64, -32 - 4, 0, 2,3) 
+        DrawText("Baby", -77, -56, 4);
+    end
+
+    if currentDay > KID_THRESHOLD and currentDay <= TEEN_THRESHOLD then 
+        DrawSprite(34, -64, -32 + 4, 0, 3,5) 
+        DrawText("Kid", -73, -56, 4);
+    end
+
+    if currentDay > TEEN_THRESHOLD and currentDay <= ADULT_THRESHOLD then 
+        DrawSprite(37, -64, -32 + 8, 0, 4,6) 
+        DrawText("Teen", -77, -56, 4);
+    end
+    
+    if currentDay > ADULT_THRESHOLD and currentDay <= OLD_THRESHOLD then 
+        DrawSprite(41, -64, -32 + 12, 0, 5,7) 
+        DrawText("Adult", -81, -56, 4);
+    end
+    
+    if currentDay > OLD_THRESHOLD then 
+        DrawSprite(112, -64, -32 + 8, 0, 4,6) 
+        DrawText("Old", -73, -56, 4);
+    end
+
+
 end
 
 ------------------------------------------------------------
-function DrawDay()
+function DrawUI()
 
-    local x = -80;
-    local y = 48;
-    
-    DrawText("Day 1", x , y, 4, "white");
+    DrawText("Day:" .. currentDay, 8 , 52, 4, "white");
+    if #combos > 0 and POP_COOLDOWN_LENGTH ~= START_POP_COOLDOWN_LENGTH then DrawText("Combos: " .. #combos, -8 , -56, 4, "random") end
 
 end
 
@@ -503,6 +599,7 @@ end
 function CheckForCombos()
     for gridY = 0, BOARD_HEIGHT - 1 do
         for gridX = 0, BOARD_WIDTH - 1 do
+            
             -- Get amount in direction
             local leftAmount = GetHowManyCombosFromTileInDirection(gridX, gridY, -1, 0);
             local rightAmount = GetHowManyCombosFromTileInDirection(gridX, gridY, 1, 0);
@@ -711,6 +808,29 @@ end
 ------------------------------------------------------------
 function GetRandomTileType()
     return Floor(RandomRange(0, TypesOfTiles.NUMBER_OF_TILES));
+end
+
+------------------------------------------------------------
+function GetNumberOfBlankTilesOnBoard()
+    local count = 0;
+    for gridY = 0, BOARD_HEIGHT - 1 do
+        for gridX = 0, BOARD_WIDTH - 1 do
+            local type = GetTileType(gridX, gridY);
+
+            if type == TypesOfTiles.NOTHING then
+                count = count + 1;
+            end
+        end       
+    end
+
+    return count;
+end
+
+------------------------------------------------------------
+function ChangeScore(amount)
+    
+    currentHealth = currentHealth + amount;
+    currentHealth = Clamp(currentHealth, 0, maxHealth);
 end
 
 -- Good luck <3

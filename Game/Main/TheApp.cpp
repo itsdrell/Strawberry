@@ -153,6 +153,8 @@ void App::ReloadAndRunGame()
 	if(g_theGame != nullptr)
 		delete g_theGame;
 	
+	AudioSystem::GetInstance()->StopAllSounds();
+	
 	g_theGame = new Game(); 
 	g_theGame->StartUp();
 
