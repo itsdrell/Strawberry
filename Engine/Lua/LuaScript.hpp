@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include "Engine/Core/General/EngineCommon.hpp"
 
 extern "C" {
@@ -45,8 +45,9 @@ public:
 
 public:
 	void LogError();
-	String LuaErrorCodeToString(int theCode);
+	void SetErrorCode(int theCode) { m_errorCode = theCode; }
 	bool HasError();
+	String LuaErrorCodeToString(int theCode);
 	String GetErrorMessage();
 
 private:

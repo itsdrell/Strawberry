@@ -72,7 +72,8 @@ void Game::StartUp()
 //-----------------------------------------------------------------------------------------------
 void Game::Update()
 {
-	LuaUpdate(*m_mainLuaScript, g_theGameClock->deltaTime);
+	if(!m_mainLuaScript->HasError())
+		LuaUpdate(*m_mainLuaScript, g_theGameClock->deltaTime);
 }
 
 //-----------------------------------------------------------------------------------------------

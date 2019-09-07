@@ -83,7 +83,12 @@ void LuaScript::LogError()
 //-----------------------------------------------------------------------------------------------
 String LuaScript::LuaErrorCodeToString(int theCode)
 {
-	if(theCode == LUA_ERRSYNTAX) return "Syntax Error! :O ";
+	if( theCode == LUA_ERRSYNTAX)	return "Syntax Error! :O ";
+	if( theCode == LUA_ERRRUN)		return "Runtime Error! :O ";
+	if (theCode == LUA_YIELD)		return "Yield Error?! :O ";
+	if (theCode == LUA_ERRMEM)		return "Memory Error! :O ";
+	if (theCode == LUA_ERRGCMM)		return "GCM Error?! :O ";
+	if (theCode == LUA_ERRERR)		return "Error Error! :O ";
 
 	return "idk the error";
 }
@@ -108,7 +113,13 @@ bool LuaStartUp(LuaScript& mainScript)
 
 	lua_getglobal(theState, "StartUp");
 
-	lua_pcall(theState, 0, 0, 0);
+	mainScript.SetErrorCode( lua_pcall(theState, 0, 0, 0) );
+
+ 	if (mainScript.HasError())
+	{
+		mainScript.LogError();
+		return false;
+	}
 
 	return true;
 }
@@ -122,7 +133,13 @@ bool LuaUpdate(LuaScript& mainScript, float ds)
 	lua_getglobal(theState, "Update");
 	lua_pushnumber(theState, ds);
 
-	lua_pcall(theState, 1, 0, 0);
+	mainScript.SetErrorCode( lua_pcall(theState, 1, 0, 0) );
+
+	if (mainScript.HasError())
+	{
+		mainScript.LogError();
+		return false;
+	}
 
 	return true;
 }
@@ -135,7 +152,13 @@ bool LuaRender(LuaScript & mainScript)
 
 	lua_getglobal(theState, "Draw");
 
-	lua_pcall(theState, 0, 0, 0);
+	mainScript.SetErrorCode( lua_pcall(theState, 0, 0, 0) );
+
+	if (mainScript.HasError())
+	{
+		mainScript.LogError();
+		return false;
+	}
 
 	return true;
 }
