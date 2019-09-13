@@ -1019,20 +1019,18 @@ void Renderer::DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, 
 //-----------------------------------------------------------------------------------------------
 Texture* Renderer::CreateOrGetTexture(const String& path, bool flip /*= true*/)
 {
-	String fullPath = path;
-	
 	std::map<String, Texture*>::iterator textureIterator;
 
 	for (textureIterator = m_createdTextures.begin(); textureIterator != m_createdTextures.end(); textureIterator++)
 	{
-		if (textureIterator->first == fullPath)
+		if (textureIterator->first == path)
 			return textureIterator->second;
 	}
 
 	// need to make it
-	PrintLog("Created a texture at address: " + fullPath);
-	Texture* newTexture = new Texture(fullPath, flip);
-	m_createdTextures.insert(std::pair<String, Texture*>(fullPath, newTexture));
+	PrintLog("Created a texture at address: " + path);
+	Texture* newTexture = new Texture(path, flip);
+	m_createdTextures.insert(std::pair<String, Texture*>(path, newTexture));
 
 	return newTexture;
 }

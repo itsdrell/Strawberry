@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -286,12 +286,14 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Main\Editor.cpp" />
     <ClCompile Include="Main\Game.cpp" />
     <ClCompile Include="Main\Main_Win32.cpp" />
     <ClCompile Include="Main\Playground.cpp" />
     <ClCompile Include="Main\TheApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Main\Editor.hpp" />
     <ClInclude Include="Main\Game.hpp" />
     <ClInclude Include="Main\Playground.hpp" />
     <ClInclude Include="Main\TheApp.hpp" />

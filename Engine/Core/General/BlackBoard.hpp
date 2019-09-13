@@ -36,6 +36,8 @@ public:
 	BlackBoard();
 	BlackBoard(const String& thePath, eBlackboardTypes type);
 
+	~BlackBoard();
+
 public:
 	void CreateDataBlackboard();
 	void CreateEngineBlackboard();

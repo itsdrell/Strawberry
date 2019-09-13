@@ -38,6 +38,7 @@ constexpr KeyCode KEYBOARD_LSHIFT = 0xA0;
 constexpr KeyCode KEYBOARD_ENTER = 0x0D;
 constexpr KeyCode KEYBOARD_BACKSPACE = 0x08;
 constexpr KeyCode KEYBOARD_TILDE = 96;
+constexpr KeyCode KEYBOARD_ESC = 0x1B;
 
 //====================================================================================
 // ENUMS

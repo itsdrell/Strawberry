@@ -36,6 +36,7 @@ class Texture
 private:
 	Texture();
 	Texture(const String& filePath, bool flip = true);
+	~Texture();
 
 	void PopulateFromData( unsigned char* imageData, const IntVector2& texelSize, int numComponents) ;
 	bool CreateRenderTarget( int width, int height, eTextureFormat format );
@@ -52,8 +53,6 @@ private:
 	uint				m_textureID;
 	IntVector2			m_dimensions;
 	eTextureFormat		m_format;
-
-	unsigned char*		m_data;
 };
 
 //====================================================================================

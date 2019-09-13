@@ -41,6 +41,12 @@ Texture::Texture(const String& filePath, bool flip /*= true*/)
 }
 
 //-----------------------------------------------------------------------------------------------
+Texture::~Texture()
+{
+	glDeleteTextures(1, (GLuint*) &m_textureID);
+}
+
+//-----------------------------------------------------------------------------------------------
 void Texture::PopulateFromData(unsigned char * imageData, const IntVector2 & texelSize, int numComponents)
 {
 	GL_CHECK_ERROR();
@@ -200,38 +206,38 @@ SDL_Surface* Texture::GetSDLSurfaceFromGLTexture()
 
 // does not work on web because of glGetTexImage
 #ifndef EMSCRIPTEN_PORT
-	glBindTexture( GL_TEXTURE_2D, m_textureID );    // bind our texture to our current texture unit (0)
-
-	const int size = m_dimensions.x * m_dimensions.y * 4; //4 because texels rgba
-
-	if(m_data != NULL)
-		free(m_data);
-	m_data = (unsigned char*)malloc(size);
-	
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE,m_data);
-
-	// the color format you request stb_image to output,
-	// use STBI_rgb if you don't want/need the alpha channel
-	int req_format = STBI_rgb_alpha;
-	int width = m_dimensions.x; 
-	int height = m_dimensions.y; 
-	int /*orig_format*/ depth, pitch;
-	Uint32 pixel_format;
-	if (req_format == STBI_rgb) {
-		depth = 24;
-		pitch = 3*width; // 3 bytes per pixel * pixels per row
-		pixel_format = SDL_PIXELFORMAT_RGB24;
-	} else { // STBI_rgb_alpha (RGBA)
-		depth = 32;
-		pitch = 4*width;
-		pixel_format = SDL_PIXELFORMAT_RGBA32;
-	}
-
-	SDL_Surface* theSurface = SDL_CreateRGBSurfaceWithFormatFrom((void*)m_data, width, height,
-		depth, pitch, pixel_format);
-
-	return theSurface;
-
+	//glBindTexture( GL_TEXTURE_2D, m_textureID );    // bind our texture to our current texture unit (0)
+	//
+	//const int size = m_dimensions.x * m_dimensions.y * 4; //4 because texels rgba
+	//
+	//if(m_data != NULL)
+	//	free(m_data);
+	//m_data = (unsigned char*)malloc(size);
+	//
+	//glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE,m_data);
+	//
+	//// the color format you request stb_image to output,
+	//// use STBI_rgb if you don't want/need the alpha channel
+	//int req_format = STBI_rgb_alpha;
+	//int width = m_dimensions.x; 
+	//int height = m_dimensions.y; 
+	//int /*orig_format*/ depth, pitch;
+	//Uint32 pixel_format;
+	//if (req_format == STBI_rgb) {
+	//	depth = 24;
+	//	pitch = 3*width; // 3 bytes per pixel * pixels per row
+	//	pixel_format = SDL_PIXELFORMAT_RGB24;
+	//} else { // STBI_rgb_alpha (RGBA)
+	//	depth = 32;
+	//	pitch = 4*width;
+	//	pixel_format = SDL_PIXELFORMAT_RGBA32;
+	//}
+	//
+	//SDL_Surface* theSurface = SDL_CreateRGBSurfaceWithFormatFrom((void*)m_data, width, height,
+	//	depth, pitch, pixel_format);
+	//
+	//return theSurface;
+	return nullptr;
 #else
 	return nullptr;
 #endif

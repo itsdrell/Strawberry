@@ -28,16 +28,20 @@ AudioSystem::~AudioSystem()
 void AudioSystem::ReleaseFModAndSounds()
 {
 	// I think this is how you free up fmod. Release all sounds we made and then Release the system
+	ReleaseSounds();
+	
+	m_fmodSystem->release();
+}
 
-	for(uint i = 0; i < m_registeredSounds.size(); i++)
+//-----------------------------------------------------------------------------------------------
+void AudioSystem::ReleaseSounds()
+{
+	for (uint i = 0; i < m_registeredSounds.size(); i++)
 	{
-		//TODO figure out how this works :(
-		//FMOD_RESULT result = m_registeredSounds.at(i)->release();
+		FMOD_RESULT result = m_registeredSounds.at(i)->release();
 	}
 
 	m_registeredSounds.clear();
-
-	m_fmodSystem->release();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -47,6 +51,16 @@ void AudioSystem::Shutdown()
 	
 	delete s_theAudioSystem;
 	s_theAudioSystem = nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
+void AudioSystem::FlushRegisteredSounds()
+{
+	DeleteAllAudioClips();
+
+	m_registeredSoundIDs.clear();
+	
+	ReleaseSounds();
 }
 
 //-----------------------------------------------------------------------------------------------

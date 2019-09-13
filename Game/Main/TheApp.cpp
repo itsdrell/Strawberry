@@ -7,6 +7,7 @@
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Engine/Input/InputSystem.hpp"
 #include "Engine/Core/General/BlackBoard.hpp"
+#include "Game/Main/Editor.hpp"
 
 #ifdef EMSCRIPTEN_PORT
 	#include "Engine/Internal/EmscriptenCommon.hpp"
@@ -114,15 +115,17 @@ void App::Update()
 {
 	Console::GetInstance()->Update();
 	
-	if(g_theGame)
+	if(m_currentState == APPSTATE_GAME)
 		g_theGame->Update();
+	if (m_currentState == APPSTATE_EDITOR)
+		g_theEditor->Render();
 	
 	Playground::RunTestOnUpdate();
-
+	 
 	if (WasKeyJustPressed(KEYBOARD_TILDE))
 	{
 		// can only toggle if there is a game!
-		if(g_theGame)
+		if(g_theGame || g_theEditor)
 			Console::GetInstance()->Toggle();
 	}
 
@@ -130,16 +133,37 @@ void App::Update()
 	{
 		// only works if the game is already loaded! 
 		// could also make this so we check if the project exists 
-		if(g_theGame)
+		if (g_theGame || g_theEditor)
 			ReloadAndRunGame();
+	}
+
+	if (WasKeyJustPressed(KEYBOARD_ESC))
+	{
+		if (m_currentState == APPSTATE_GAME)
+		{
+			// leave the game / cleanup
+			g_theGame->CleanUp();
+
+			delete g_theGame;
+			g_theGame = nullptr;
+		}
+		
+		m_currentState = APPSTATE_EDITOR;
+
+		if (g_theEditor == nullptr)
+			g_theEditor = new Editor();
+
+		Console::GetInstance()->Close();
 	}
 }
 
 //-----------------------------------------------------------------------------------------------
 void App::Render() const
 {
-	if(g_theGame)
+	if(m_currentState == APPSTATE_GAME)
 		g_theGame->Render();
+	if (m_currentState == APPSTATE_EDITOR)
+		g_theEditor->Render();
 	
 	Playground::RenderTest();
 
@@ -149,13 +173,19 @@ void App::Render() const
 //-----------------------------------------------------------------------------------------------
 void App::ReloadAndRunGame()
 {
+	m_currentState = APPSTATE_GAME;
+	
 	// Later it might save the editor and things like that :o 
-	if(g_theGame != nullptr)
+	if (g_theGame != nullptr)
+	{
+		g_theGame->CleanUp();
+
 		delete g_theGame;
+	}
 	
-	AudioSystem::GetInstance()->StopAllSounds();
+	if(g_theGame == nullptr)
+		g_theGame = new Game(); 
 	
-	g_theGame = new Game(); 
 	g_theGame->StartUp();
 
 	Console::GetInstance()->Close();

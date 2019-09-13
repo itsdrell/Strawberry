@@ -43,6 +43,13 @@ BlackBoard::BlackBoard(const String& thePath, eBlackboardTypes type)
 }
 
 //-----------------------------------------------------------------------------------------------
+BlackBoard::~BlackBoard()
+{
+	delete m_blackboardLuaScript;
+	m_blackboardLuaScript = nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
 void BlackBoard::CreateDataBlackboard()
 {
 	// ta do

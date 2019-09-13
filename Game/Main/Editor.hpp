@@ -1,10 +1,9 @@
 #pragma once
-#include "Engine/Core/General/EngineCommon.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class LuaScript;
+
 
 //====================================================================================
 // Type Defs + Defines
@@ -24,28 +23,15 @@ class LuaScript;
 //====================================================================================
 // Classes
 //====================================================================================
-class Game
+class Editor
 {
 public:
-	Game();
-	~Game();
+	Editor() {}
+	~Editor() {}
 
 public:
-	void		StartUp();
-	void		CleanUp();
-	void		Update();
-	void		Render() const;
-
-public:
-	void		RenderGame() const;
-	void		RenderError() const;
-
-public:
-	static Game* GetInstance();
-
-public:
-	LuaScript*		m_mainLuaScript;
-	String			m_texturePath;
+	void Update();
+	void Render() const;
 
 };
 
@@ -57,8 +43,8 @@ public:
 //====================================================================================
 // Externs
 //====================================================================================
-extern Game* g_theGame;
+extern Editor* g_theEditor;
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [9/7/2019]
 //====================================================================================

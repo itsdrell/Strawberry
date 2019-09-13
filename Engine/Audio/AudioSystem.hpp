@@ -52,8 +52,10 @@ public:
 
 public:
 	void Shutdown();
+	void FlushRegisteredSounds();
 	void DeleteAllAudioClips();
 	void ReleaseFModAndSounds();
+	void ReleaseSounds();
 
 public:
 	void BeginFrame();

@@ -13,7 +13,13 @@ class Command;
 //====================================================================================
 // ENUMS
 //====================================================================================
-
+enum AppState
+{
+	APPSTATE_EDITOR,
+	APPSTATE_GAME,
+	APPSTATE_CONSOLE,
+	NUM_OF_APP_STATES
+};
 
 //====================================================================================
 // Structs
@@ -46,6 +52,7 @@ public:
 	void TestTexture();
 
 public:
+	AppState m_currentState = APPSTATE_CONSOLE;
 	bool m_isQuitting;
 	float m_timeSinceStart;
 

@@ -29,6 +29,7 @@ class SpriteSheet
 {
 public:
 	SpriteSheet(Texture* theTexture, int tilesWide, int tilesHigh);
+	~SpriteSheet() {}
 
 public:
 	AABB2		GetTexCoordsForSpriteCoords(const IntVector2& spriteCoords) const;

@@ -20,14 +20,11 @@ void EngineStartUp()
 {
 	g_theMasterClock = new Clock();
 	
-	AudioSystem* audio = new AudioSystem();
-	InputSystem* input = new InputSystem();
-	Renderer* renderer = new Renderer();
+	new AudioSystem();
+	new InputSystem();
+	new Renderer();
 	new Console();
 
-	audio = nullptr;
-	input = nullptr;
-	renderer = nullptr;
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -14,6 +14,7 @@
 #include "Engine/Core/Platform/Window.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/General/BlackBoard.hpp"
+#include "Engine/Audio/AudioSystem.hpp"
 
 //===============================================================================================
 Game* g_theGame = nullptr;
@@ -24,23 +25,28 @@ Game::Game()
 	String path = "Projects/" + g_currentProjectName;
 	
 	m_mainLuaScript = new LuaScript(path + "/Scripts/Main.lua");
+	if (m_mainLuaScript == nullptr)
+		PrintLog("Error creating main lua script");
 
 	Renderer* r = Renderer::GetInstance();
-	String texturePath = path + "/Images/SpriteSheet.png";
+	m_texturePath = path + "/Images/SpriteSheet.png";
 	
-	// make sure the sprite doesn't already exist from previous runs
-	r->DeleteTexture(texturePath);
-	g_theSpriteSheet = new SpriteSheet(r->CreateOrGetTexture(texturePath), 16, 16);
+	if(g_theSpriteSheet != nullptr)
+	{
+		r->DeleteTexture(m_texturePath);
+		delete g_theSpriteSheet;
+	}
+	g_theSpriteSheet = new SpriteSheet(r->CreateOrGetTexture(m_texturePath), 16, 16);
 
 	g_theGameCamera = new Camera();
 	g_theGameCamera->SetColorTarget(r->m_defaultColorTarget);
 
 	g_theGameClock = new Clock(g_theMasterClock);
 
-	if(m_mainLuaScript == nullptr)
-		PrintLog("Error creating main lua script");
-
+	if (g_theGameBlackboard != nullptr)
+		delete g_theGameBlackboard;
 	new BlackBoard(path + "/Scripts/GameConfig.lua", GAME_BLACKBOARD);
+	
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -67,6 +73,20 @@ void Game::StartUp()
 {
 	if(!LuaStartUp(*m_mainLuaScript))
 		PrintLog("Error calling Lua start up script! \n");
+}
+
+//-----------------------------------------------------------------------------------------------
+void Game::CleanUp()
+{
+	String path = "Projects/" + g_currentProjectName;
+	
+	// delete textures
+	Renderer* r = Renderer::GetInstance();
+	r->DeleteTexture(m_texturePath);
+
+	// delete sounds
+	AudioSystem::GetInstance()->StopAllSounds();
+	AudioSystem::GetInstance()->FlushRegisteredSounds();
 }
 
 //-----------------------------------------------------------------------------------------------
