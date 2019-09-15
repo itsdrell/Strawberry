@@ -2,6 +2,7 @@
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/Core/General/Camera.hpp"
+#include "Engine/Input/InputSystem.hpp"
 
 //===============================================================================================
 Editor* g_theEditor = nullptr;  
@@ -26,4 +27,6 @@ void Editor::Render() const
 
 	AABB2 cameraBounds = r->m_defaultUICamera->GetOrthoBounds();
 	r->DrawAABB2Filled(cameraBounds, Rgba(255,0,0,255));
+	r->DrawCircleFilled2D(GetMousePosition(cameraBounds), .05f, Rgba(0, 255, 0, 255));
+
 }

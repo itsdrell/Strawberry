@@ -31,6 +31,12 @@ float AABB2::GetHeight() const
 }
 
 //-----------------------------------------------------------------------------------------------
+Vector2 AABB2::GetDimensions() const
+{
+	return Vector2(GetWidth(), GetHeight());
+}
+
+//-----------------------------------------------------------------------------------------------
 Vector2 AABB2::GetPositionWithinBox(const Vector2 & percentWithin)
 {
 	Vector2 result;

@@ -3,6 +3,9 @@
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 #include "Engine/Core/General/EngineCommon.hpp"
 #include "Engine/Core/Tools/Console.hpp"
+#include "Engine/Math/MathUtils.hpp"
+#include "Engine/Core/Platform/Window.hpp"
+#include "Engine/Math/Geometry/AABB2.hpp"
 
 //===============================================================================================
 InputSystem*		g_theInputSystem = nullptr;
@@ -51,6 +54,7 @@ InputSystem * InputSystem::GetInstance()
 void InputSystem::BeginFrame()
 {
 	UpdateKeyboard();
+	UpdateMouse();
 	PollEvents(); 
 }
 
@@ -63,7 +67,7 @@ void InputSystem::Update()
 //-----------------------------------------------------------------------------------------------
 void InputSystem::EndFrame()
 {
-	// nothing for now
+	// nothing yet
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -101,6 +105,52 @@ bool InputSystem::WasKeyJustReleased(KeyCode keyCode) const
 }
 
 //-----------------------------------------------------------------------------------------------
+void InputSystem::OnMouseButtonPressed(MouseButtons theButton)
+{
+	if (m_mouseButtonStates[theButton].m_isDown == false)
+		m_mouseButtonStates[theButton].m_wasJustPressed = true;
+	m_mouseButtonStates[theButton].m_isDown = true;
+}
+
+//-----------------------------------------------------------------------------------------------
+void InputSystem::OnMouseButtonReleased(MouseButtons theButton)
+{
+	if (m_mouseButtonStates[theButton].m_isDown == true)
+		m_mouseButtonStates[theButton].m_wasJustReleased = true;
+	m_mouseButtonStates[theButton].m_isDown = false;
+}
+
+//-----------------------------------------------------------------------------------------------
+bool InputSystem::IsMouseButtonPressed(MouseButtons theButton)
+{
+	return m_mouseButtonStates[theButton].m_isDown;
+}
+
+//-----------------------------------------------------------------------------------------------
+bool InputSystem::WasMouseButtonJustPressed(MouseButtons theButton)
+{
+	return m_mouseButtonStates[theButton].m_wasJustPressed;
+}
+
+//-----------------------------------------------------------------------------------------------
+bool InputSystem::WasMouseButtonJustReleased(MouseButtons theButton)
+{
+	return m_mouseButtonStates[theButton].m_wasJustReleased;
+}
+
+//-----------------------------------------------------------------------------------------------
+bool InputSystem::DidMouseWheelScrollUp()
+{
+	return (m_mouseScrollWheel.y > 0);
+}
+
+//-----------------------------------------------------------------------------------------------
+bool InputSystem::DidMouseWheelScrollDown()
+{
+	return (m_mouseScrollWheel.y < 0);
+}
+
+//-----------------------------------------------------------------------------------------------
 void InputSystem::PollEvents()
 {
 	SDL_Event theEvent;
@@ -132,6 +182,34 @@ void InputSystem::PollEvents()
 			Console::GetInstance()->GetInput((KeyCode)theEvent.key.state);
 			theEvent.text.text;
 
+		} 
+
+		if (theEvent.type == SDL_MOUSEBUTTONDOWN)
+		{
+			if (theEvent.button.button == SDL_BUTTON_LEFT)
+				OnMouseButtonPressed(LEFT_MOUSE_BUTTON);
+			if (theEvent.button.button == SDL_BUTTON_RIGHT)
+				OnMouseButtonPressed(RIGHT_MOUSE_BUTTON);
+		}
+
+		if (theEvent.type == SDL_MOUSEBUTTONUP)
+		{
+			if (theEvent.button.button == SDL_BUTTON_LEFT)
+				OnMouseButtonReleased(LEFT_MOUSE_BUTTON);
+			if (theEvent.button.button == SDL_BUTTON_RIGHT)
+				OnMouseButtonReleased(RIGHT_MOUSE_BUTTON);
+		}
+
+		if (theEvent.type == SDL_MOUSEWHEEL)
+		{
+			m_mouseScrollWheel.y = (float) theEvent.wheel.y;
+			m_mouseScrollWheel.x = (float) theEvent.wheel.x;
+		}
+
+		if (theEvent.type == SDL_MOUSEMOTION)
+		{
+			m_mousePosition.x = theEvent.motion.x;
+			m_mousePosition.y = theEvent.motion.y;
 		}
 	}
 }
@@ -156,6 +234,18 @@ void InputSystem::UpdateKeyboard()
 		m_keyStates[keyCode].m_wasJustPressed = false;
 		m_keyStates[keyCode].m_wasJustReleased = false;
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void InputSystem::UpdateMouse()
+{
+	for (int i = 0; i < NUM_OF_MOUSE_BUTTONS; i++)
+	{
+		m_mouseButtonStates[i].m_wasJustPressed = false;
+		m_mouseButtonStates[i].m_wasJustReleased = false;
+	}
+
+	m_mouseScrollWheel = Vector2(0.f, 0.f);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -247,4 +337,50 @@ bool WasKeyJustPressed(KeyCode keyCode)
 bool WasKeyJustReleased(KeyCode keyCode)
 {
 	return InputSystem::GetInstance()->WasKeyJustReleased(keyCode);
+}
+
+//-----------------------------------------------------------------------------------------------
+bool IsMouseButtonPressed(MouseButtons theButton)
+{
+	return InputSystem::GetInstance()->IsMouseButtonPressed(theButton);
+}
+
+//-----------------------------------------------------------------------------------------------
+bool WasMouseButtonJustPressed(MouseButtons theButton)
+{
+	return 	InputSystem::GetInstance()->WasMouseButtonJustPressed(theButton);
+}
+
+//-----------------------------------------------------------------------------------------------
+bool WasMouseButtonJustReleased(MouseButtons theButton)
+{
+	return InputSystem::GetInstance()->WasMouseButtonJustReleased(theButton);
+}
+
+//-----------------------------------------------------------------------------------------------
+bool DidMouseWheelScrollUp()
+{
+	return InputSystem::GetInstance()->DidMouseWheelScrollUp();
+}
+
+//-----------------------------------------------------------------------------------------------
+bool DidMouseWheelScrollDown()
+{
+	return InputSystem::GetInstance()->DidMouseWheelScrollDown();
+}
+
+//-----------------------------------------------------------------------------------------------
+Vector2 GetMousePosition(const AABB2& orthoBounds)
+{
+	Vector2 windowDimensions = Window::GetInstance()->GetDimensions();
+	Vector2 orthoDimensions = orthoBounds.GetDimensions();
+	Vector2 mousePositionInPixels = InputSystem::GetInstance()->GetMousePositionInPixels();
+
+	float x = RangeMapFloat(mousePositionInPixels.x, 0.f, windowDimensions.x, 0.f, orthoDimensions.x);
+
+	// this is swapped cause window coordinates are top left is 0,0 but we want bottom left to 
+	// be zero zero 
+	float y = RangeMapFloat(mousePositionInPixels.y, windowDimensions.y, 0.f, 0.f, orthoDimensions.y);
+
+	return Vector2( x,y );
 }

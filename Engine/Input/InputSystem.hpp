@@ -1,9 +1,10 @@
 #pragma once
+#include "Engine/Math/Vectors/Vector2.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-
+class AABB2;
 
 //====================================================================================
 // Type Defs + Defines
@@ -43,7 +44,12 @@ constexpr KeyCode KEYBOARD_ESC = 0x1B;
 //====================================================================================
 // ENUMS
 //====================================================================================
-
+enum MouseButtons
+{
+	LEFT_MOUSE_BUTTON,
+	RIGHT_MOUSE_BUTTON,
+	NUM_OF_MOUSE_BUTTONS
+};
 
 //====================================================================================
 // Structs
@@ -78,10 +84,23 @@ public:
 	bool					WasKeyJustPressed(KeyCode keyCode) const;
 	bool					WasKeyJustReleased(KeyCode keyCode) const;
 
+private:
+	void					OnMouseButtonPressed(MouseButtons theButton);
+	void					OnMouseButtonReleased(MouseButtons theButton);
+
+public:
+	bool					IsMouseButtonPressed(MouseButtons theButton);
+	bool					WasMouseButtonJustPressed(MouseButtons theButton);
+	bool					WasMouseButtonJustReleased(MouseButtons theButton);
+	bool					DidMouseWheelScrollUp();
+	bool					DidMouseWheelScrollDown();
+	Vector2					GetMousePositionInPixels() { return m_mousePosition; }
+
 protected:
 	void					PollEvents();
 	void					FilterKeysAndPassToDevConsole(int code);
 	void					UpdateKeyboard();
+	void					UpdateMouse();
 	KeyCode					CheckAndCorrectSDLArrowKeys(KeyCode code);
 
 	// this function is important because the function keys are really big numbers
@@ -97,6 +116,13 @@ public:
 
 protected:
 	KeyButtonState			m_keyStates[NUM_KEYS];
+	KeyButtonState			m_mouseButtonStates[NUM_OF_MOUSE_BUTTONS];
+
+	Vector2					m_mouseScrollWheel;
+
+	// note: this mouse position is based on pixel mouse position on the app
+	// not based on the ortho
+	Vector2					m_mousePosition;
 
 	ShutdownFunction		m_shutdownFunction = nullptr;
 };
@@ -107,6 +133,15 @@ protected:
 bool					IsKeyPressed(KeyCode keyCode);
 bool					WasKeyJustPressed(KeyCode keyCode);
 bool					WasKeyJustReleased(KeyCode keyCode);
+
+bool					IsMouseButtonPressed(MouseButtons theButton);
+bool					WasMouseButtonJustPressed(MouseButtons theButton);
+bool					WasMouseButtonJustReleased(MouseButtons theButton);
+
+bool					DidMouseWheelScrollUp();
+bool					DidMouseWheelScrollDown();
+
+Vector2					GetMousePosition(const AABB2& orthoBounds);
 
 //====================================================================================
 // Externs

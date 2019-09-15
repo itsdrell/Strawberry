@@ -34,6 +34,7 @@ public:
 public:
 	float		GetWidth() const;
 	float		GetHeight() const;
+	Vector2		GetDimensions() const;
 	Vector2		GetPositionWithinBox(const Vector2& percentWithin);
 
 
