@@ -286,14 +286,19 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Main\Editor.cpp" />
+    <ClCompile Include="Editor\Editor.cpp" />
+    <ClCompile Include="Editor\MapEditor.cpp" />
+    <ClCompile Include="Editor\SpriteSheetViewer.cpp" />
     <ClCompile Include="Main\Game.cpp" />
     <ClCompile Include="Main\Main_Win32.cpp" />
     <ClCompile Include="Main\Playground.cpp" />
     <ClCompile Include="Main\TheApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Main\Editor.hpp" />
+    <ClInclude Include="Editor\Editor.hpp" />
+    <ClInclude Include="Editor\EditorMode.hpp" />
+    <ClInclude Include="Editor\MapEditor.hpp" />
+    <ClInclude Include="Editor\SpriteSheetViewer.hpp" />
     <ClInclude Include="Main\Game.hpp" />
     <ClInclude Include="Main\Playground.hpp" />
     <ClInclude Include="Main\TheApp.hpp" />

@@ -23,11 +23,6 @@ void Playground::RunTestOnce()
 //-----------------------------------------------------------------------------------------------
 void Playground::RunTestOnUpdate()
 {
-	//PrintLog("MouseX: " + )
-	Renderer* r = Renderer::GetInstance();
-	AABB2 cameraBounds = r->m_defaultUICamera->GetOrthoBounds();
-	Vector2 mousepos = GetMousePosition(cameraBounds);
-	PrintLog("MouseX: " + std::to_string(mousepos.x) + " MouseY: " + std::to_string(mousepos.y) + "\n");
 }
 
 //-----------------------------------------------------------------------------------------------

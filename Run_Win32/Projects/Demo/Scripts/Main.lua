@@ -24,8 +24,8 @@ RenderTests =
 eCurrentRenderTest = 0;
 
 
-bgMusic = "Audio/Music/test.mp3";
-errorSound = "Audio/SFX/error.wav";
+bgMusic = "test.mp3";
+errorSound = "error.wav";
 
 -------------------------------------------------------------------
 function StartUp()

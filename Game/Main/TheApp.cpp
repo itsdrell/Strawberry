@@ -7,7 +7,7 @@
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Engine/Input/InputSystem.hpp"
 #include "Engine/Core/General/BlackBoard.hpp"
-#include "Game/Main/Editor.hpp"
+#include "Game/Editor/Editor.hpp"
 
 #ifdef EMSCRIPTEN_PORT
 	#include "Engine/Internal/EmscriptenCommon.hpp"
@@ -65,6 +65,10 @@ App::~App()
 	delete g_theGameBlackboard;
 	g_theGameBlackboard = nullptr;
 
+	if (g_theSpriteSheet != nullptr)
+		delete g_theSpriteSheet;
+	g_theSpriteSheet = nullptr;
+
 	EngineShutdown();
 }
 
@@ -118,7 +122,7 @@ void App::Update()
 	if(m_currentState == APPSTATE_GAME)
 		g_theGame->Update();
 	if (m_currentState == APPSTATE_EDITOR)
-		g_theEditor->Render();
+		g_theEditor->Update();
 	
 	Playground::RunTestOnUpdate();
 	 

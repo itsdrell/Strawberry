@@ -64,8 +64,7 @@ Game::~Game()
 	delete g_theGameBlackboard;
 	g_theGameBlackboard = nullptr;
 
-	delete g_theSpriteSheet;
-	g_theSpriteSheet = nullptr;
+	// don't delete the spritesheet, the game will delete it on startup and the app on shutdown
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -79,10 +78,6 @@ void Game::StartUp()
 void Game::CleanUp()
 {
 	String path = "Projects/" + g_currentProjectName;
-	
-	// delete textures
-	Renderer* r = Renderer::GetInstance();
-	r->DeleteTexture(m_texturePath);
 
 	// delete sounds
 	AudioSystem::GetInstance()->StopAllSounds();

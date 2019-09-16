@@ -208,8 +208,8 @@ void InputSystem::PollEvents()
 
 		if (theEvent.type == SDL_MOUSEMOTION)
 		{
-			m_mousePosition.x = theEvent.motion.x;
-			m_mousePosition.y = theEvent.motion.y;
+			m_mousePosition.x = (float) theEvent.motion.x;
+			m_mousePosition.y = (float) theEvent.motion.y;
 		}
 	}
 }
