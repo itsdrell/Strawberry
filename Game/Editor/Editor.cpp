@@ -3,6 +3,7 @@
 #include "Engine/Core/General/EngineCommon.hpp"
 #include "Game/Editor/SpriteSheetViewer.hpp"
 #include "Game/Editor/MapEditor.hpp"
+#include "Engine/Core/Tools/Console.hpp"
 
 //===============================================================================================
 Editor* g_theEditor = nullptr;  
@@ -46,6 +47,9 @@ void Editor::HandleInput()
 //-----------------------------------------------------------------------------------------------
 void Editor::KeyboardInput()
 {
+	if (Console::GetInstance()->IsOpen())
+		return;
+	
 	if (WasKeyJustPressed(KEYBOARD_RIGHT_ARROW) || WasKeyJustPressed('g'))
 	{
 		m_currentMode = (TypesOfEditorModes)((m_currentMode + 1) % NUM_OF_EDITOR_MODES);

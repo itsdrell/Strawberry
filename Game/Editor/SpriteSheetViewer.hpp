@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/Editor/EditorMode.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
+#include "Engine/Math/Vectors/IntVector2.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -36,7 +37,11 @@ public:
 	virtual void Render() const override;
 
 public:
-	AABB2	m_textureBounds;
+	AABB2			m_cameraBounds;
+	AABB2			m_textureBounds;
+
+	IntVector2		m_spriteCoords;
+	int				m_spriteIndex = 0;
 };
 
 //====================================================================================

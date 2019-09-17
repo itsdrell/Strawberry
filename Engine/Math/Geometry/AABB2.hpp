@@ -37,6 +37,8 @@ public:
 	Vector2		GetDimensions() const;
 	Vector2		GetPositionWithinBox(const Vector2& percentWithin);
 
+	bool		IsPointInBox(const Vector2& thePoint);
+
 
 public:
 	Vector2 mins, maxs;

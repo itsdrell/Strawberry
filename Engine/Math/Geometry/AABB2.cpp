@@ -48,6 +48,13 @@ Vector2 AABB2::GetPositionWithinBox(const Vector2 & percentWithin)
 }
 
 //-----------------------------------------------------------------------------------------------
+bool AABB2::IsPointInBox(const Vector2& thePoint)
+{
+	return (thePoint.x >= mins.x) && (thePoint.x <= maxs.x)
+		&& (thePoint.y >= mins.y) && (thePoint.y <= maxs.y);
+}
+
+//-----------------------------------------------------------------------------------------------
 AABB2::AABB2(float minX, float minY, float maxX, float maxY)
 {
 	mins = Vector2(minX, minY);
