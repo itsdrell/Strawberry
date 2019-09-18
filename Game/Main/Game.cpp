@@ -23,20 +23,14 @@ Game* g_theGame = nullptr;
 Game::Game()
 {
 	String path = "Projects/" + g_currentProjectName;
+	Renderer* r = Renderer::GetInstance();
 	
 	m_mainLuaScript = new LuaScript(path + "/Scripts/Main.lua");
 	if (m_mainLuaScript == nullptr)
 		PrintLog("Error creating main lua script");
 
-	Renderer* r = Renderer::GetInstance();
+	LoadOrReloadSpriteSheet();
 	m_texturePath = path + "/Images/SpriteSheet.png";
-	
-	if(g_theSpriteSheet != nullptr)
-	{
-		r->DeleteTexture(m_texturePath);
-		delete g_theSpriteSheet;
-	}
-	g_theSpriteSheet = new SpriteSheet(r->CreateOrGetTexture(m_texturePath), 16, 16);
 
 	g_theGameCamera = new Camera();
 	g_theGameCamera->SetColorTarget(r->m_defaultColorTarget);
@@ -139,6 +133,22 @@ void Game::RenderError() const
 	r->DrawAABB2Outline(inspirationTextBounds, Rgba::WHITE);
 
 	r->DrawWrappedTextInBox2D(m_mainLuaScript->GetErrorMessage(), errorTextBounds, fontHeight, Window::GetInstance()->GetAspect());
+}
+
+//-----------------------------------------------------------------------------------------------
+void Game::LoadOrReloadSpriteSheet()
+{
+	String path = "Projects/" + g_currentProjectName;
+
+	Renderer* r = Renderer::GetInstance();
+	String fullPath = path + "/Images/SpriteSheet.png";
+
+	if (g_theSpriteSheet != nullptr)
+	{
+		r->DeleteTexture(fullPath);
+		delete g_theSpriteSheet;
+	}
+	g_theSpriteSheet = new SpriteSheet(r->CreateOrGetTexture(fullPath), 16, 16);
 }
 
 //-----------------------------------------------------------------------------------------------

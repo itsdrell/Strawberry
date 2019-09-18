@@ -32,6 +32,7 @@ public:
 
 public:
 	virtual void Update() override;
+	virtual void HandleInput() override;
 	virtual void Render() const override;
 };
 

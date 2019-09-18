@@ -36,6 +36,8 @@ public:
 
 public:
 	virtual void Update() = 0;
+	virtual void HandleInput() = 0;
+	
 	virtual void Render() const = 0;
 
 	// maybe a Enter() / Leave() ?

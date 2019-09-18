@@ -9,6 +9,10 @@ void MapEditor::Update()
 {
 }
 
+void MapEditor::HandleInput()
+{
+}
+
 //-----------------------------------------------------------------------------------------------
 void MapEditor::Render() const
 {

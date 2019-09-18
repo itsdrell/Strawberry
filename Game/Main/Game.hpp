@@ -41,6 +41,9 @@ public:
 	void		RenderError() const;
 
 public:
+	static void LoadOrReloadSpriteSheet();
+
+public:
 	static Game* GetInstance();
 
 public:

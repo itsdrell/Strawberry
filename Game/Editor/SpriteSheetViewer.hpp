@@ -36,7 +36,17 @@ public:
 	virtual void Update() override;
 	virtual void Render() const override;
 
-public:
+private:
+	virtual void HandleInput() override;
+	void CalculateSpritePositions();
+
+private:
+	void RenderTexture() const;
+	void RenderCursor() const;
+	void RenderGrid() const;
+	void RenderIndex() const;
+
+private:
 	AABB2			m_cameraBounds;
 	AABB2			m_textureBounds;
 
