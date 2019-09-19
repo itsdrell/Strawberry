@@ -38,7 +38,7 @@ void AudioSystem::ReleaseSounds()
 {
 	for (uint i = 0; i < m_registeredSounds.size(); i++)
 	{
-		FMOD_RESULT result = m_registeredSounds.at(i)->release();
+		m_registeredSounds.at(i)->release();
 	}
 
 	m_registeredSounds.clear();

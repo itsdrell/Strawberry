@@ -23,6 +23,7 @@
 #include "Engine/Core/Tools/Console.hpp"
 #include "Engine/Core/Tools/Command.hpp"
 #include "Engine/Core/Platform/File.hpp"
+#include "Engine/Renderer/Images/SpriteSheet.hpp"
 
 
 //===============================================================================================
@@ -52,7 +53,7 @@ App::App()
 	EngineStartUp();
 	InputSystem::GetInstance()->SetShutdownFunction((ShutdownFunction) Quit);
 
-	new BlackBoard("Data/EditorConfig.lua", ENGINE_BLACKBOARD);
+	new BlackBoard("Data/AppConfig.lua", ENGINE_BLACKBOARD);
 
 	m_isQuitting = false;
 	m_timeSinceStart = 0.f;
@@ -76,19 +77,29 @@ App::~App()
 void App::StartUp()
 {
 	CommandRegister("run", "run <projectName>", "runs project", RunProject, false);
-	
-	printf("Done with startup \n");	
-
-	Playground::RunTestOnce();
 
 #ifndef EMSCRIPTEN_PORT
+	Playground::RunTestOnce();
 	Console::GetInstance()->Open();
+
+	String startupGame = g_theEngineBlackboard->GetValue("startupGame", "idk");
+	if (startupGame != "idk")
+	{
+		g_currentProjectName = startupGame;
+		PrintLog("Project Name is: " + g_currentProjectName);
+		ReloadAndRunGame();
+
+		m_isReleaseVersion = g_theEngineBlackboard->GetValue("release", false);
+	}
+
 #else
 	BlackBoard temp = BlackBoard("Data/Web/NameOfGame.lua", DATA_BLACKBOARD);
 	g_currentProjectName = temp.GetValue("webName", "idk");
 	PrintLog("Project Name is: " + g_currentProjectName);
 	ReloadAndRunGame();
 #endif
+	
+	printf("Done with startup \n");	
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -126,10 +137,10 @@ void App::Update()
 	
 	Playground::RunTestOnUpdate();
 	 
-	if (WasKeyJustPressed(KEYBOARD_TILDE))
+	if (WasKeyJustPressed(KEYBOARD_TILDE) && m_isReleaseVersion == false)
 	{
 		// can only toggle if there is a game!
-		if(g_theGame || g_theEditor)
+		if (g_theGame || g_theEditor)
 			Console::GetInstance()->Toggle();
 	}
 
@@ -141,7 +152,7 @@ void App::Update()
 			ReloadAndRunGame();
 	}
 
-	if (WasKeyJustPressed(KEYBOARD_ESC))
+	if (WasKeyJustPressed(KEYBOARD_ESC) && m_isReleaseVersion == false)
 	{
 		if (m_currentState == APPSTATE_GAME)
 		{

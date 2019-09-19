@@ -54,6 +54,7 @@ public:
 public:
 	AppState m_currentState = APPSTATE_CONSOLE;
 	bool m_isQuitting;
+	bool m_isReleaseVersion = false;
 	float m_timeSinceStart;
 
 };

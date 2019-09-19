@@ -43,13 +43,13 @@ void SpriteSheetView::CalculateSpritePositions()
 	AABB2 cameraBounds = Renderer::GetInstance()->m_defaultUICamera->GetOrthoBounds();
 	Vector2 mousePos = GetMousePosition(cameraBounds);
 
-	m_spriteCoords.x = RangeMapFloat(mousePos.x, m_textureBounds.mins.x, m_textureBounds.maxs.x, 0.f, g_theSpriteSheet->m_spriteLayout.x);
-	m_spriteCoords.y = RangeMapFloat(mousePos.y, m_textureBounds.mins.y, m_textureBounds.maxs.y, g_theSpriteSheet->m_spriteLayout.y, 0.f);
-	m_spriteCoords.x = ClampFloat(m_spriteCoords.x, 0, g_theSpriteSheet->m_spriteLayout.x - 1);
-	m_spriteCoords.y = ClampFloat(m_spriteCoords.y, 0, g_theSpriteSheet->m_spriteLayout.y - 1);
+	m_spriteCoords.x = (int) RangeMapFloat(mousePos.x, m_textureBounds.mins.x, m_textureBounds.maxs.x, 0.f, (float) g_theSpriteSheet->m_spriteLayout.x);
+	m_spriteCoords.y = (int) RangeMapFloat(mousePos.y, m_textureBounds.mins.y, m_textureBounds.maxs.y, (float) g_theSpriteSheet->m_spriteLayout.y, 0.f);
+	m_spriteCoords.x = ClampInt(m_spriteCoords.x, 0, (g_theSpriteSheet->m_spriteLayout.x - 1));
+	m_spriteCoords.y = ClampInt(m_spriteCoords.y, 0, (g_theSpriteSheet->m_spriteLayout.y - 1));
 
 	m_spriteIndex = m_spriteCoords.x + (m_spriteCoords.y * g_theSpriteSheet->m_spriteLayout.x);
-	m_spriteIndex = ClampFloat(m_spriteIndex, 0, g_theSpriteSheet->m_spriteLayout.x * g_theSpriteSheet->m_spriteLayout.y);
+	m_spriteIndex = ClampInt(m_spriteIndex, 0, g_theSpriteSheet->m_spriteLayout.x * g_theSpriteSheet->m_spriteLayout.y);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -86,10 +86,10 @@ void SpriteSheetView::RenderCursor() const
 {
 	Renderer* r = Renderer::GetInstance();
 
-	float minX = RangeMapFloat(m_spriteCoords.x, 0, g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
-	float maxX = RangeMapFloat(m_spriteCoords.x + 1, 0, g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
-	float minY = RangeMapFloat(m_spriteCoords.y, 0, g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
-	float maxY = RangeMapFloat(m_spriteCoords.y + 1, 0, g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
+	float minX = RangeMapFloat((float) m_spriteCoords.x,		 0.f, (float) g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
+	float maxX = RangeMapFloat((float) (m_spriteCoords.x + 1),	 0.f, (float) g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
+	float minY = RangeMapFloat((float) m_spriteCoords.y,		 0.f, (float) g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
+	float maxY = RangeMapFloat((float) (m_spriteCoords.y + 1.f), 0.f, (float) g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
 	
 	r->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), Rgba(0, 0, 0, 255));
 
@@ -106,10 +106,10 @@ void SpriteSheetView::RenderGrid() const
 	r->DrawAABB2Filled(m_textureBounds, Rgba(255, 255, 255, 255));
 
 	Rgba gridColor = Rgba(171, 183, 183, 150);
-	for (uint i = 1; i < g_theSpriteSheet->m_spriteLayout.x; i++)
+	for (uint i = 1; i < (uint) g_theSpriteSheet->m_spriteLayout.x; i++)
 	{
-		float xpos = RangeMapFloat(i, 0, g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
-		float ypos = RangeMapFloat(i, 0, g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.mins.y, m_textureBounds.maxs.y);
+		float xpos = RangeMapFloat((float) i, 0.f, (float) g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
+		float ypos = RangeMapFloat((float) i, 0.f, (float) g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.mins.y, m_textureBounds.maxs.y);
 
 		Vector2 verticalStart = Vector2(xpos, m_textureBounds.maxs.y);
 		Vector2 verticalEnd = Vector2(xpos, m_textureBounds.mins.y);
