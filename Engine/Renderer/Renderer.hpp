@@ -61,7 +61,8 @@ public:
 	void BindCameraToShader(const Camera& theCamera);
 	void SetShader( Shader* shader = nullptr );
 	void SetCurrentTexture( int bindIndex = 0, const Texture* texture = nullptr);
-	Texture* CreateRenderTarget( int width, int height, eTextureFormat format = TEXTURE_FORMAT_RGBA8 );
+	void CreateAllRenderTargets(int width, int height);
+	void ResizeViewport(int width, int height);
 
 public:
 	void SetUniform( const String& name, float uniform );
@@ -100,6 +101,9 @@ public:
 	void DrawMeshImmediate( PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices );
 	//void DrawMeshImmediate( PrimitiveType thePrimitive, uint vertexCount, Vertex3D_PCU* vertices, uint indicesCount = 0, uint* indices = nullptr );
 	void DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices);
+
+private:
+	Texture* CreateRenderTarget(int width, int height, eTextureFormat format = TEXTURE_FORMAT_RGBA8);
 
 
 public:

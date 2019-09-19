@@ -170,6 +170,17 @@ void App::Update()
 
 		Console::GetInstance()->Close();
 	}
+
+	if (WasKeyJustPressed(KEYBOARD_SPACE))
+	{
+		Window::GetInstance()->SetWindowSize(1200, 800);
+		//Renderer::GetInstance()->m_defaultUICamera->SetProjectionOrthoByAspect(1.f);
+	}
+
+	if (WasKeyJustPressed('f'))
+	{
+		Window::GetInstance()->ToggleFullscreenMode();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

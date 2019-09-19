@@ -131,12 +131,7 @@ void Renderer::RenderPostStartUp()
 	int window_width =  (int) m_windowSize.x;
 	int window_height = (int) m_windowSize.y;
 
-	// create our output textures
-	m_defaultColorTarget = CreateRenderTarget( window_width, 
-		window_height );
-	m_defaultDepthTarget = CreateRenderTarget( window_width, 
-		window_height, 
-		TEXTURE_FORMAT_D24S8 ); 
+	CreateAllRenderTargets(window_width, window_height);
 
 	// setup the initial camera
 	m_defaultCamera = new Camera();
@@ -538,6 +533,24 @@ void Renderer::DrawLines2D(Vector2* arrayPointer, int numberOfSides, const Rgba&
 	}
 
 	DrawMeshImmediate(PRIMITIVE_LINES, points.data(), numberOfSides);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::CreateAllRenderTargets(int width, int height)
+{
+	// create our output textures
+	m_defaultColorTarget = CreateRenderTarget(width,
+		height);
+
+	m_defaultDepthTarget = CreateRenderTarget(width,
+		height,
+		TEXTURE_FORMAT_D24S8);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::ResizeViewport(int width, int height)
+{
+	glViewport(0, 0, width, height);
 }
 
 //-----------------------------------------------------------------------------------------------

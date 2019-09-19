@@ -39,6 +39,10 @@ public:
 	Vector2 GetDimensions() const { return Vector2(m_width, m_height); }
 
 public:
+	void SetWindowSize(int x, int y);
+	void ToggleFullscreenMode();
+
+public:
 	static Window* GetInstance();
 	static SDL_Window* GetWindowReference();
 
@@ -46,6 +50,9 @@ private:
 	float m_width;
 	float m_height;
 	float m_aspect;
+
+	Vector2 m_originalResolution;
+	bool  m_isFullscreen = false;
 
 	const char* m_appName = "Made with the Strawberry Engine :p ";
 
