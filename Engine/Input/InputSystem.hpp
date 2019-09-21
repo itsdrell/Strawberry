@@ -19,6 +19,7 @@ constexpr KeyCode KEYBOARD_RIGHT_ARROW = 0x27;
 constexpr KeyCode KEYBOARD_UP_ARROW =	0x26;
 constexpr KeyCode KEYBOARD_DOWN_ARROW =	0x28;
 
+// Windows look up: https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 // this is SDL2 look up https://wiki.libsdl.org/SDLKeycodeLookup
 // all the f1 are max int numbers so I am making my own : (
 constexpr KeyCode KEYBOARD_F1 = 0x80; // started at 0x70 but was bad so i am going up 1
@@ -40,6 +41,7 @@ constexpr KeyCode KEYBOARD_ENTER = 0x0D;
 constexpr KeyCode KEYBOARD_BACKSPACE = 0x08;
 constexpr KeyCode KEYBOARD_TILDE = 96;
 constexpr KeyCode KEYBOARD_ESC = 0x1B;
+constexpr KeyCode KEYBOARD_ALT = 0x12;
 
 //====================================================================================
 // ENUMS

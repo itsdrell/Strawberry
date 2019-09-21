@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 //====================================================================================
 // Forward Declare
@@ -28,10 +29,14 @@ class Vector2
 public:
 	Vector2();
 	Vector2( float theX, float theY );
+	Vector2(const std::string& theString);
 
 public:
 	Vector2 operator-() const { return Vector2(-x, -y); }
 	const Vector2 operator+(const Vector2& vecToAdd) const;
+
+public:
+	std::string ToString() const;
 
 public:
 	float x,y;

@@ -47,13 +47,13 @@ App::App()
 #endif
 
 	SDL_StartTextInput();
+	new BlackBoard("Data/AppConfig.lua", ENGINE_BLACKBOARD);
 
-	new Window("Strawberry Engine <3 ", 600, 400);
+	new Window("Strawberry Engine <3 ");
 	
 	EngineStartUp();
 	InputSystem::GetInstance()->SetShutdownFunction((ShutdownFunction) Quit);
 
-	new BlackBoard("Data/AppConfig.lua", ENGINE_BLACKBOARD);
 
 	m_isQuitting = false;
 	m_timeSinceStart = 0.f;
@@ -137,6 +137,12 @@ void App::Update()
 	
 	Playground::RunTestOnUpdate();
 	 
+	HandleInput();
+}
+
+//-----------------------------------------------------------------------------------------------
+void App::HandleInput()
+{
 	if (WasKeyJustPressed(KEYBOARD_TILDE) && m_isReleaseVersion == false)
 	{
 		// can only toggle if there is a game!
@@ -162,7 +168,7 @@ void App::Update()
 			delete g_theGame;
 			g_theGame = nullptr;
 		}
-		
+
 		m_currentState = APPSTATE_EDITOR;
 
 		if (g_theEditor == nullptr)
@@ -171,13 +177,17 @@ void App::Update()
 		Console::GetInstance()->Close();
 	}
 
-	if (WasKeyJustPressed(KEYBOARD_SPACE))
+	if (IsKeyPressed(KEYBOARD_ALT) && WasKeyJustPressed(KEYBOARD_UP_ARROW))
 	{
-		Window::GetInstance()->SetWindowSize(1200, 800);
-		//Renderer::GetInstance()->m_defaultUICamera->SetProjectionOrthoByAspect(1.f);
+		Window::GetInstance()->GoUpResolution();
 	}
 
-	if (WasKeyJustPressed('f'))
+	if (IsKeyPressed(KEYBOARD_ALT) && WasKeyJustPressed(KEYBOARD_DOWN_ARROW))
+	{
+		Window::GetInstance()->GoDownResolution();
+	}
+
+	if (IsKeyPressed(KEYBOARD_ALT) && WasKeyJustPressed(KEYBOARD_ENTER))
 	{
 		Window::GetInstance()->ToggleFullscreenMode();
 	}

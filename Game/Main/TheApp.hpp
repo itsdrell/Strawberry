@@ -42,6 +42,7 @@ public:
 	
 public:
 	void Update();
+	void HandleInput();
 	void Render() const;
 	
 public:

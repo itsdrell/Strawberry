@@ -318,6 +318,9 @@ KeyCode InputSystem::LookUpKeyCodeFromSDLKeySym(KeyCode code)
 	if (code == SDLK_F12)
 		return KEYBOARD_F12;
 
+	if (code == SDLK_LALT)
+		return KEYBOARD_ALT;
+
 	return 0;
 }
 

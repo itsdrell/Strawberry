@@ -1,6 +1,8 @@
 #include "BlackBoard.hpp"
 #include "Engine/Lua/LuaScript.hpp"
 #include "Engine/Lua/LuaUtils.hpp"
+#include "Engine/Math/Vectors/Vector2.hpp"
+#include "Engine/Math/Vectors/IntVector2.hpp"
 
 //===============================================================================================
 BlackBoard* g_theGameBlackboard = nullptr;
@@ -103,6 +105,20 @@ Rgba BlackBoard::GetValue(const String& name, const Rgba& defaultValue) const
 {
 	// we know this is a global table so we can use these helper functions
 	return LuaGetRgbaFromTable(m_blackboardLuaScript->GetLuaState(), name, defaultValue);
+}
+
+//-----------------------------------------------------------------------------------------------
+Vector2 BlackBoard::GetValue(const String& name, const Vector2& defaultValue) const
+{
+	String vectorAsString = LuaGetGlobalString(m_blackboardLuaScript->GetLuaState(), name, defaultValue.ToString());
+	return Vector2(vectorAsString);
+}
+
+//-----------------------------------------------------------------------------------------------
+IntVector2 BlackBoard::GetValue(const String& name, const IntVector2& defaultValue) const
+{
+	String vectorAsString = LuaGetGlobalString(m_blackboardLuaScript->GetLuaState(), name, defaultValue.ToString());
+	return IntVector2(vectorAsString);
 }
 
 //-----------------------------------------------------------------------------------------------

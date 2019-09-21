@@ -6,6 +6,8 @@
 //====================================================================================
 class LuaScript;
 class Rgba;
+class Vector2;
+class IntVector2;
 
 //====================================================================================
 // Type Defs + Defines
@@ -50,6 +52,8 @@ public:
 	String GetValue(const String& name, const String& defaultValue) const;
 	String GetValue(const String& name, const char* defaultValue) const;
 	Rgba GetValue(const String& name, const Rgba& defaultValue) const;
+	Vector2 GetValue(const String& name, const Vector2& defaultValue) const;
+	IntVector2 GetValue(const String& name, const IntVector2& defaultValue) const;
 
 private:
 	void GetAllColorsFromGameConfigColorsTable();

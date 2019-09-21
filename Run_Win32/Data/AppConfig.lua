@@ -2,7 +2,9 @@ webName="Demo"
 startupGame="Demo"
 --release=true
 
-
+resolution1="600,400"
+resolution2="900,600"
+resolution3="1200,800"
 
 
 --[[
@@ -16,5 +18,11 @@ startupGame = "theNameOfProjectYouWantToLoad"
 release = bool 
     - If set to true, disables the editor and console and auto loads the startupGame
     - Good for when you want to give out your game as a windows exe
+
+resolution1="600,400"
+resolution2="900,600"
+resolution3="width,height"
+    - Allows you to change to three different types of resolutions
+    - Resolution1 is what the app window will start as (the default)
 
 --]]
