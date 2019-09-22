@@ -289,6 +289,7 @@
     <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="Editor\MapEditor.cpp" />
     <ClCompile Include="Editor\SpriteSheetViewer.cpp" />
+    <ClCompile Include="General\Map\Map.cpp" />
     <ClCompile Include="Main\Game.cpp" />
     <ClCompile Include="Main\Main_Win32.cpp" />
     <ClCompile Include="Main\Playground.cpp" />
@@ -299,6 +300,8 @@
     <ClInclude Include="Editor\EditorMode.hpp" />
     <ClInclude Include="Editor\MapEditor.hpp" />
     <ClInclude Include="Editor\SpriteSheetViewer.hpp" />
+    <ClInclude Include="General\Map\Map.hpp" />
+    <ClInclude Include="General\Map\Tile.hpp" />
     <ClInclude Include="Main\Game.hpp" />
     <ClInclude Include="Main\Playground.hpp" />
     <ClInclude Include="Main\TheApp.hpp" />

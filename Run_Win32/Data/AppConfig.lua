@@ -1,5 +1,5 @@
 webName="Demo" 
-startupGame="Demo"
+startupGame="Map"
 --release=true
 
 resolution1="600,400"

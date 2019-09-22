@@ -1,16 +1,19 @@
 #pragma once
-#include "Game/Editor/EditorMode.hpp"
+#include "Engine/Math/Vectors/IntVector2.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class Map;
-class Camera;
+
 
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
 
+// Which spritesheet (x) and what index (y)
+typedef IntVector2 TileSpriteInfo;
+
+#define DEFAULT_TILE_SPRITE_INFO IntVector2(-1,-1)
 
 //====================================================================================
 // ENUMS
@@ -25,20 +28,15 @@ class Camera;
 //====================================================================================
 // Classes
 //====================================================================================
-class MapEditor : public EditorMode
+class Tile
 {
 public:
-	MapEditor();
-	~MapEditor();
+	Tile() {}
+	~Tile() {}
 
 public:
-	virtual void Update() override;
-	virtual void HandleInput() override;
-	virtual void Render() const override;
-
-public:
-	Map*		m_map;
-	Camera*		m_camera;
+	TileSpriteInfo	m_spriteInfo = DEFAULT_TILE_SPRITE_INFO;
+	bool			m_hasCollision = false;
 };
 
 //====================================================================================
@@ -52,5 +50,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [9/15/2019]
+// Written by Zachary Bracken : [9/21/2019]
 //====================================================================================

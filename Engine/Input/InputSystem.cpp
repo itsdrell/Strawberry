@@ -376,14 +376,13 @@ bool DidMouseWheelScrollDown()
 Vector2 GetMousePosition(const AABB2& orthoBounds)
 {
 	Vector2 windowDimensions = Window::GetInstance()->GetDimensions();
-	Vector2 orthoDimensions = orthoBounds.GetDimensions();
 	Vector2 mousePositionInPixels = InputSystem::GetInstance()->GetMousePositionInPixels();
 
-	float x = RangeMapFloat(mousePositionInPixels.x, 0.f, windowDimensions.x, 0.f, orthoDimensions.x);
+	float x = RangeMapFloat(mousePositionInPixels.x, 0.f, windowDimensions.x, orthoBounds.mins.x, orthoBounds.maxs.x);
 
 	// this is swapped cause window coordinates are top left is 0,0 but we want bottom left to 
 	// be zero zero 
-	float y = RangeMapFloat(mousePositionInPixels.y, windowDimensions.y, 0.f, 0.f, orthoDimensions.y);
+	float y = RangeMapFloat(mousePositionInPixels.y, windowDimensions.y, 0.f, orthoBounds.mins.y, orthoBounds.maxs.y);
 
 	return Vector2( x,y );
 }

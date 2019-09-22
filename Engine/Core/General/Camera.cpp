@@ -45,6 +45,9 @@ void Camera::SetProjectionOrthoByAspect(float height, float theNear /*= -10.f*/,
 		Vector3(-m_orthoDimensions.x *.5f , -m_orthoDimensions.y *.5f, theNear),
 		Vector3(m_orthoDimensions.x * .5f , m_orthoDimensions.y *.5f,  theFar));
 
+	float halfWidth = m_orthoDimensions.x * .5f;
+	float halfHeight = m_orthoDimensions.y * .5f;
+	m_orthoBounds = AABB2(-halfWidth, -halfHeight, halfWidth, halfHeight);
 }
 
 //-----------------------------------------------------------------------------------------------

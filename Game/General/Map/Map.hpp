@@ -1,16 +1,17 @@
 #pragma once
-#include "Game/Editor/EditorMode.hpp"
+#include "Game/General/Map/Tile.hpp"
+#include <vector>
+
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class Map;
-class Camera;
+
 
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
-
+typedef std::vector<Tile> Tiles;
 
 //====================================================================================
 // ENUMS
@@ -25,20 +26,25 @@ class Camera;
 //====================================================================================
 // Classes
 //====================================================================================
-class MapEditor : public EditorMode
+class Map
 {
 public:
-	MapEditor();
-	~MapEditor();
+	Map(const IntVector2& dimensions);
+	~Map() {}
 
 public:
-	virtual void Update() override;
-	virtual void HandleInput() override;
-	virtual void Render() const override;
+	void InitializeMap();
+	void LoadMap();
+	void CreateNewMap();
 
 public:
-	Map*		m_map;
-	Camera*		m_camera;
+	void Update();
+	void Render() const;
+
+public:
+	unsigned int	m_totalAmountOfTiles;
+	IntVector2		m_dimensions;
+	Tiles			m_tiles;
 };
 
 //====================================================================================
@@ -52,5 +58,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [9/15/2019]
+// Written by Zachary Bracken : [9/21/2019]
 //====================================================================================

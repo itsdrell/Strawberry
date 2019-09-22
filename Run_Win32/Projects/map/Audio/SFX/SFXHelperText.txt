@@ -1,0 +1,18 @@
+
+SFX supports all audio types but .wav and .mp3 are ideal! 
+This is for sfx that are just played once!
+
+You can create subfolders in here but in lua you will have to 
+add the folders to the path when using the lua functions
+
+Ex. You made a folder call PlayerSounds
+Music/PlayerSounds/theCoolSound.wav
+
+In Lua you would call the sounds like:
+PlayMusic("PlayerSounds/theCoolSound.wav")
+
+instead of 
+PlayMusic("theCoolSound.wav") -- DOES NOT WORK
+
+
+
