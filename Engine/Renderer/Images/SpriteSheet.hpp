@@ -40,6 +40,9 @@ public:
 	IntVector2	GetCoordsFromSpriteIndex(int index) const;
 
 public:
+	int GetSpriteIndexFromPositionInBounds(const Vector2& pos, const AABB2& bounds);
+
+public:
 	Texture*		m_texture = nullptr;
 	IntVector2		m_spriteLayout = IntVector2(0, 0);
 	IntVector2		m_dimensions = IntVector2(0, 0);

@@ -1,5 +1,6 @@
 #include "SpriteSheet.hpp"
 #include "Engine/Renderer/Images/Texture.hpp"
+#include "Engine/Math/MathUtils.hpp"
 
 //===============================================================================================
 SpriteSheet::SpriteSheet(Texture * theTexture, int tilesWide, int tilesHigh)
@@ -86,4 +87,13 @@ IntVector2 SpriteSheet::GetCoordsFromSpriteIndex(int index) const
 	int indexY = (int)(index / m_spriteLayout.x);
 
 	return IntVector2(indexX, indexY);
+}
+
+//-----------------------------------------------------------------------------------------------
+int SpriteSheet::GetSpriteIndexFromPositionInBounds(const Vector2& pos, const AABB2& bounds)
+{
+	int tileX = ClampFloat(RangeMapFloat(pos.x, bounds.mins.x, bounds.maxs.x, 0, m_spriteLayout.x), 0, m_spriteLayout.x - 1);
+	int tileY = ClampFloat(RangeMapFloat(pos.y, bounds.mins.y, bounds.maxs.y, m_spriteLayout.y, 0), 0, m_spriteLayout.y - 1);
+
+	return (tileY * m_spriteLayout.x) + tileX;
 }

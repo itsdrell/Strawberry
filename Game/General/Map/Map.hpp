@@ -6,7 +6,8 @@
 //====================================================================================
 // Forward Declare
 //====================================================================================
-
+class AABB2;
+class Vector2;
 
 //====================================================================================
 // Type Defs + Defines
@@ -40,6 +41,10 @@ public:
 public:
 	void Update();
 	void Render() const;
+
+public:
+	AABB2 GetBounds() const;
+	void ChangeTileAtMousePos(const Vector2& mousePos, const TileSpriteInfo& spriteInfo);
 
 public:
 	unsigned int	m_totalAmountOfTiles;

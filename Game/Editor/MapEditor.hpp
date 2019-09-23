@@ -1,5 +1,7 @@
 #pragma once
 #include "Game/Editor/EditorMode.hpp"
+#include "Engine/Math/Geometry/AABB2.hpp"
+#include "Game/General/Map/Tile.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -33,12 +35,24 @@ public:
 
 public:
 	virtual void Update() override;
-	virtual void HandleInput() override;
 	virtual void Render() const override;
+	virtual void HandleInput() override;
+
+private:
+	void LeftClick();
+	void SelectSpriteSheetTile(const Vector2& mousePos);
 
 public:
 	Map*		m_map;
 	Camera*		m_camera;
+
+private:
+	AABB2		m_cameraBounds;
+	AABB2		m_tileSelectBounds;
+	AABB2		m_optionsBounds;
+	AABB2		m_selectedTilePreviewBounds;
+
+	TileSpriteInfo	m_selectedSpriteInfo = DEFAULT_TILE_SPRITE_INFO;
 };
 
 //====================================================================================

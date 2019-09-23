@@ -15,6 +15,8 @@ typedef IntVector2 TileSpriteInfo;
 
 #define DEFAULT_TILE_SPRITE_INFO IntVector2(-1,-1)
 
+constexpr int TILE_SIZE = 16;
+
 //====================================================================================
 // ENUMS
 //====================================================================================
