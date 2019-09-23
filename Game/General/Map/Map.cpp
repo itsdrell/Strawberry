@@ -77,8 +77,8 @@ void Map::Render() const
 AABB2 Map::GetBounds() const
 {
 	// assuming the origin is at 0,0
-	float width = TILE_SIZE * m_dimensions.x;
-	float height = TILE_SIZE * m_dimensions.y;
+	float width = (float)(TILE_SIZE * m_dimensions.x);
+	float height = (float)(TILE_SIZE * m_dimensions.y);
 	return AABB2(0.f, 0.f, width, height);
 }
 
@@ -87,8 +87,8 @@ void Map::ChangeTileAtMousePos(const Vector2& mousePos, const TileSpriteInfo& sp
 {
 	AABB2 mapBounds = GetBounds();
 
-	int tileX = ClampFloat(RangeMapFloat(mousePos.x, mapBounds.mins.x, mapBounds.maxs.x, 0, m_dimensions.x), 0, m_dimensions.x - 1);
-	int tileY = ClampFloat(RangeMapFloat(mousePos.y, mapBounds.mins.y, mapBounds.maxs.y, 0, m_dimensions.y), 0, m_dimensions.y - 1);
+	int tileX = (int)ClampFloat(RangeMapFloat(mousePos.x, mapBounds.mins.x, mapBounds.maxs.x, 0.f, (float)m_dimensions.x), 0.f, (float)(m_dimensions.x - 1));
+	int tileY = (int)ClampFloat(RangeMapFloat(mousePos.y, mapBounds.mins.y, mapBounds.maxs.y, 0.f, (float)m_dimensions.y), 0.f, (float)(m_dimensions.y - 1));
 
 	int index = (tileY * m_dimensions.x) + tileX;
 	m_tiles.at(index).m_spriteInfo = spriteInfo;

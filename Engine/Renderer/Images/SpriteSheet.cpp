@@ -92,8 +92,8 @@ IntVector2 SpriteSheet::GetCoordsFromSpriteIndex(int index) const
 //-----------------------------------------------------------------------------------------------
 int SpriteSheet::GetSpriteIndexFromPositionInBounds(const Vector2& pos, const AABB2& bounds)
 {
-	int tileX = ClampFloat(RangeMapFloat(pos.x, bounds.mins.x, bounds.maxs.x, 0, m_spriteLayout.x), 0, m_spriteLayout.x - 1);
-	int tileY = ClampFloat(RangeMapFloat(pos.y, bounds.mins.y, bounds.maxs.y, m_spriteLayout.y, 0), 0, m_spriteLayout.y - 1);
+	int tileX = (int)ClampFloat(RangeMapFloat(pos.x, bounds.mins.x, bounds.maxs.x, 0.f, (float) m_spriteLayout.x), 0.f, (float)(m_spriteLayout.x - 1));
+	int tileY = (int)ClampFloat(RangeMapFloat(pos.y, bounds.mins.y, bounds.maxs.y, (float) m_spriteLayout.y, 0.f), 0.f, (float)(m_spriteLayout.y - 1));
 
 	return (tileY * m_spriteLayout.x) + tileX;
 }

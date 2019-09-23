@@ -15,6 +15,7 @@ SpriteSheetView::SpriteSheetView()
 {
 	m_cameraBounds = Renderer::GetInstance()->m_defaultUICamera->GetOrthoBounds();
 	m_textureBounds = GetAABB2FromAABB2(Vector2(.1f, .1f), Vector2(.9f, .9f), m_cameraBounds);
+	m_textureBounds.ShrinkToSquare();
 } 
 
 //-----------------------------------------------------------------------------------------------
@@ -65,6 +66,8 @@ void SpriteSheetView::Render() const
 	r->SetShader(r->m_defaultShader);
 	r->SetCurrentTexture();
 
+	r->DrawAABB2Filled(m_cameraBounds, Rgba(255, 20, 147, 255));
+
 	RenderGrid();
 	RenderTexture();
 	RenderIndex();
@@ -77,7 +80,7 @@ void SpriteSheetView::RenderTexture() const
 {
 	Renderer* r = Renderer::GetInstance();
 
-	r->DrawAABB2Outline(m_textureBounds, Rgba(0, 0, 0, 255));
+	r->DrawAABB2Outline(m_textureBounds, Rgba(255, 255, 255, 255));
 	r->DrawTexturedAABB2(m_textureBounds, *g_theSpriteSheet->m_texture, Vector2(0.f, 0.f), Vector2(1.f, 1.f), Rgba(255, 255, 255, 255));
 }
 
@@ -126,9 +129,8 @@ void SpriteSheetView::RenderGrid() const
 void SpriteSheetView::RenderIndex() const
 {
 	Renderer* r = Renderer::GetInstance();
-	AABB2 textBox = GetAABB2FromAABB2(Vector2(.1f, .02f), Vector2(.3f, .1f), m_cameraBounds);
+	AABB2 textBox = GetAABB2FromAABB2(Vector2(.01f, .02f), Vector2(.2f, .1f), m_cameraBounds);
 	
-	r->DrawAABB2Filled(textBox, Rgba(0, 0, 255, 255));
-	r->DrawAABB2Outline(textBox, Rgba(0, 0, 0, 255));
+	r->DrawAABB2Outline(textBox, Rgba(255, 255, 255, 255));
 	r->DrawText2D(textBox.mins, std::to_string(m_spriteIndex), .05f, Rgba(255, 255, 255, 255));
 }

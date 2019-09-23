@@ -48,10 +48,56 @@ Vector2 AABB2::GetPositionWithinBox(const Vector2 & percentWithin)
 }
 
 //-----------------------------------------------------------------------------------------------
-bool AABB2::IsPointInBox(const Vector2& thePoint)
+bool AABB2::IsPointInBox(const Vector2& thePoint) const
 {
 	return (thePoint.x >= mins.x) && (thePoint.x <= maxs.x)
 		&& (thePoint.y >= mins.y) && (thePoint.y <= maxs.y);
+}
+
+//-----------------------------------------------------------------------------------------------
+void AABB2::GrowToSquare()
+{
+	float width = GetWidth();
+	float height = GetHeight();
+
+	if (width == height)
+		return;
+
+	if (width < height)
+	{
+		float amountToUse = (height - width) *.5f;
+		maxs.x += amountToUse;
+		mins.x -= amountToUse;
+	}
+	else
+	{
+		float amountToUse = (width - height) *.5f;
+		maxs.y += amountToUse;
+		mins.y -= amountToUse;
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void AABB2::ShrinkToSquare()
+{
+	float width = GetWidth();
+	float height = GetHeight();
+
+	if (width == height)
+		return;
+
+	if (width < height)
+	{
+		float amountToUse = (height - width) *.5f;
+		maxs.y -= amountToUse;
+		mins.y += amountToUse;
+	}
+	else
+	{
+		float amountToUse = (width - height) *.5f;
+		maxs.x -= amountToUse;
+		mins.x += amountToUse;
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

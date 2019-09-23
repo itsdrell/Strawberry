@@ -20,9 +20,15 @@ MapEditor::MapEditor()
 	r->SetCamera();
 
 	m_cameraBounds = m_camera->GetOrthoBounds();
-	m_tileSelectBounds = GetAABB2FromAABB2(Vector2(0.f, 0.1f), Vector2(.3f, 1.f), m_cameraBounds);
+	m_tileSelectBounds = GetAABB2FromAABB2(Vector2(0.f, 0.1f), Vector2(.3f, .55f), m_cameraBounds);
+	m_tileSelectBounds.ShrinkToSquare();
 	m_optionsBounds = GetAABB2FromAABB2(Vector2(0.f, 0.f), Vector2(.3f, .1f), m_cameraBounds);
+	
 	m_selectedTilePreviewBounds = GetAABB2FromAABB2(Vector2(.9f, .05f), Vector2(.95f, .1f), m_cameraBounds);
+	m_selectedTilePreviewBounds.GrowToSquare();
+
+	m_tilePreviewBounds = GetAABB2FromAABB2(Vector2(.1f, .6f), Vector2(.2f, .75f), m_cameraBounds);
+	m_tilePreviewBounds.ShrinkToSquare();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -101,7 +107,22 @@ void MapEditor::Render() const
 
 	AABB2 spritePreviewUVs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(m_selectedSpriteInfo.y);
 	r->DrawTexturedAABB2(m_selectedTilePreviewBounds, *g_theSpriteSheet->m_texture, spritePreviewUVs.mins, spritePreviewUVs.maxs, Rgba(255, 255, 255, 255));
-	r->DrawAABB2Outline(m_selectedTilePreviewBounds, Rgba(0, 0, 0, 255));
+	r->DrawAABB2Outline(m_selectedTilePreviewBounds, Rgba(255, 255, 255, 255));
+
+
+	Vector2 mousePos = GetMousePosition(m_cameraBounds);
+	if (m_tileSelectBounds.IsPointInBox(mousePos))
+	{
+		int index = g_theSpriteSheet->GetSpriteIndexFromPositionInBounds(mousePos, m_tileSelectBounds);
+		AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(index);
+		r->DrawTexturedAABB2(m_tilePreviewBounds, *g_theSpriteSheet->m_texture, uvs.mins, uvs.maxs, Rgba(255, 255, 255, 255));
+		r->DrawAABB2Outline(m_tilePreviewBounds);
+
+		float midPoint = m_tileSelectBounds.maxs.x - (m_tileSelectBounds.GetWidth() * .5f);
+		r->DrawLine2D(Vector2(midPoint, m_tileSelectBounds.maxs.y), m_tilePreviewBounds.mins, Rgba(255,255,255,255));
+		r->DrawLine2D(Vector2(midPoint, m_tileSelectBounds.maxs.y), Vector2(m_tilePreviewBounds.maxs.x, m_tilePreviewBounds.mins.y), Rgba(255, 255, 255, 255));
+
+	}
 	
 	m_map->Render();
 	

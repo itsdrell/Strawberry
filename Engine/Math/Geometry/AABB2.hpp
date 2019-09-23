@@ -37,7 +37,11 @@ public:
 	Vector2		GetDimensions() const;
 	Vector2		GetPositionWithinBox(const Vector2& percentWithin);
 
-	bool		IsPointInBox(const Vector2& thePoint);
+	bool		IsPointInBox(const Vector2& thePoint) const;
+
+public:
+	void GrowToSquare();
+	void ShrinkToSquare();
 
 
 public:

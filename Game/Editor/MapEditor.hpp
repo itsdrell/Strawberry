@@ -51,6 +51,7 @@ private:
 	AABB2		m_tileSelectBounds;
 	AABB2		m_optionsBounds;
 	AABB2		m_selectedTilePreviewBounds;
+	AABB2		m_tilePreviewBounds;
 
 	TileSpriteInfo	m_selectedSpriteInfo = DEFAULT_TILE_SPRITE_INFO;
 };
