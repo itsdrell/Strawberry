@@ -54,6 +54,11 @@ void MapEditor::HandleInput()
 	{
 		LeftClick();
 	}
+
+	if (IsKeyPressed(KEYBOARD_CTRL) && WasKeyJustPressed('s'))
+	{
+		m_map->SaveMap();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -74,7 +79,7 @@ void MapEditor::LeftClick()
 	}
 	
 	AABB2 mapBounds = m_map->GetBounds();
-	if (mapBounds.IsPointInBox(mousePos) && m_selectedSpriteInfo != DEFAULT_TILE_SPRITE_INFO)
+	if (mapBounds.IsPointInBox(mousePos) && !m_selectedSpriteInfo.IsDefault())
 	{
 		m_map->ChangeTileAtMousePos(mousePos, m_selectedSpriteInfo);
 		return;
@@ -85,7 +90,11 @@ void MapEditor::LeftClick()
 void MapEditor::SelectSpriteSheetTile(const Vector2& mousePos)
 {
 	int index = g_theSpriteSheet->GetSpriteIndexFromPositionInBounds(mousePos, m_tileSelectBounds);
-	m_selectedSpriteInfo = TileSpriteInfo(0, index);
+
+	TileSpriteInfo newInfo;
+	newInfo.SetSpriteIndex(index);
+	newInfo.SetSpriteSheet(0);
+	m_selectedSpriteInfo = newInfo;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -105,7 +114,7 @@ void MapEditor::Render() const
 
 	r->DrawAABB2Outline(m_optionsBounds, Rgba(255, 255, 255, 255));
 
-	AABB2 spritePreviewUVs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(m_selectedSpriteInfo.y);
+	AABB2 spritePreviewUVs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(m_selectedSpriteInfo.GetSpriteIndex());
 	r->DrawTexturedAABB2(m_selectedTilePreviewBounds, *g_theSpriteSheet->m_texture, spritePreviewUVs.mins, spritePreviewUVs.maxs, Rgba(255, 255, 255, 255));
 	r->DrawAABB2Outline(m_selectedTilePreviewBounds, Rgba(255, 255, 255, 255));
 
@@ -118,10 +127,8 @@ void MapEditor::Render() const
 		r->DrawTexturedAABB2(m_tilePreviewBounds, *g_theSpriteSheet->m_texture, uvs.mins, uvs.maxs, Rgba(255, 255, 255, 255));
 		r->DrawAABB2Outline(m_tilePreviewBounds);
 
-		float midPoint = m_tileSelectBounds.maxs.x - (m_tileSelectBounds.GetWidth() * .5f);
-		r->DrawLine2D(Vector2(midPoint, m_tileSelectBounds.maxs.y), m_tilePreviewBounds.mins, Rgba(255,255,255,255));
-		r->DrawLine2D(Vector2(midPoint, m_tileSelectBounds.maxs.y), Vector2(m_tilePreviewBounds.maxs.x, m_tilePreviewBounds.mins.y), Rgba(255, 255, 255, 255));
-
+		r->DrawLine2D(mousePos, m_tilePreviewBounds.mins, Rgba(255, 255, 255, 255));
+		r->DrawLine2D(mousePos, Vector2(m_tilePreviewBounds.maxs.x, m_tilePreviewBounds.mins.y), Rgba(255, 255, 255, 255));
 	}
 	
 	m_map->Render();

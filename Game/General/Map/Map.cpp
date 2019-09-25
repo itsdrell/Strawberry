@@ -6,6 +6,9 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/Vectors/Vector2.hpp"
 
+#
+#include <stdio.h>
+
 //===============================================================================================
 Map::Map(const IntVector2& dimensions)
 {
@@ -17,8 +20,77 @@ Map::Map(const IntVector2& dimensions)
 //-----------------------------------------------------------------------------------------------
 void Map::InitializeMap()
 {
-	// Later will load the map file
-	CreateNewMap();
+	//if(!LoadMap())
+		CreateNewMap();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::SaveMap()
+{
+#ifndef EMSCRIPTEN_PORT
+	String path = "Projects/" + g_currentProjectName + "/" + g_currentProjectName + ".mapdata";
+
+	FILE* theFile;
+	fopen_s(&theFile, path.c_str(), "wb");
+
+	if (theFile == NULL)
+		return;
+
+	std::vector<int> m_fileData;
+	m_fileData.reserve(m_dimensions.x * m_dimensions.y);
+
+	for (int i = 0; i < m_tiles.size(); i++)
+	{
+		Tile currentTile = m_tiles.at(i);
+
+		int value;
+		if (currentTile.m_spriteInfo.GetSpriteSheet() != 0)
+			value = currentTile.m_spriteInfo.GetSpriteSheet() * currentTile.m_spriteInfo.GetSpriteIndex();
+		else
+			value = currentTile.m_spriteInfo.GetSpriteIndex();
+
+		m_fileData.push_back(value);
+	}
+
+	fwrite(m_fileData.data(), sizeof(unsigned char), sizeof(unsigned char) * m_fileData.size(), theFile);
+
+	// terminate
+	fclose(theFile);
+
+#endif
+}
+
+//-----------------------------------------------------------------------------------------------
+bool Map::LoadMap()
+{
+#ifndef EMSCRIPTEN_PORT
+	String path = "Projects/" + g_currentProjectName + "/" + g_currentProjectName + ".mapdata";
+	
+	FILE* theFile;
+	fopen_s(&theFile, path.c_str(), "rb");
+
+	if (theFile == NULL)
+		return false;
+
+	std::vector<int> m_fileData;
+
+	// read the buffer
+	int c; // note: int, not char, required to handle EOF
+	while ((c = fgetc(theFile)) != EOF)
+	{
+		putchar(c);
+		m_fileData.push_back(c);
+	}
+
+	// terminate
+	fclose(theFile);
+
+	return true;
+
+#endif
+
+	// if somehow we got here in web, id rather return false and create a new map idk??
+	return false;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -50,13 +122,13 @@ void Map::Render() const
 			Tile currentTile = m_tiles.at(currentTileIndex);
 			
 			AABB2 currentBounds = AABB2(currentPos.x, currentPos.y, currentPos.x + TILE_SIZE, currentPos.y + TILE_SIZE);
-			if (currentTile.m_spriteInfo == DEFAULT_TILE_SPRITE_INFO)
+			if (currentTile.m_spriteInfo.IsDefault())
 			{
 				r->DrawAABB2Outline(currentBounds, Rgba(0, 0, 255, 255));
 			}
 			else
 			{
-				AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(currentTile.m_spriteInfo.y);
+				AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(currentTile.m_spriteInfo.GetSpriteIndex());
 				r->DrawTexturedAABB2(currentBounds, *g_theSpriteSheet->m_texture, uvs.mins, uvs.maxs, Rgba(255,255,255,255));
 				
 				// may need to do the outline as a batched job cause hot damn

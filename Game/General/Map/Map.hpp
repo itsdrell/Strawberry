@@ -35,7 +35,8 @@ public:
 
 public:
 	void InitializeMap();
-	void LoadMap();
+	void SaveMap();
+	bool LoadMap();
 	void CreateNewMap();
 
 public:

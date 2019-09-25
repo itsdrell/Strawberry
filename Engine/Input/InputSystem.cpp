@@ -320,6 +320,8 @@ KeyCode InputSystem::LookUpKeyCodeFromSDLKeySym(KeyCode code)
 
 	if (code == SDLK_LALT)
 		return KEYBOARD_ALT;
+	if (code == SDLK_LCTRL)
+		return KEYBOARD_CTRL;
 
 	return 0;
 }

@@ -42,6 +42,7 @@ constexpr KeyCode KEYBOARD_BACKSPACE = 0x08;
 constexpr KeyCode KEYBOARD_TILDE = 96;
 constexpr KeyCode KEYBOARD_ESC = 0x1B;
 constexpr KeyCode KEYBOARD_ALT = 0x12;
+constexpr KeyCode KEYBOARD_CTRL = 0x11;
 
 //====================================================================================
 // ENUMS
