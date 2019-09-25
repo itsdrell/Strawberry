@@ -57,6 +57,7 @@ class Tile
 {
 public:
 	Tile() {}
+	Tile(TileSpriteInfo info) { m_spriteInfo = info; }
 	~Tile() {}
 
 public:

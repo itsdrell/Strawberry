@@ -33,11 +33,15 @@ public:
 	Map(const IntVector2& dimensions);
 	~Map() {}
 
-public:
+private:
 	void InitializeMap();
+	void WriteFileHeader();
+	void CreateNewMap();
+	void CreateTilesFromData();
+
+public:
 	void SaveMap();
 	bool LoadMap();
-	void CreateNewMap();
 
 public:
 	void Update();
@@ -48,9 +52,12 @@ public:
 	void ChangeTileAtMousePos(const Vector2& mousePos, const TileSpriteInfo& spriteInfo);
 
 public:
-	unsigned int	m_totalAmountOfTiles;
-	IntVector2		m_dimensions;
-	Tiles			m_tiles;
+	unsigned int			m_totalAmountOfTiles;
+	IntVector2				m_dimensions;
+
+private:
+	Tiles					m_tiles;
+	std::vector<uint16>		m_fileData;
 };
 
 //====================================================================================

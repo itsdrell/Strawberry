@@ -20,8 +20,15 @@ Map::Map(const IntVector2& dimensions)
 //-----------------------------------------------------------------------------------------------
 void Map::InitializeMap()
 {
-	//if(!LoadMap())
+	if(!LoadMap())
 		CreateNewMap();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::WriteFileHeader()
+{
+	// TODO 
+	// for validation between versions, maybe dimensions as well
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -36,7 +43,6 @@ void Map::SaveMap()
 	if (theFile == NULL)
 		return;
 
-	std::vector<int> m_fileData;
 	m_fileData.reserve(m_dimensions.x * m_dimensions.y);
 
 	for (int i = 0; i < m_tiles.size(); i++)
@@ -49,10 +55,13 @@ void Map::SaveMap()
 		else
 			value = currentTile.m_spriteInfo.GetSpriteIndex();
 
-		m_fileData.push_back(value);
+		m_fileData.push_back((uint16)(value)); 
 	}
 
-	fwrite(m_fileData.data(), sizeof(unsigned char), sizeof(unsigned char) * m_fileData.size(), theFile);
+	// write header
+	WriteFileHeader();
+
+	fwrite(m_fileData.data(), sizeof(uint16), m_fileData.size(), theFile);
 
 	// terminate
 	fclose(theFile);
@@ -72,18 +81,19 @@ bool Map::LoadMap()
 	if (theFile == NULL)
 		return false;
 
-	std::vector<int> m_fileData;
-
 	// read the buffer
 	int c; // note: int, not char, required to handle EOF
 	while ((c = fgetc(theFile)) != EOF)
 	{
 		putchar(c);
-		m_fileData.push_back(c);
+		m_fileData.push_back((uint16) c);
 	}
 
 	// terminate
 	fclose(theFile);
+
+	// map tiles from data
+	CreateTilesFromData();
 
 	return true;
 
@@ -100,6 +110,25 @@ void Map::CreateNewMap()
 	{
 		m_tiles.push_back(Tile());
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::CreateTilesFromData()
+{
+	m_tiles.reserve((uint)(((float) m_fileData.size()) * .5f));
+	for (uint i = 0; i < m_fileData.size(); i += 2)
+	{
+		uint16 rightBits = m_fileData.at(i);
+		uint16 leftBits = m_fileData.at(i + 1);
+
+		uint16 result = leftBits << 8;
+		result |= rightBits;
+
+		TileSpriteInfo theInfo = TileSpriteInfo(result);
+		m_tiles.push_back(theInfo);
+	}
+	
+	m_fileData.clear();
 }
 
 //-----------------------------------------------------------------------------------------------
