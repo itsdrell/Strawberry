@@ -20,8 +20,7 @@
 #include "Engine/Renderer/Images/SpriteSheet.hpp"
 #include "Engine/Renderer/Images/BitmapFont.hpp"
 #include "Engine/Core/Utils/StringUtils.hpp"
-
-
+#include "Engine/Renderer/Components/Mesh.hpp"
 
 //-----------------------------------------------------------------------------------------------
 int g_openGlPrimitiveTypes[ NUM_PRIMITIVE_TYPES ] =
@@ -1027,6 +1026,125 @@ void Renderer::DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, 
 
 	GLenum glPrimitiveType = g_openGlPrimitiveTypes[ primitiveType ];
 	glDrawArrays(glPrimitiveType, 0, numOfVertices );							GL_CHECK_ERROR();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawMesh(Mesh* mesh, bool deleteTempMesh /*= false*/)
+{
+	GL_CHECK_ERROR();
+
+	// this is incase you forgot to bind it (like for UI text)
+	SetUniform("MODEL", Matrix44());
+
+	SetShader(m_currentShader); // this might be redundant
+	BindRenderState(m_currentShader->m_state);
+	BindMeshToProgram(m_currentShader->m_program, mesh);
+
+	GL_CHECK_ERROR();
+
+	// binding frame buffer
+	//glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)m_currentCamera->GetFramebufferID());					GL_CHECK_ERROR();
+
+
+	GLenum glPrimitiveType = g_openGlPrimitiveTypes[mesh->m_drawInstruction.primitiveType];
+
+	// if you use indices us DrawElements, else draw arrays
+	if (mesh->m_drawInstruction.usingIndices)
+	{
+		glDrawElements(glPrimitiveType, mesh->m_ibo.m_indexCount, GL_UNSIGNED_INT, 0); // null because we don't have offsets?
+		GL_CHECK_ERROR();
+	}
+	else
+		glDrawArrays(glPrimitiveType, 0, mesh->m_drawInstruction.elemCount);			GL_CHECK_ERROR();
+
+	// just so I dont forget
+	if (deleteTempMesh)
+		delete mesh;
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::BindMeshToProgram(ShaderProgram* program, Mesh* mesh)
+{
+	GL_CHECK_ERROR();
+
+	// first, bind the mesh - same as before
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->m_vbo.m_handle);				GL_CHECK_ERROR();
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->m_ibo.m_handle);		GL_CHECK_ERROR();
+
+	// we'll need stride later...
+	uint vertex_stride = mesh->GetVertexStride();
+
+	// but now, lets describe the mesh to the program, generally, 
+	// so first, how many things do we need to know about?  There are
+	// multiple, so this means we'll need a container of some sorts (m_attributes),
+	// and this container contains a description of each member
+	// (vertex_attribute_t)
+	GLuint ph = program->m_programHandle;
+	uint attrib_count = mesh->m_layout->GetAttributeCount();
+
+	for (uint attrib_idx = 0; attrib_idx < attrib_count; ++attrib_idx) {
+		const VertexAttributeT &attrib = mesh->m_layout->GetAttribute(attrib_idx);
+
+		// a program needs a name;
+		uint bind = glGetAttribLocation(ph, attrib.name.c_str());		GL_CHECK_ERROR();
+
+		// this attribute exists in this shader, cool, bind it
+		if (bind >= 0) {
+			glEnableVertexAttribArray(bind);							GL_CHECK_ERROR();
+
+			// be sure mesh and program are bound at this point
+			// as this links them together
+			glVertexAttribPointer(bind,
+				attrib.elem_count,				// how many? 
+				ToGLType((eRenderDataType) attrib.type),			// what are they 
+				attrib.normalized,				// are theynormalized 
+				vertex_stride,					// vertex size?
+				(GLvoid*)attrib.member_offset // data offset from start
+			);								// of vertex 
+
+			GL_CHECK_ERROR();
+		}
+	}
+
+	GL_CHECK_ERROR();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::BindRenderState(const RenderState &state)
+{
+	glUseProgram(m_currentShader->m_program->m_programHandle);					GL_CHECK_ERROR();
+
+	// blend mode
+	// dont have to worry about this cause if we want it off we change the values
+	glEnable(GL_BLEND);														GL_CHECK_ERROR();
+
+	//  could be GlBlendEquationSeperate instead of this twice
+	glBlendFuncSeparate(ToGLBlendFactor(state.m_colorSrcFactor), ToGLBlendFactor(state.m_colorDstFactor),
+		ToGLBlendFactor(state.m_alphaSrcFactor), ToGLBlendFactor(state.m_alphaDstFactor));
+	GL_CHECK_ERROR();
+
+	glBlendEquationSeparate(ToGLBlendOperation(state.m_colorBlendOp), ToGLBlendOperation(state.m_alphaBlendOp));
+	GL_CHECK_ERROR();
+
+	// Depth mode ones
+	//EnableDepth(state.m_depthCompare, state.m_depthWrite);
+
+	// Fill mode
+	glPolygonMode(GL_FRONT_AND_BACK, ToGLFillMode(state.m_fillMode));
+
+	// Cull mode
+	if (state.m_cullMode == CULLMODE_NONE)
+	{
+		glDisable(GL_CULL_FACE);												GL_CHECK_ERROR();
+	}
+	else
+	{
+		glEnable(GL_CULL_FACE);													GL_CHECK_ERROR();
+		glCullFace(ToGLCullMode(state.m_cullMode));
+	}
+
+	// Winding Order
+	glFrontFace(ToGLWindOrder(state.m_frontFace));								GL_CHECK_ERROR();
 }
 
 //-----------------------------------------------------------------------------------------------

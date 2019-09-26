@@ -11,7 +11,7 @@
 //===============================================================================================
 MapEditor::MapEditor()
 {
-	m_map = new Map(IntVector2(4, 4));
+	m_map = new Map(IntVector2(128, 128));
 
 	Renderer* r = Renderer::GetInstance();
 	m_camera = new Camera();

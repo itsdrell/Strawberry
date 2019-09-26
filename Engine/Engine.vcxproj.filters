@@ -174,6 +174,8 @@
     <ClInclude Include="Core\Tools\EngineConsoleCommands.hpp" />
     <ClInclude Include="Core\General\BuiltInAssets.hpp" />
     <ClInclude Include="Core\Platform\File.hpp" />
+    <ClInclude Include="Renderer\Systems\MeshBuilder.hpp" />
+    <ClInclude Include="Renderer\Components\Mesh.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -408,6 +410,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Platform\File.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Systems\MeshBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Components\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

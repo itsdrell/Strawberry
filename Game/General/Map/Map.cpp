@@ -5,8 +5,8 @@
 #include "Engine/Renderer/Images/SpriteSheet.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/Vectors/Vector2.hpp"
+#include "Engine/Renderer/Systems/MeshBuilder.hpp"
 
-#
 #include <stdio.h>
 
 //===============================================================================================
@@ -22,6 +22,8 @@ void Map::InitializeMap()
 {
 	if(!LoadMap())
 		CreateNewMap();
+
+	GenerateTileMesh();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -132,36 +134,23 @@ void Map::CreateTilesFromData()
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::Update()
+void Map::GenerateTileMesh()
 {
-}
-
-//-----------------------------------------------------------------------------------------------
-void Map::Render() const
-{
-	Renderer* r = Renderer::GetInstance();
-
 	Vector2 currentPos = Vector2(0.f, 0.f);
+	MeshBuilder tileMap;
 
-	for(uint yIndex = 0; yIndex < (uint) m_dimensions.y; yIndex++)
-	{	
-		for (uint xIndex = 0; xIndex < (uint) m_dimensions.x; xIndex++)
+	for (uint yIndex = 0; yIndex < (uint)m_dimensions.y; yIndex++)
+	{
+		for (uint xIndex = 0; xIndex < (uint)m_dimensions.x; xIndex++)
 		{
 			uint currentTileIndex = (m_dimensions.x * yIndex) + xIndex;
 			Tile currentTile = m_tiles.at(currentTileIndex);
-			
+
 			AABB2 currentBounds = AABB2(currentPos.x, currentPos.y, currentPos.x + TILE_SIZE, currentPos.y + TILE_SIZE);
-			if (currentTile.m_spriteInfo.IsDefault())
-			{
-				r->DrawAABB2Outline(currentBounds, Rgba(0, 0, 255, 255));
-			}
-			else
+			if (!currentTile.m_spriteInfo.IsDefault())
 			{
 				AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(currentTile.m_spriteInfo.GetSpriteIndex());
-				r->DrawTexturedAABB2(currentBounds, *g_theSpriteSheet->m_texture, uvs.mins, uvs.maxs, Rgba(255,255,255,255));
-				
-				// may need to do the outline as a batched job cause hot damn
-				r->DrawAABB2Outline(currentBounds, Rgba(171, 183, 183, 150));
+				tileMap.Add2DPlane(currentBounds, uvs, Rgba::WHITE);
 			}
 
 			currentPos.x += TILE_SIZE;
@@ -171,7 +160,62 @@ void Map::Render() const
 		currentPos.y += TILE_SIZE;
 	}
 
-	r->DrawAABB2Outline(GetBounds(), Rgba(0, 0, 0, 255));
+	if (m_tileMesh != nullptr)
+		delete m_tileMesh;
+
+	m_tileMesh = tileMap.CreateMesh<Vertex3D_PCU>();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::Update()
+{
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::Render() const
+{
+	RenderTiles();
+	RenderGrid();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::RenderTiles() const
+{
+	if (m_tileMesh == nullptr)
+		return;
+	
+	Renderer* r = Renderer::GetInstance();
+	
+	r->SetCurrentTexture(0, g_theSpriteSheet->m_texture);
+	r->DrawMesh(m_tileMesh, false);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::RenderGrid() const
+{
+	// TODO: Make this a mesh pls
+	Renderer* r = Renderer::GetInstance();
+
+	Rgba gridColor = Rgba(171, 183, 183, 150);
+	AABB2 mapBounds = GetBounds();
+	for (uint i = 1; i < (uint)g_theSpriteSheet->m_spriteLayout.x; i++)
+	{
+		float xpos = RangeMapFloat((float)i, 0.f, m_dimensions.x, mapBounds.mins.x, mapBounds.maxs.x);
+		float ypos = RangeMapFloat((float)i, 0.f, m_dimensions.y, mapBounds.mins.y, mapBounds.maxs.y);
+
+		Vector2 verticalStart = Vector2(xpos, mapBounds.maxs.y);
+		Vector2 verticalEnd = Vector2(xpos, mapBounds.mins.y);
+
+		Vector2 horizontalStart = Vector2(mapBounds.mins.x, ypos);
+		Vector2 horizontalEnd = Vector2(mapBounds.maxs.x, ypos);
+
+		r->DrawLine2D(verticalStart, verticalEnd, gridColor);
+		r->DrawLine2D(horizontalStart, horizontalEnd, gridColor);
+	}
+
+	r->SetLineWidth(2.f);
+	r->DrawAABB2Outline(mapBounds, gridColor);
+	r->SetLineWidth(1.f);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -193,4 +237,6 @@ void Map::ChangeTileAtMousePos(const Vector2& mousePos, const TileSpriteInfo& sp
 
 	int index = (tileY * m_dimensions.x) + tileX;
 	m_tiles.at(index).m_spriteInfo = spriteInfo;
+
+	GenerateTileMesh();
 }

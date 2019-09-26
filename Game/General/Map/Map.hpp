@@ -8,6 +8,7 @@
 //====================================================================================
 class AABB2;
 class Vector2;
+class Mesh;
 
 //====================================================================================
 // Type Defs + Defines
@@ -38,6 +39,7 @@ private:
 	void WriteFileHeader();
 	void CreateNewMap();
 	void CreateTilesFromData();
+	void GenerateTileMesh();
 
 public:
 	void SaveMap();
@@ -47,6 +49,10 @@ public:
 	void Update();
 	void Render() const;
 
+private:
+	void RenderTiles() const;
+	void RenderGrid() const;
+
 public:
 	AABB2 GetBounds() const;
 	void ChangeTileAtMousePos(const Vector2& mousePos, const TileSpriteInfo& spriteInfo);
@@ -54,6 +60,7 @@ public:
 public:
 	unsigned int			m_totalAmountOfTiles;
 	IntVector2				m_dimensions;
+	Mesh*					m_tileMesh;
 
 private:
 	Tiles					m_tiles;

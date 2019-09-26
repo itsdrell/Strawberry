@@ -20,6 +20,9 @@ struct SDL_Surface;
 struct SDL_Renderer;
 class Sprite;
 class BitmapFont;
+class Mesh;
+class ShaderProgram;
+struct RenderState;
 
 //====================================================================================
 // Type Defs + Defines
@@ -101,6 +104,10 @@ public:
 	void DrawMeshImmediate( PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices );
 	//void DrawMeshImmediate( PrimitiveType thePrimitive, uint vertexCount, Vertex3D_PCU* vertices, uint indicesCount = 0, uint* indices = nullptr );
 	void DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices);
+	
+	void DrawMesh(Mesh* mesh, bool deleteTempMesh = false);
+	void BindMeshToProgram(ShaderProgram* program, Mesh* mesh);
+	void BindRenderState(const RenderState& state);
 
 private:
 	Texture* CreateRenderTarget(int width, int height, eTextureFormat format = TEXTURE_FORMAT_RGBA8);

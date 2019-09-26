@@ -262,6 +262,7 @@
     <ClInclude Include="Math\Vectors\Vector3.hpp" />
     <ClInclude Include="Math\Vectors\Vector4.hpp" />
     <ClInclude Include="Renderer\BuiltInShaders.hpp" />
+    <ClInclude Include="Renderer\Components\Mesh.hpp" />
     <ClInclude Include="Renderer\Components\Shader.hpp" />
     <ClInclude Include="Renderer\Components\ShaderProgram.hpp" />
     <ClInclude Include="Renderer\external\gl\glcorearb.h" />
@@ -279,6 +280,7 @@
     <ClInclude Include="Renderer\Pipeline\VertexLayout.hpp" />
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Renderer\RenderTypes.hpp" />
+    <ClInclude Include="Renderer\Systems\MeshBuilder.hpp" />
     <ClInclude Include="ThirdParty\fmod\fmod.h" />
     <ClInclude Include="ThirdParty\fmod\fmod.hpp" />
     <ClInclude Include="ThirdParty\fmod\fmod_codec.h" />
@@ -428,6 +430,7 @@
     <ClCompile Include="Math\Vectors\Vector3.cpp" />
     <ClCompile Include="Math\Vectors\Vector4.cpp" />
     <ClCompile Include="Renderer\BuiltInShaders.cpp" />
+    <ClCompile Include="Renderer\Components\Mesh.cpp" />
     <ClCompile Include="Renderer\Components\Shader.cpp" />
     <ClCompile Include="Renderer\Components\ShaderProgram.cpp" />
     <ClCompile Include="Renderer\GLFunctions.cpp" />
@@ -442,6 +445,7 @@
     <ClCompile Include="Renderer\Pipeline\VertexLayout.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RenderTypes.cpp" />
+    <ClCompile Include="Renderer\Systems\MeshBuilder.cpp" />
     <ClCompile Include="ThirdParty\Lua\lapi.c" />
     <ClCompile Include="ThirdParty\Lua\lauxlib.c" />
     <ClCompile Include="ThirdParty\Lua\lbaselib.c" />

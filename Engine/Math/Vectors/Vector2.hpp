@@ -34,6 +34,18 @@ public:
 public:
 	Vector2 operator-() const { return Vector2(-x, -y); }
 	const Vector2 operator+(const Vector2& vecToAdd) const;
+	const Vector2 operator-(const Vector2& vecToSubtract) const;	// vec2 - vec2
+	const Vector2 operator*(float uniformScale) const;			// vec2 * float
+	const Vector2 operator/(float inverseScale) const;			// vec2 / float
+	void operator+=(const Vector2& vecToAdd);						// vec2 += vec2
+	void operator-=(const Vector2& vecToSubtract);				// vec2 -= vec2
+	void operator*=(const float uniformScale);					// vec2 *= float
+	void operator/=(const float uniformDivisor);					// vec2 /= float
+	void operator=(const Vector2& copyFrom);						// vec2 = vec2
+	bool operator==(const Vector2& compare) const;				// vec2 == vec2
+	bool operator!=(const Vector2& compare) const;				// vec2 != vec2
+
+	friend const Vector2 operator*(float uniformScale, const Vector2& vecToScale);	// float * vec2
 
 public:
 	std::string ToString() const;
