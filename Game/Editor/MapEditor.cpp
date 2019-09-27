@@ -44,6 +44,7 @@ MapEditor::~MapEditor()
 //-----------------------------------------------------------------------------------------------
 void MapEditor::Update()
 {
+	m_map->Update();
 	HandleInput();
 }
 

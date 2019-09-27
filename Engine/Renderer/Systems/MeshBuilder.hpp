@@ -51,11 +51,14 @@ public:
 	VertexMaster GetVertex(uint index) { return m_vertices.at(index); }
 
 public:
+	void ChangeUVOfVertexAtPosition(uint pos, const Vector2& uvs);
+
+public:
 	void AddFace(uint a, uint b, uint c);
 	void AddQuad(uint a, uint b, uint c, uint d);
 
 	template< typename VERTTYPE >
-	Mesh* CreateMesh();
+	Mesh* CreateMesh(bool flush = true);
 
 public:
 	void AddPoint(const Vector3& pos, const Rgba& color = Rgba::WHITE);
@@ -82,15 +85,18 @@ public:
 // Standalone C Functions
 //====================================================================================
 template< typename VERTTYPE >
-Mesh* MeshBuilder::CreateMesh()
+Mesh* MeshBuilder::CreateMesh(bool flush)
 {
 	Mesh *mesh = new Mesh();
 
 	mesh->FromBuilderForType<VERTTYPE>(*this);
 
 	// Flush
-	m_vertices.clear();
-	m_indices.clear();
+	if (flush)
+	{
+		m_vertices.clear();
+		m_indices.clear();
+	}
 
 	return mesh;
 }

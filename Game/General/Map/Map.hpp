@@ -9,6 +9,8 @@
 class AABB2;
 class Vector2;
 class Mesh;
+class Tile;
+class MeshBuilder;
 
 //====================================================================================
 // Type Defs + Defines
@@ -32,13 +34,14 @@ class Map
 {
 public:
 	Map(const IntVector2& dimensions);
-	~Map() {}
+	~Map();
 
 private:
 	void InitializeMap();
 	void WriteFileHeader();
 	void CreateNewMap();
 	void CreateTilesFromData();
+	void UpdateTileMesh(int tileIndex, const Tile& changedTile);
 	void GenerateTileMesh();
 
 public:
@@ -61,9 +64,11 @@ public:
 	unsigned int			m_totalAmountOfTiles;
 	IntVector2				m_dimensions;
 	Mesh*					m_tileMesh;
+	MeshBuilder*			m_tileBuilder;
 
 private:
 	Tiles					m_tiles;
+	Tiles					m_viewableTiles;
 	std::vector<uint16>		m_fileData;
 };
 

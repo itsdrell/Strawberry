@@ -108,6 +108,12 @@ uint MeshBuilder::PushVertex(const Vector3& position)
 }
 
 //-----------------------------------------------------------------------------------------------
+void MeshBuilder::ChangeUVOfVertexAtPosition(uint pos, const Vector2& uvs)
+{
+	m_vertices.at(pos).m_uvTexCoords = uvs;
+}
+
+//-----------------------------------------------------------------------------------------------
 void MeshBuilder::AddFace(uint a, uint b, uint c)
 {
 	m_indices.emplace_back(a);

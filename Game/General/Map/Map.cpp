@@ -8,13 +8,26 @@
 #include "Engine/Renderer/Systems/MeshBuilder.hpp"
 
 #include <stdio.h>
+#include "Engine/Input/InputSystem.hpp"
+#include "Engine/Renderer/RenderTypes.hpp"
 
 //===============================================================================================
 Map::Map(const IntVector2& dimensions)
 {
 	m_dimensions = dimensions;
 	m_totalAmountOfTiles = m_dimensions.x * m_dimensions.y;
+	m_tileBuilder = new MeshBuilder();
 	InitializeMap();
+}
+
+//-----------------------------------------------------------------------------------------------
+Map::~Map()
+{
+	delete m_tileMesh;
+	m_tileMesh = nullptr;
+
+	delete m_tileBuilder;
+	m_tileBuilder = nullptr;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -134,10 +147,26 @@ void Map::CreateTilesFromData()
 }
 
 //-----------------------------------------------------------------------------------------------
+void Map::UpdateTileMesh(int tileIndex, const Tile& changedTile)
+{
+	AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(changedTile.m_spriteInfo.GetSpriteIndex());
+
+	// just editing the UVs of the meshbuilder for performance reasons!
+	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex, uvs.mins);
+	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 1, Vector2(uvs.maxs.x, uvs.mins.y));
+	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 2, Vector2(uvs.mins.x, uvs.maxs.y));
+	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 3, uvs.maxs);
+
+	if (m_tileMesh)
+		delete m_tileMesh;
+
+	m_tileMesh = m_tileBuilder->CreateMesh<Vertex3D_PCU>(false);
+}
+
+//-----------------------------------------------------------------------------------------------
 void Map::GenerateTileMesh()
 {
 	Vector2 currentPos = Vector2(0.f, 0.f);
-	MeshBuilder tileMap;
 
 	for (uint yIndex = 0; yIndex < (uint)m_dimensions.y; yIndex++)
 	{
@@ -150,7 +179,14 @@ void Map::GenerateTileMesh()
 			if (!currentTile.m_spriteInfo.IsDefault())
 			{
 				AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(currentTile.m_spriteInfo.GetSpriteIndex());
-				tileMap.Add2DPlane(currentBounds, uvs, Rgba::WHITE);
+				m_tileBuilder->Add2DPlane(currentBounds, uvs, Rgba::WHITE);
+			}
+			else
+			{
+				// We need to make a placeholder vertex that we will later change
+				// so we use one has UVs of 0 so it wont draw anything for that tile!
+				// so the map looks empty #hack
+				m_tileBuilder->Add2DPlane(currentBounds, AABB2(0.f, 0.f, 0.f, 0.f), Rgba::WHITE);
 			}
 
 			currentPos.x += TILE_SIZE;
@@ -163,12 +199,13 @@ void Map::GenerateTileMesh()
 	if (m_tileMesh != nullptr)
 		delete m_tileMesh;
 
-	m_tileMesh = tileMap.CreateMesh<Vertex3D_PCU>();
+	m_tileMesh = m_tileBuilder->CreateMesh<Vertex3D_PCU>(false);
 }
 
 //-----------------------------------------------------------------------------------------------
 void Map::Update()
 {
+
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -185,7 +222,6 @@ void Map::RenderTiles() const
 		return;
 	
 	Renderer* r = Renderer::GetInstance();
-	
 	r->SetCurrentTexture(0, g_theSpriteSheet->m_texture);
 	r->DrawMesh(m_tileMesh, false);
 }
@@ -238,5 +274,5 @@ void Map::ChangeTileAtMousePos(const Vector2& mousePos, const TileSpriteInfo& sp
 	int index = (tileY * m_dimensions.x) + tileX;
 	m_tiles.at(index).m_spriteInfo = spriteInfo;
 
-	GenerateTileMesh();
+	UpdateTileMesh(index * 4, m_tiles.at(index));
 }
