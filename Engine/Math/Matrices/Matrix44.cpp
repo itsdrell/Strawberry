@@ -1,5 +1,6 @@
 #include "Matrix44.hpp"
-#include "../MathUtils.hpp"
+#include "Engine/Math/MathUtils.hpp"
+#include "Engine/Core/General/EngineCommon.hpp"
 
 
 //===============================================================================================
@@ -65,6 +66,30 @@ void Matrix44::SetIdentity()
 	Jx = Jz = Jw = 0.0f;
 	Kx = Ky = Kw = 0.0f;
 	Tx = Ty = Tz = 0.0f;
+}
+
+//-----------------------------------------------------------------------------------------------
+void Matrix44::SetValues(const float* sixteenValuesBasisMajor)
+{
+	Ix = sixteenValuesBasisMajor[0];
+	Iy = sixteenValuesBasisMajor[1];
+	Iz = sixteenValuesBasisMajor[2];
+	Iw = sixteenValuesBasisMajor[3];
+
+	Jx = sixteenValuesBasisMajor[4];
+	Jy = sixteenValuesBasisMajor[5];
+	Jz = sixteenValuesBasisMajor[6];
+	Jw = sixteenValuesBasisMajor[7];
+
+	Kx = sixteenValuesBasisMajor[8];
+	Ky = sixteenValuesBasisMajor[9];
+	Kz = sixteenValuesBasisMajor[10];
+	Kw = sixteenValuesBasisMajor[11];
+
+	Tx = sixteenValuesBasisMajor[12];
+	Ty = sixteenValuesBasisMajor[13];
+	Tz = sixteenValuesBasisMajor[14];
+	Tw = sixteenValuesBasisMajor[15];
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -320,3 +345,154 @@ Matrix44 Matrix44::MakeRotationDegrees2D(float rotationDegreesAboutZ)
 
 	return result;
 }
+
+
+//------------------------------------------------------------------------
+// Forseth Lifted from GLU
+void Matrix44::Invert()
+{
+	float data[16];
+	GetValuesAsArray(data);
+
+	float inv[16];
+	float det;
+	float m[16];
+	uint i;
+
+	for (i = 0; i < 16; ++i) {
+		m[i] = data[i];
+	}
+
+	inv[0] = m[5] * m[10] * m[15] -
+		m[5] * m[11] * m[14] -
+		m[9] * m[6] * m[15] +
+		m[9] * m[7] * m[14] +
+		m[13] * m[6] * m[11] -
+		m[13] * m[7] * m[10];
+
+	inv[4] = -m[4] * m[10] * m[15] +
+		m[4] * m[11] * m[14] +
+		m[8] * m[6] * m[15] -
+		m[8] * m[7] * m[14] -
+		m[12] * m[6] * m[11] +
+		m[12] * m[7] * m[10];
+
+	inv[8] = m[4] * m[9] * m[15] -
+		m[4] * m[11] * m[13] -
+		m[8] * m[5] * m[15] +
+		m[8] * m[7] * m[13] +
+		m[12] * m[5] * m[11] -
+		m[12] * m[7] * m[9];
+
+	inv[12] = -m[4] * m[9] * m[14] +
+		m[4] * m[10] * m[13] +
+		m[8] * m[5] * m[14] -
+		m[8] * m[6] * m[13] -
+		m[12] * m[5] * m[10] +
+		m[12] * m[6] * m[9];
+
+	inv[1] = -m[1] * m[10] * m[15] +
+		m[1] * m[11] * m[14] +
+		m[9] * m[2] * m[15] -
+		m[9] * m[3] * m[14] -
+		m[13] * m[2] * m[11] +
+		m[13] * m[3] * m[10];
+
+	inv[5] = m[0] * m[10] * m[15] -
+		m[0] * m[11] * m[14] -
+		m[8] * m[2] * m[15] +
+		m[8] * m[3] * m[14] +
+		m[12] * m[2] * m[11] -
+		m[12] * m[3] * m[10];
+
+	inv[9] = -m[0] * m[9] * m[15] +
+		m[0] * m[11] * m[13] +
+		m[8] * m[1] * m[15] -
+		m[8] * m[3] * m[13] -
+		m[12] * m[1] * m[11] +
+		m[12] * m[3] * m[9];
+
+	inv[13] = m[0] * m[9] * m[14] -
+		m[0] * m[10] * m[13] -
+		m[8] * m[1] * m[14] +
+		m[8] * m[2] * m[13] +
+		m[12] * m[1] * m[10] -
+		m[12] * m[2] * m[9];
+
+	inv[2] = m[1] * m[6] * m[15] -
+		m[1] * m[7] * m[14] -
+		m[5] * m[2] * m[15] +
+		m[5] * m[3] * m[14] +
+		m[13] * m[2] * m[7] -
+		m[13] * m[3] * m[6];
+
+	inv[6] = -m[0] * m[6] * m[15] +
+		m[0] * m[7] * m[14] +
+		m[4] * m[2] * m[15] -
+		m[4] * m[3] * m[14] -
+		m[12] * m[2] * m[7] +
+		m[12] * m[3] * m[6];
+
+	inv[10] = m[0] * m[5] * m[15] -
+		m[0] * m[7] * m[13] -
+		m[4] * m[1] * m[15] +
+		m[4] * m[3] * m[13] +
+		m[12] * m[1] * m[7] -
+		m[12] * m[3] * m[5];
+
+	inv[14] = -m[0] * m[5] * m[14] +
+		m[0] * m[6] * m[13] +
+		m[4] * m[1] * m[14] -
+		m[4] * m[2] * m[13] -
+		m[12] * m[1] * m[6] +
+		m[12] * m[2] * m[5];
+
+	inv[3] = -m[1] * m[6] * m[11] +
+		m[1] * m[7] * m[10] +
+		m[5] * m[2] * m[11] -
+		m[5] * m[3] * m[10] -
+		m[9] * m[2] * m[7] +
+		m[9] * m[3] * m[6];
+
+	inv[7] = m[0] * m[6] * m[11] -
+		m[0] * m[7] * m[10] -
+		m[4] * m[2] * m[11] +
+		m[4] * m[3] * m[10] +
+		m[8] * m[2] * m[7] -
+		m[8] * m[3] * m[6];
+
+	inv[11] = -m[0] * m[5] * m[11] +
+		m[0] * m[7] * m[9] +
+		m[4] * m[1] * m[11] -
+		m[4] * m[3] * m[9] -
+		m[8] * m[1] * m[7] +
+		m[8] * m[3] * m[5];
+
+	inv[15] = m[0] * m[5] * m[10] -
+		m[0] * m[6] * m[9] -
+		m[4] * m[1] * m[10] +
+		m[4] * m[2] * m[9] +
+		m[8] * m[1] * m[6] -
+		m[8] * m[2] * m[5];
+
+	det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+
+	// if this is 0 it wont work meaning the matrix cant be solved
+	det = 1.0f / det;
+
+	for (i = 0; i < 16; i++) {
+		data[i] = (float)(inv[i] * det);
+	}
+
+	SetValues(data);
+}
+
+//-----------------------------------------------------------------------------------------------
+Matrix44 Matrix44::Invert(const Matrix44& matrixToInverse)
+{
+	Matrix44 result = matrixToInverse;
+	result.Invert();
+
+	return result;
+}
+

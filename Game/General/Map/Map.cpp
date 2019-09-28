@@ -234,7 +234,7 @@ void Map::RenderGrid() const
 
 	Rgba gridColor = Rgba(171, 183, 183, 150);
 	AABB2 mapBounds = GetBounds();
-	for (uint i = 1; i < (uint)g_theSpriteSheet->m_spriteLayout.x; i++)
+	for (uint i = 1; i < (uint)m_dimensions.x; i++)
 	{
 		float xpos = RangeMapFloat((float)i, 0.f, m_dimensions.x, mapBounds.mins.x, mapBounds.maxs.x);
 		float ypos = RangeMapFloat((float)i, 0.f, m_dimensions.y, mapBounds.mins.y, mapBounds.maxs.y);
@@ -244,6 +244,12 @@ void Map::RenderGrid() const
 
 		Vector2 horizontalStart = Vector2(mapBounds.mins.x, ypos);
 		Vector2 horizontalEnd = Vector2(mapBounds.maxs.x, ypos);
+
+		// outline of cells
+		if (GetFractionOf((float)i / 16.f) == 0)
+			r->SetLineWidth(3.f);
+		else
+			r->SetLineWidth(1.f);
 
 		r->DrawLine2D(verticalStart, verticalEnd, gridColor);
 		r->DrawLine2D(horizontalStart, horizontalEnd, gridColor);

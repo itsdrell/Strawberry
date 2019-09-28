@@ -42,12 +42,13 @@ public:
 
 public:
 	void LookAt(Vector3 position, Vector3 target, Vector3 up = Vector3(0.f, 1.f, 0.f));  
-	void Translate2D(const Vector2& translation);
+	void GoToPosition2D(const Vector2& translation);
 
 public:
 	FrameBuffer GetFramebuffer() { return m_output; }
 	uint GetFrameBufferID() { return m_output.m_ID; }
 	AABB2 GetOrthoBounds() const { return m_orthoBounds; }
+	AABB2 GetBounds() const;
 
 public:
 	Matrix44		m_cameraMatrix; // where is the camera in the world

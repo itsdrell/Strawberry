@@ -34,9 +34,13 @@ public:
 
 public:
 	void SetIdentity();
+	void SetValues(const float* sixteenValuesBasisMajor);
 	void SetPosition2D(const Vector2& pos);
 	void Append( const Matrix44& matrixToAppend ); // a.k.a. Concatenate (right-multiply)
 	void Translate2D( const Vector2& translation );
+
+public:
+	void Invert();
 
 public:
 	void GetValuesAsArray(float* outArray) const;
@@ -58,6 +62,7 @@ public:
 	static Matrix44 MakeRotationDegreesAroundY(float rotationDegrees);
 	static Matrix44 MakeRotationDegreesAroundX(float rotationDegrees);
 	static Matrix44 MakeRotationDegrees2D(float rotationDegreesAboutZ);
+	static Matrix44 Invert(const Matrix44& matrixToInverse);
 
 private:
 	// Column Major (squirrels way)

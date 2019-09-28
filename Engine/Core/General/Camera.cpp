@@ -63,12 +63,27 @@ void Camera::LookAt(Vector3 position, Vector3 target, Vector3 up /*= Vector3(0.f
 	// Look first creates the camera position
 	m_cameraMatrix = Matrix44::LookAt(position, target, up);
 
+	m_viewMatrix = Matrix44::Invert(m_cameraMatrix);
+
 	// Using the make view function its look at + inverse in one call
-	m_viewMatrix = Matrix44::MakeView(position, target, up);
+	//m_viewMatrix = Matrix44::MakeView(position, target, up);
 }
 
 //-----------------------------------------------------------------------------------------------
-void Camera::Translate2D(const Vector2& translation)
+void Camera::GoToPosition2D(const Vector2& translation)
 {
 	m_cameraMatrix = Matrix44::MakeTranslation2D(translation);
+
+	m_viewMatrix = Matrix44::Invert(m_cameraMatrix);
+}
+
+//-----------------------------------------------------------------------------------------------
+AABB2 Camera::GetBounds() const
+{
+	AABB2 bounds = GetOrthoBounds();
+
+	Vector3 pos = m_cameraMatrix.GetPosition();
+	bounds.Translate(pos.x, pos.y);
+
+	return bounds;
 }

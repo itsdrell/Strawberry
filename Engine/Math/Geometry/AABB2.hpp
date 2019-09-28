@@ -40,6 +40,10 @@ public:
 	bool		IsPointInBox(const Vector2& thePoint) const;
 
 public:
+	void Translate(const Vector2& pos);
+	void Translate(float translationX, float translationY);
+
+public:
 	void GrowToSquare();
 	void ShrinkToSquare();
 

@@ -19,16 +19,7 @@ MapEditor::MapEditor()
 	m_camera->SetProjectionOrthoByAspect(Window::GetInstance()->GetHeight() * .5f);
 	r->SetCamera();
 
-	m_cameraBounds = m_camera->GetOrthoBounds();
-	m_tileSelectBounds = GetAABB2FromAABB2(Vector2(0.f, 0.1f), Vector2(.3f, .55f), m_cameraBounds);
-	m_tileSelectBounds.ShrinkToSquare();
-	m_optionsBounds = GetAABB2FromAABB2(Vector2(0.f, 0.f), Vector2(.3f, .1f), m_cameraBounds);
-	
-	m_selectedTilePreviewBounds = GetAABB2FromAABB2(Vector2(.9f, .05f), Vector2(.95f, .1f), m_cameraBounds);
-	m_selectedTilePreviewBounds.GrowToSquare();
-
-	m_tilePreviewBounds = GetAABB2FromAABB2(Vector2(.1f, .6f), Vector2(.2f, .75f), m_cameraBounds);
-	m_tilePreviewBounds.ShrinkToSquare();
+	GenerateAllBounds();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -46,6 +37,7 @@ void MapEditor::Update()
 {
 	m_map->Update();
 	HandleInput();
+	GenerateAllBounds();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -60,6 +52,38 @@ void MapEditor::HandleInput()
 	{
 		m_map->SaveMap();
 	}
+
+	KeyboardMovement();
+}
+
+//-----------------------------------------------------------------------------------------------
+void MapEditor::RenderUI() const
+{
+	Renderer* r = Renderer::GetInstance();
+
+	r->SetCurrentTexture();
+	r->DrawTexturedAABB2(m_tileSelectBounds, *g_theSpriteSheet->m_texture, Vector2(0, 0), Vector2(1, 1), Rgba(255, 255, 255, 255));
+	r->DrawAABB2Outline(m_tileSelectBounds, Rgba(255, 255, 255, 255));
+
+	r->DrawAABB2Outline(m_optionsBounds, Rgba(255, 255, 255, 255));
+
+	AABB2 spritePreviewUVs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(m_selectedSpriteInfo.GetSpriteIndex());
+	r->DrawTexturedAABB2(m_selectedTilePreviewBounds, *g_theSpriteSheet->m_texture, spritePreviewUVs.mins, spritePreviewUVs.maxs, Rgba(255, 255, 255, 255));
+	r->DrawAABB2Outline(m_selectedTilePreviewBounds, Rgba(255, 255, 255, 255));
+
+	Vector2 mousePos = GetMousePosition(m_cameraBounds);
+	if (m_tileSelectBounds.IsPointInBox(mousePos))
+	{
+		int index = g_theSpriteSheet->GetSpriteIndexFromPositionInBounds(mousePos, m_tileSelectBounds);
+		AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(index);
+		r->DrawTexturedAABB2(m_tilePreviewBounds, *g_theSpriteSheet->m_texture, uvs.mins, uvs.maxs, Rgba(255, 255, 255, 255));
+		r->DrawAABB2Outline(m_tilePreviewBounds);
+
+		r->DrawLine2D(mousePos, m_tilePreviewBounds.mins, Rgba(255, 255, 255, 255));
+		r->DrawLine2D(mousePos, Vector2(m_tilePreviewBounds.maxs.x, m_tilePreviewBounds.mins.y), Rgba(255, 255, 255, 255));
+	}
+
+	r->DrawCircleFilled2D(GetMousePosition(m_cameraBounds), 1.f, Rgba(0, 255, 0, 255));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -88,6 +112,41 @@ void MapEditor::LeftClick()
 }
 
 //-----------------------------------------------------------------------------------------------
+void MapEditor::KeyboardMovement()
+{
+	float stepSize = 1.f;
+
+	if (IsKeyPressed(KEYBOARD_LSHIFT))
+	{
+		stepSize *= 16.f;
+	}
+	
+	if (IsKeyPressed('d'))
+	{
+		m_cameraPosition += Vector2(stepSize, 0.f);
+		m_camera->GoToPosition2D(m_cameraPosition);
+	}
+
+	if (IsKeyPressed('a'))
+	{
+		m_cameraPosition -= Vector2(stepSize, 0.f);
+		m_camera->GoToPosition2D(m_cameraPosition);
+	}
+
+	if (IsKeyPressed('w'))
+	{
+		m_cameraPosition += Vector2(0.f, stepSize);
+		m_camera->GoToPosition2D(m_cameraPosition);
+	}
+
+	if (IsKeyPressed('s'))
+	{
+		m_cameraPosition -= Vector2(0.f, stepSize);
+		m_camera->GoToPosition2D(m_cameraPosition);
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
 void MapEditor::SelectSpriteSheetTile(const Vector2& mousePos)
 {
 	int index = g_theSpriteSheet->GetSpriteIndexFromPositionInBounds(mousePos, m_tileSelectBounds);
@@ -96,6 +155,21 @@ void MapEditor::SelectSpriteSheetTile(const Vector2& mousePos)
 	newInfo.SetSpriteIndex(index);
 	newInfo.SetSpriteSheet(0);
 	m_selectedSpriteInfo = newInfo;
+}
+
+//-----------------------------------------------------------------------------------------------
+void MapEditor::GenerateAllBounds()
+{
+	m_cameraBounds = m_camera->GetBounds();
+	m_tileSelectBounds = GetAABB2FromAABB2(Vector2(0.f, 0.1f), Vector2(.3f, .55f), m_cameraBounds);
+	m_tileSelectBounds.ShrinkToSquare();
+	m_optionsBounds = GetAABB2FromAABB2(Vector2(0.f, 0.f), Vector2(.3f, .1f), m_cameraBounds);
+
+	m_selectedTilePreviewBounds = GetAABB2FromAABB2(Vector2(.9f, .05f), Vector2(.95f, .1f), m_cameraBounds);
+	m_selectedTilePreviewBounds.GrowToSquare();
+
+	m_tilePreviewBounds = GetAABB2FromAABB2(Vector2(.1f, .6f), Vector2(.2f, .75f), m_cameraBounds);
+	m_tilePreviewBounds.ShrinkToSquare();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -108,34 +182,12 @@ void MapEditor::Render() const
 	r->SetShader(r->m_defaultShader);
 	r->SetCurrentTexture();
 
+	// bg
 	r->DrawAABB2Filled(m_cameraBounds, Rgba(255, 20, 147, 255));
 
-	r->DrawTexturedAABB2(m_tileSelectBounds, *g_theSpriteSheet->m_texture, Vector2(0, 0), Vector2(1, 1), Rgba(255, 255, 255, 255));
-	r->DrawAABB2Outline(m_tileSelectBounds, Rgba(255, 255, 255, 255));
-
-	r->DrawAABB2Outline(m_optionsBounds, Rgba(255, 255, 255, 255));
-
-	AABB2 spritePreviewUVs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(m_selectedSpriteInfo.GetSpriteIndex());
-	r->DrawTexturedAABB2(m_selectedTilePreviewBounds, *g_theSpriteSheet->m_texture, spritePreviewUVs.mins, spritePreviewUVs.maxs, Rgba(255, 255, 255, 255));
-	r->DrawAABB2Outline(m_selectedTilePreviewBounds, Rgba(255, 255, 255, 255));
-
-
-	Vector2 mousePos = GetMousePosition(m_cameraBounds);
-	if (m_tileSelectBounds.IsPointInBox(mousePos))
-	{
-		int index = g_theSpriteSheet->GetSpriteIndexFromPositionInBounds(mousePos, m_tileSelectBounds);
-		AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(index);
-		r->DrawTexturedAABB2(m_tilePreviewBounds, *g_theSpriteSheet->m_texture, uvs.mins, uvs.maxs, Rgba(255, 255, 255, 255));
-		r->DrawAABB2Outline(m_tilePreviewBounds);
-
-		r->DrawLine2D(mousePos, m_tilePreviewBounds.mins, Rgba(255, 255, 255, 255));
-		r->DrawLine2D(mousePos, Vector2(m_tilePreviewBounds.maxs.x, m_tilePreviewBounds.mins.y), Rgba(255, 255, 255, 255));
-	}
-	
 	m_map->Render();
+	RenderUI();
 	
-	r->DrawCircleFilled2D(GetMousePosition(m_cameraBounds), 1.f, Rgba(0, 255, 0, 255));
-
 	r->SetCamera();
 }
 

@@ -39,8 +39,15 @@ public:
 	virtual void HandleInput() override;
 
 private:
+	void RenderUI() const;
+
+private:
 	void LeftClick();
+	void KeyboardMovement();
 	void SelectSpriteSheetTile(const Vector2& mousePos);
+
+private:
+	void GenerateAllBounds();
 
 public:
 	Map*		m_map;
@@ -52,6 +59,8 @@ private:
 	AABB2		m_optionsBounds;
 	AABB2		m_selectedTilePreviewBounds;
 	AABB2		m_tilePreviewBounds;
+
+	Vector2		m_cameraPosition = Vector2(0.f, 0.f);
 
 	TileSpriteInfo	m_selectedSpriteInfo;
 };

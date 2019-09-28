@@ -107,6 +107,42 @@ AABB2::AABB2(float minX, float minY, float maxX, float maxY)
 	maxs = Vector2(maxX, maxY);
 }
 
+//-----------------------------------------------------------------------------------------------
+void AABB2::Translate(float translationX, float translationY)
+{
+
+	if (translationX < 0)
+	{
+		maxs.x -= -translationX; // thats the same thing as adding... but it worked?
+		mins.x -= -translationX;
+	}
+	else
+	{
+		maxs.x += translationX;
+		mins.x += translationX;
+	}
+
+	if (translationY < 0)
+	{
+		maxs.y -= -translationY;
+		mins.y -= -translationY;
+
+	}
+	else
+	{
+		maxs.y += translationY;
+		mins.y += translationY;
+	}
+
+
+}
+
+//-----------------------------------------------------------------------------------------------
+void AABB2::Translate(const Vector2& pos)
+{
+	Translate(pos.x, pos.y);
+}
+
 //===============================================================================================
 //C functions
 //===============================================================================================

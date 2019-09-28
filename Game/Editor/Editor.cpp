@@ -50,12 +50,12 @@ void Editor::KeyboardInput()
 	if (Console::GetInstance()->IsOpen())
 		return;
 	
-	if (WasKeyJustPressed(KEYBOARD_RIGHT_ARROW) || WasKeyJustPressed('g'))
+	if (WasKeyJustPressed(KEYBOARD_RIGHT_ARROW))
 	{
 		m_currentMode = (TypesOfEditorModes)((m_currentMode + 1) % NUM_OF_EDITOR_MODES);
 	}
 
-	if (WasKeyJustPressed(KEYBOARD_LEFT_ARROW) || WasKeyJustPressed('a'))
+	if (WasKeyJustPressed(KEYBOARD_LEFT_ARROW))
 	{
 		if (m_currentMode == 0)
 			m_currentMode = (TypesOfEditorModes)(NUM_OF_EDITOR_MODES - 1);
