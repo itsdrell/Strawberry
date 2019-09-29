@@ -11,14 +11,14 @@ struct TileSpriteInfo;
 // Type Defs + Defines
 //====================================================================================
 
-#define DEFAULT_TILE_SPRITE_INFO = TileSpriteInfo(0x1111, 0x1111)
-
 constexpr int TILE_SIZE = 16;
 constexpr uint16 DEFAULT_TILE_SPRITE_INFO_FLAG = 0b1111'1111'1111'1111;
 
 constexpr uint16 SPRITE_INDEX_MASK	= 0b0000'0000'1111'1111;
 constexpr uint16 SPRITE_SHEET_MASK	= 0b0000'0111'0000'0000;
 constexpr uint16 CHANNELS_MASK		= 0b1111'1000'0000'0000;
+
+#define DEFAULT_TILE_SPRITE_INFO TileSpriteInfo(DEFAULT_TILE_SPRITE_INFO_FLAG)
 
 //====================================================================================
 // ENUMS

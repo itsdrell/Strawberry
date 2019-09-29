@@ -12,7 +12,10 @@ class Camera;
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
-
+constexpr float DEFAULT_ZOOMED_IN_LEVEL = .6f;
+constexpr float MAX_ZOOMED_OUT_LEVEL = .95f; // anything higher than one breaks our lines?
+constexpr float MIN_ZOOMED_IN_LEVEL = .2f;
+constexpr float ZOOM_STEP_SIZE = .05f;
 
 //====================================================================================
 // ENUMS
@@ -43,6 +46,7 @@ private:
 
 private:
 	void LeftClick();
+	void RightClick();
 	void KeyboardMovement();
 	void SelectSpriteSheetTile(const Vector2& mousePos);
 
@@ -59,6 +63,10 @@ private:
 	AABB2		m_optionsBounds;
 	AABB2		m_selectedTilePreviewBounds;
 	AABB2		m_tilePreviewBounds;
+
+	float		m_currentZoom = DEFAULT_ZOOMED_IN_LEVEL;
+
+	bool		m_showGrid = true;
 
 	Vector2		m_cameraPosition = Vector2(0.f, 0.f);
 

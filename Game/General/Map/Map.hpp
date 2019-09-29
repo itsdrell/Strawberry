@@ -50,7 +50,7 @@ public:
 
 public:
 	void Update();
-	void Render() const;
+	void Render(bool showGrid = true) const;
 
 private:
 	void RenderTiles() const;

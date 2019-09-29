@@ -157,6 +157,11 @@ void Map::UpdateTileMesh(int tileIndex, const Tile& changedTile)
 	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 2, Vector2(uvs.mins.x, uvs.maxs.y));
 	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 3, uvs.maxs);
 
+	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex, Rgba::WHITE);
+	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 1, Rgba::WHITE);
+	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 2, Rgba::WHITE);
+	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 3, Rgba::WHITE);
+
 	if (m_tileMesh)
 		delete m_tileMesh;
 
@@ -184,9 +189,9 @@ void Map::GenerateTileMesh()
 			else
 			{
 				// We need to make a placeholder vertex that we will later change
-				// so we use one has UVs of 0 so it wont draw anything for that tile!
+				// so we use one has UVs of 0 to skip the expensive check, and set the color to black
 				// so the map looks empty #hack
-				m_tileBuilder->Add2DPlane(currentBounds, AABB2(0.f, 0.f, 0.f, 0.f), Rgba::WHITE);
+				m_tileBuilder->Add2DPlane(currentBounds, AABB2(0.f,0.f,0.f,0.f), Rgba(0,0,0,0));
 			}
 
 			currentPos.x += TILE_SIZE;
@@ -209,10 +214,12 @@ void Map::Update()
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::Render() const
+void Map::Render(bool showGrid) const
 {
 	RenderTiles();
-	RenderGrid();
+
+	if(showGrid)
+		RenderGrid();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -222,6 +229,9 @@ void Map::RenderTiles() const
 		return;
 	
 	Renderer* r = Renderer::GetInstance();
+	r->SetLineWidth(2.f);
+	r->DrawAABB2Outline(GetBounds(), Rgba::WHITE);
+
 	r->SetCurrentTexture(0, g_theSpriteSheet->m_texture);
 	r->DrawMesh(m_tileMesh, false);
 }
@@ -247,17 +257,15 @@ void Map::RenderGrid() const
 
 		// outline of cells
 		if (GetFractionOf((float)i / 16.f) == 0)
-			r->SetLineWidth(3.f);
+			r->SetLineWidth(6.f);
+		else if (GetFractionOf((float)i / 8.f) == 0)
+			r->SetLineWidth(4.f);
 		else
-			r->SetLineWidth(1.f);
+			r->SetLineWidth(2.f);
 
 		r->DrawLine2D(verticalStart, verticalEnd, gridColor);
 		r->DrawLine2D(horizontalStart, horizontalEnd, gridColor);
 	}
-
-	r->SetLineWidth(2.f);
-	r->DrawAABB2Outline(mapBounds, gridColor);
-	r->SetLineWidth(1.f);
 }
 
 //-----------------------------------------------------------------------------------------------

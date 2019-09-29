@@ -114,6 +114,12 @@ void MeshBuilder::ChangeUVOfVertexAtPosition(uint pos, const Vector2& uvs)
 }
 
 //-----------------------------------------------------------------------------------------------
+void MeshBuilder::ChangeColorOfVertexAtPosition(uint pos, const Rgba& color)
+{
+	m_vertices.at(pos).m_color = color;
+}
+
+//-----------------------------------------------------------------------------------------------
 void MeshBuilder::AddFace(uint a, uint b, uint c)
 {
 	m_indices.emplace_back(a);

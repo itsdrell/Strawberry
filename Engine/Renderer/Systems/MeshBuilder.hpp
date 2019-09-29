@@ -52,6 +52,7 @@ public:
 
 public:
 	void ChangeUVOfVertexAtPosition(uint pos, const Vector2& uvs);
+	void ChangeColorOfVertexAtPosition(uint pos, const Rgba& color);
 
 public:
 	void AddFace(uint a, uint b, uint c);

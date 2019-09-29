@@ -101,6 +101,44 @@ void AABB2::ShrinkToSquare()
 }
 
 //-----------------------------------------------------------------------------------------------
+void AABB2::GrowBy(float size)
+{
+	GrowBy(size, size);
+}
+
+//-----------------------------------------------------------------------------------------------
+void AABB2::GrowBy(float xGrowth, float yGrowth)
+{
+	xGrowth *= .5f;
+	yGrowth *= .5f;
+
+	mins.x -= xGrowth;
+	mins.y -= yGrowth;
+
+	maxs.x += xGrowth;
+	maxs.y += yGrowth;
+}
+
+//-----------------------------------------------------------------------------------------------
+void AABB2::ShrinkBy(float size)
+{
+	ShrinkBy(size, size);
+}
+
+//-----------------------------------------------------------------------------------------------
+void AABB2::ShrinkBy(float xShrink, float yShrink)
+{
+	xShrink *= .5f;
+	yShrink *= .5f;
+
+	mins.x += xShrink;
+	mins.y += yShrink;
+
+	maxs.x -= xShrink;
+	maxs.y -= yShrink;
+}
+
+//-----------------------------------------------------------------------------------------------
 AABB2::AABB2(float minX, float minY, float maxX, float maxY)
 {
 	mins = Vector2(minX, minY);
@@ -155,4 +193,20 @@ AABB2 GetAABB2FromAABB2(const Vector2& minPercentage, const Vector2& maxPercenta
 	Vector2 newMaxs = Vector2(maxPercentage.x * width, maxPercentage.y * height);
 
 	return AABB2(theBounds.mins + newMins, theBounds.mins + newMaxs);
+}
+
+//-----------------------------------------------------------------------------------------------
+AABB2 GetBiggerAABB2FromAABB2(const AABB2& original, float xGrowth, float yGrowth)
+{
+	AABB2 bounds = original;
+	bounds.GrowBy(xGrowth, yGrowth);
+	return bounds;
+}
+
+//-----------------------------------------------------------------------------------------------
+AABB2 GetSmallerAABB2FromAABB2(const AABB2& original, float xAmount, float yAmount)
+{
+	AABB2 bounds = original;
+	bounds.ShrinkBy(xAmount, yAmount);
+	return bounds;
 }
