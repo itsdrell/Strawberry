@@ -71,5 +71,14 @@ void Editor::KeyboardInput()
 	if (WasKeyJustPressed('2'))
 	{
 		m_currentMode = (TypesOfEditorModes)(1);
+		MapEditor* mapEditor = (MapEditor*)m_editorModes[MAP_EDITOR_MODE];
+		mapEditor->SetMode(TILE_EDITOR_MODE);
+	}
+
+	if (WasKeyJustPressed('3'))
+	{
+		m_currentMode = (TypesOfEditorModes)(1);
+		MapEditor* mapEditor = (MapEditor*)m_editorModes[MAP_EDITOR_MODE];
+		mapEditor->SetMode(COLLISION_EDITOR_MODE);
 	}
 }

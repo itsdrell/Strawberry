@@ -286,9 +286,11 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Editor\CollisionEditor.cpp" />
     <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="Editor\MapEditor.cpp" />
     <ClCompile Include="Editor\SpriteSheetViewer.cpp" />
+    <ClCompile Include="Editor\TileEditor.cpp" />
     <ClCompile Include="General\Map\Map.cpp" />
     <ClCompile Include="Main\Game.cpp" />
     <ClCompile Include="Main\Main_Win32.cpp" />
@@ -296,10 +298,12 @@
     <ClCompile Include="Main\TheApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Editor\CollisionEditor.hpp" />
     <ClInclude Include="Editor\Editor.hpp" />
     <ClInclude Include="Editor\EditorMode.hpp" />
     <ClInclude Include="Editor\MapEditor.hpp" />
     <ClInclude Include="Editor\SpriteSheetViewer.hpp" />
+    <ClInclude Include="Editor\TileEditor.hpp" />
     <ClInclude Include="General\Map\Map.hpp" />
     <ClInclude Include="General\Map\Tile.hpp" />
     <ClInclude Include="Main\Game.hpp" />
