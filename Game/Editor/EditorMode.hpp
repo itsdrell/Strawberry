@@ -40,7 +40,9 @@ public:
 	
 	virtual void Render() const = 0;
 
-	// maybe a Enter() / Leave() ?
+public:
+	virtual void Enter() = 0;
+	virtual void Exit() = 0;
 
 };
 

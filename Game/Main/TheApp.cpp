@@ -70,6 +70,9 @@ App::~App()
 		delete g_theSpriteSheet;
 	g_theSpriteSheet = nullptr;
 
+	delete g_theGameBlackboard;
+	g_theGameBlackboard = nullptr;
+
 	EngineShutdown();
 }
 

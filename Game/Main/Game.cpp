@@ -55,9 +55,6 @@ Game::~Game()
 	delete g_theGameClock;
 	g_theGameClock = nullptr;
 
-	delete g_theGameBlackboard;
-	g_theGameBlackboard = nullptr;
-
 	// don't delete the spritesheet, the game will delete it on startup and the app on shutdown
 }
 

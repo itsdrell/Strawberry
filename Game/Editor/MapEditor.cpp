@@ -80,6 +80,14 @@ void MapEditor::HandleInput()
 }
 
 //-----------------------------------------------------------------------------------------------
+void MapEditor::SetMode(MapEditorMode theMode)
+{
+	m_mapEditorModes[m_currentMode]->Exit();
+	m_currentMode = theMode;
+	m_mapEditorModes[m_currentMode]->Enter();
+}
+
+//-----------------------------------------------------------------------------------------------
 void MapEditor::RenderUI() const
 {
 	Renderer* r = Renderer::GetInstance();

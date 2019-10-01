@@ -46,9 +46,12 @@ public:
 	virtual void Update() override;
 	virtual void Render() const override;
 	virtual void HandleInput() override;
+	
+	virtual void Enter() override {}
+	virtual void Exit() override {}
 
 public:
-	void SetMode(MapEditorMode theMode) { m_currentMode = theMode; }
+	void SetMode(MapEditorMode theMode);
 
 private:
 	void RenderUI() const;

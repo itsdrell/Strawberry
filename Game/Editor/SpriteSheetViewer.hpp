@@ -36,6 +36,9 @@ public:
 	virtual void Update() override;
 	virtual void Render() const override;
 
+	virtual void Enter() override {}
+	virtual void Exit() override {}
+
 private:
 	virtual void HandleInput() override;
 	void CalculateSpritePositions();

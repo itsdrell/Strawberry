@@ -48,6 +48,14 @@ name = "strawberry engine";
 version = 1.2;
 web = true;
 
+-- These are the physics channels in the collision editor
+-- You can change what they equal -v to show up in the editor
+channelOneName      = "Channel One";
+channelTwoName      = "Channel Two";
+channelThreeName    = "Channel Three";
+channelFourName     = "Channel Four";
+channelFiveName     = "Channel Five";
+
 ----------------------------------------------------------------------
 -- default colors are from SuperFuture25 by @ENDESGA
 -- https://twitter.com/ENDESGA

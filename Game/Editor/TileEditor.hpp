@@ -40,6 +40,9 @@ public:
 	virtual void Render() const override;
 	virtual void HandleInput() override;
 
+	virtual void Enter() override {}
+	virtual void Exit() override {}
+
 private:
 	void LeftClick();
 	void RightClick();
