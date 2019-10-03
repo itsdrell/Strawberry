@@ -14,6 +14,11 @@
 void Playground::RunTestOnce()
 {
 	//Command newCommand = Command("help idk how to help you_duh");
+	TileSpriteInfo test = TileSpriteInfo(0b0000'0000'0000'0000);
+
+	test.SetChannelBits(0b0001'0100);
+	test.SetChannelBits(0b0000'1011);
+	int value = test.GetCollisionChannelValue();
 }
 
 //-----------------------------------------------------------------------------------------------

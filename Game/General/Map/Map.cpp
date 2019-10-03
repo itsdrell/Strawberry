@@ -64,13 +64,7 @@ void Map::SaveMap()
 	{
 		Tile currentTile = m_tiles.at(i);
 
-		int value;
-		if (currentTile.m_spriteInfo.GetSpriteSheet() != 0)
-			value = currentTile.m_spriteInfo.GetSpriteSheet() * currentTile.m_spriteInfo.GetSpriteIndex();
-		else
-			value = currentTile.m_spriteInfo.GetSpriteIndex();
-
-		m_fileData.push_back((uint16)(value)); 
+		m_fileData.push_back((currentTile.m_spriteInfo.GetData()));
 	}
 
 	// write header
@@ -191,7 +185,7 @@ void Map::GenerateTileMesh()
 				// We need to make a placeholder vertex that we will later change
 				// so we use one has UVs of 0 to skip the expensive check, and set the color to black
 				// so the map looks empty #hack
-				m_tileBuilder->Add2DPlane(currentBounds, AABB2(0.f,0.f,0.f,0.f), Rgba(0,0,0,0));
+				m_tileBuilder->Add2DPlane(currentBounds, AABB2(0.f,0.f,0.f,0.f), Rgba(0,255,0,50));
 			}
 
 			currentPos.x += TILE_SIZE;
@@ -278,15 +272,34 @@ AABB2 Map::GetBounds() const
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::ChangeTileAtMousePos(const Vector2& mousePos, const TileSpriteInfo& spriteInfo)
+int Map::GetTileIndexFromWorldPos(const Vector2& pos)
 {
 	AABB2 mapBounds = GetBounds();
 
-	int tileX = (int)ClampFloat(RangeMapFloat(mousePos.x, mapBounds.mins.x, mapBounds.maxs.x, 0.f, (float)m_dimensions.x), 0.f, (float)(m_dimensions.x - 1));
-	int tileY = (int)ClampFloat(RangeMapFloat(mousePos.y, mapBounds.mins.y, mapBounds.maxs.y, 0.f, (float)m_dimensions.y), 0.f, (float)(m_dimensions.y - 1));
+	int tileX = (int)ClampFloat(RangeMapFloat(pos.x, mapBounds.mins.x, mapBounds.maxs.x, 0.f, (float)m_dimensions.x), 0.f, (float)(m_dimensions.x - 1));
+	int tileY = (int)ClampFloat(RangeMapFloat(pos.y, mapBounds.mins.y, mapBounds.maxs.y, 0.f, (float)m_dimensions.y), 0.f, (float)(m_dimensions.y - 1));
 
-	int index = (tileY * m_dimensions.x) + tileX;
-	m_tiles.at(index).m_spriteInfo = spriteInfo;
+	return (tileY * m_dimensions.x) + tileX;
+}
 
-	UpdateTileMesh(index * 4, m_tiles.at(index));
+//-----------------------------------------------------------------------------------------------
+void Map::ChangeTileAtMousePos(const Vector2& mousePos, TileSpriteInfo& spriteInfo)
+{
+	int index = GetTileIndexFromWorldPos(mousePos);
+	Tile& theTile = m_tiles.at(index);
+
+	// Hack : spriteInfo was missing collision so we make sure we have it in the info
+	// so it doesn't get overriden when we change sprites
+	int channelFlags = theTile.m_spriteInfo.GetCollisionChannelValue();
+	spriteInfo.SetChannelBits(channelFlags);
+
+	theTile.m_spriteInfo = spriteInfo;
+	UpdateTileMesh(index * 4, theTile);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::ChangeTilesCollisionChannel(const Vector2& mousePos, Byte flagsToChange)
+{
+	int index = GetTileIndexFromWorldPos(mousePos);
+	m_tiles.at(index).m_spriteInfo.SetChannelBits(flagsToChange);
 }

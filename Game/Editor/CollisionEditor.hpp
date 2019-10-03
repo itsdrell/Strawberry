@@ -2,11 +2,14 @@
 #include "Game/Editor/EditorMode.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Core/General/Rgba.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
 class MapEditor;
+class Mesh;
+class MeshBuilder;
 
 //====================================================================================
 // Type Defs + Defines
@@ -66,7 +69,10 @@ public:
 
 private:
 	void GenerateAllBounds();
+	void GenerateCurrentCollisionChannelMesh();
+	void UpdateCollisionMesh(int index);
 	void UpdateNames();
+	void LeftClick();
 
 public:
 	MapEditor*			m_mapEditor;
@@ -75,6 +81,11 @@ public:
 
 private:
 	AABB2			m_channelSelectBounds;
+	Byte			m_channelBits = 0;
+	Rgba			m_tileColor = Rgba(255, 0, 255, 100);
+
+	MeshBuilder*	m_meshBuilder;
+	Mesh*			m_mesh;
 
 };
 

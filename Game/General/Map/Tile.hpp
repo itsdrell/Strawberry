@@ -12,7 +12,7 @@ struct TileSpriteInfo;
 //====================================================================================
 
 constexpr int TILE_SIZE = 16;
-constexpr uint16 DEFAULT_TILE_SPRITE_INFO_FLAG = 0b1111'1111'1111'1111;
+constexpr uint16 DEFAULT_TILE_SPRITE_INFO_FLAG = 0b0000'0111'1111'1111;
 
 constexpr uint16 SPRITE_INDEX_MASK	= 0b0000'0000'1111'1111;
 constexpr uint16 SPRITE_SHEET_MASK	= 0b0000'0111'0000'0000;
@@ -37,10 +37,13 @@ public:
 	inline int GetSpriteIndex() const;
 	inline int GetSpriteSheet() const;
 	inline bool IsDefault() { return m_data == DEFAULT_TILE_SPRITE_INFO_FLAG; }
+	inline uint16 GetData() { return m_data; }
 
 public:
 	inline void SetSpriteIndex(int spriteIndex);
 	inline void SetSpriteSheet(int spriteSheetNumber);
+	inline void SetChannelBits(Byte channelFlags);
+	inline int GetCollisionChannelValue();
 
 private:
 	// bits are right to left, dummy
@@ -90,6 +93,19 @@ void TileSpriteInfo::SetSpriteSheet(int spriteSheetNumber)
 {
 	uint16 value = m_data & ~SPRITE_SHEET_MASK;
 	m_data = value | (((uint16)(spriteSheetNumber)) << 8);
+}
+
+//-----------------------------------------------------------------------------------------------
+void TileSpriteInfo::SetChannelBits(Byte channelFlags)
+{
+	uint16 value = m_data & ~CHANNELS_MASK;
+	m_data = value | (channelFlags << 11);
+}
+
+//-----------------------------------------------------------------------------------------------
+int TileSpriteInfo::GetCollisionChannelValue()
+{
+	return (m_data >> 11);
 }
 
 //====================================================================================

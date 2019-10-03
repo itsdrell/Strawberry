@@ -1118,13 +1118,15 @@ void Renderer::BindRenderState(const RenderState &state)
 	// dont have to worry about this cause if we want it off we change the values
 	glEnable(GL_BLEND);														GL_CHECK_ERROR();
 
-	//  could be GlBlendEquationSeperate instead of this twice
-	glBlendFuncSeparate(ToGLBlendFactor(state.m_colorSrcFactor), ToGLBlendFactor(state.m_colorDstFactor),
-		ToGLBlendFactor(state.m_alphaSrcFactor), ToGLBlendFactor(state.m_alphaDstFactor));
-	GL_CHECK_ERROR();
-
-	glBlendEquationSeparate(ToGLBlendOperation(state.m_colorBlendOp), ToGLBlendOperation(state.m_alphaBlendOp));
-	GL_CHECK_ERROR();
+	// HACK currently just want alpha to work so ignore shader properties (cause I dont use em anyways)
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	////  could be GlBlendEquationSeperate instead of this twice
+	//glBlendFuncSeparate(ToGLBlendFactor(state.m_colorSrcFactor), ToGLBlendFactor(state.m_colorDstFactor),
+	//	ToGLBlendFactor(state.m_alphaSrcFactor), ToGLBlendFactor(state.m_alphaDstFactor));
+	//GL_CHECK_ERROR();
+	//
+	//glBlendEquationSeparate(ToGLBlendOperation(state.m_colorBlendOp), ToGLBlendOperation(state.m_alphaBlendOp));
+	//GL_CHECK_ERROR();
 
 	// Depth mode ones
 	//EnableDepth(state.m_depthCompare, state.m_depthWrite);

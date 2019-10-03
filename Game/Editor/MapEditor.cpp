@@ -99,6 +99,9 @@ void MapEditor::RenderUI() const
 //-----------------------------------------------------------------------------------------------
 void MapEditor::KeyboardMovement()
 {
+	if (IsKeyPressed(KEYBOARD_CTRL))
+		return;
+	
 	float stepSize = 16.f;
 	float speed = 10.f;
 	Vector2 dir;
@@ -153,7 +156,7 @@ void MapEditor::Render() const
 	r->SetCurrentTexture();
 
 	// bg
-	r->DrawAABB2Filled(m_cameraBounds, Rgba(0, 0, 0, 255));
+	r->DrawAABB2Filled(m_cameraBounds, Rgba(255, 20, 147, 255));
 
 	m_map->Render(m_showGrid);
 	m_mapEditorModes[m_currentMode]->Render();

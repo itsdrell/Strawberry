@@ -47,6 +47,7 @@ private:
 public:
 	void SaveMap();
 	bool LoadMap();
+	Tile& GetTileByIndex(int index) { return m_tiles.at(index); };
 
 public:
 	void Update();
@@ -58,7 +59,9 @@ private:
 
 public:
 	AABB2 GetBounds() const;
-	void ChangeTileAtMousePos(const Vector2& mousePos, const TileSpriteInfo& spriteInfo);
+	int GetTileIndexFromWorldPos(const Vector2& pos);
+	void ChangeTileAtMousePos(const Vector2& mousePos, TileSpriteInfo& spriteInfo);
+	void ChangeTilesCollisionChannel(const Vector2& mousePos, Byte flagsToChange);
 
 public:
 	unsigned int			m_totalAmountOfTiles;
