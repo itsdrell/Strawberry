@@ -34,6 +34,7 @@ class Map
 {
 public:
 	Map(const IntVector2& dimensions);
+	Map();
 	~Map();
 
 private:
@@ -65,7 +66,7 @@ public:
 
 public:
 	unsigned int			m_totalAmountOfTiles;
-	IntVector2				m_dimensions;
+	IntVector2				m_dimensions = IntVector2(128, 128);
 	Mesh*					m_tileMesh;
 	MeshBuilder*			m_tileBuilder;
 

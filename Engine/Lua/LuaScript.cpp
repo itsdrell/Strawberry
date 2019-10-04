@@ -3,7 +3,7 @@
 #include "Engine/Lua/EngineLuaFunctionBindings.hpp"
 
 //===============================================================================================
-LuaScript::LuaScript(const String & path)
+LuaScript::LuaScript(const String & path, GameSideLuaFunctionBinding gameSideBinding)
 {
 	m_filePath = path;
 
@@ -13,6 +13,8 @@ LuaScript::LuaScript(const String & path)
 		printf("Lua script at: %s  :STATE could not be created \n", m_filePath.c_str());
 	}
 
+	if(gameSideBinding)
+		gameSideBinding(m_state);
 	AddBindingsToScript();
 
 	int resultOfLoad = luaL_loadfile(m_state, m_filePath.c_str());

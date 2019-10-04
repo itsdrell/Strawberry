@@ -15,6 +15,8 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/General/BlackBoard.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
+#include "Game/General/Map/Map.hpp"
+#include "Game/General/Lua/GameLuaFunctionBindings.hpp"
 
 //===============================================================================================
 Game* g_theGame = nullptr;
@@ -25,7 +27,8 @@ Game::Game()
 	String path = "Projects/" + g_currentProjectName;
 	Renderer* r = Renderer::GetInstance();
 	
-	m_mainLuaScript = new LuaScript(path + "/Scripts/Main.lua");
+	std::string fullLuaPath = path + "/Scripts/Main.lua";
+	m_mainLuaScript = new LuaScript(fullLuaPath, BindGameSideLuaFunctions);
 	if (m_mainLuaScript == nullptr)
 		PrintLog("Error creating main lua script");
 
@@ -41,6 +44,7 @@ Game::Game()
 		delete g_theGameBlackboard;
 	new BlackBoard(path + "/Scripts/GameConfig.lua", GAME_BLACKBOARD);
 	
+	m_map = new Map();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -54,6 +58,9 @@ Game::~Game()
 
 	delete g_theGameClock;
 	g_theGameClock = nullptr;
+
+	delete m_map;
+	m_map = nullptr;
 
 	// don't delete the spritesheet, the game will delete it on startup and the app on shutdown
 }
@@ -99,15 +106,25 @@ void Game::Render() const
 void Game::RenderGame() const
 {
 	Renderer* r = Renderer::GetInstance();
+	
+	float aspect = Window::GetInstance()->GetAspect();
+	float size = 16 * 16;
+	float x = size * aspect;
+	float padding = (x - size) * .5f;
 
-	// The code we want
-	g_theGameCamera->SetProjectionOrthoByAspect(128.f);
+	g_theGameCamera->SetProjectionOrtho2D(
+		Vector2(-padding + m_cameraPos.x, m_cameraPos.y), 
+		Vector2(m_cameraPos.x + size + padding, m_cameraPos.y + size));
 
 	r->SetCamera(g_theGameCamera);
 	r->SetShader(r->m_defaultShader);
-	r->SetCurrentTexture();
 
+	r->SetCurrentTexture();
 	LuaRender(*m_mainLuaScript);
+	
+	// side bars to be aspect ratio and only show one cell at a time
+	r->DrawAABB2Filled(AABB2(Vector2(-padding + m_cameraPos.x, m_cameraPos.y), Vector2(m_cameraPos.x, m_cameraPos.y + size)), Rgba(0, 0, 0, 255));
+	r->DrawAABB2Filled(AABB2(Vector2(m_cameraPos.x + size, m_cameraPos.y), Vector2(m_cameraPos.x + size + padding, m_cameraPos.y + size)), Rgba(0, 0, 0, 255));
 }
 
 //-----------------------------------------------------------------------------------------------

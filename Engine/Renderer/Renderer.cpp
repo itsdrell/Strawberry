@@ -1042,8 +1042,9 @@ void Renderer::DrawMesh(Mesh* mesh, bool deleteTempMesh /*= false*/)
 
 	GL_CHECK_ERROR();
 
-	// binding frame buffer
-	//glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)m_currentCamera->GetFramebufferID());					GL_CHECK_ERROR();
+	// binding frame buffer, default for now
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);					GL_CHECK_ERROR();
+	// glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)m_currentCamera->GetFramebufferID());					GL_CHECK_ERROR();
 
 
 	GLenum glPrimitiveType = g_openGlPrimitiveTypes[mesh->m_drawInstruction.primitiveType];

@@ -32,7 +32,7 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaDrawSprite, "DrawSprite");
 	BindFunctionToScript(theState, LuaDrawText, "DrawText");
 
-	BindFunctionToScript(theState, LuaSetCameraPosition, "Camera");
+	//BindFunctionToScript(theState, LuaSetCameraPosition, "Camera");
 
 // input
 	BindFunctionToScript(theState, LuaIsKeyPressed, "IsKeyPressed");

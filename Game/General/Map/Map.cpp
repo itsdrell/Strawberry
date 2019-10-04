@@ -21,6 +21,14 @@ Map::Map(const IntVector2& dimensions)
 }
 
 //-----------------------------------------------------------------------------------------------
+Map::Map()
+{
+	m_totalAmountOfTiles = m_dimensions.x * m_dimensions.y;
+	m_tileBuilder = new MeshBuilder();
+	InitializeMap();
+}
+
+//-----------------------------------------------------------------------------------------------
 Map::~Map()
 {
 	delete m_tileMesh;

@@ -15,7 +15,7 @@ extern "C" {
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
-
+typedef void(*GameSideLuaFunctionBinding)(lua_State* theState);
 
 //====================================================================================
 // ENUMS
@@ -33,7 +33,8 @@ extern "C" {
 class LuaScript
 {
 public:
-	LuaScript( const String& path );
+	// null for data
+	LuaScript( const String& path , GameSideLuaFunctionBinding gameSideBinding = nullptr);
 	~LuaScript();
 
 private:

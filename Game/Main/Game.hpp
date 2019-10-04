@@ -1,10 +1,12 @@
 #pragma once
 #include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Math/Vectors/Vector2.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
 class LuaScript;
+class Map;
 
 //====================================================================================
 // Type Defs + Defines
@@ -49,6 +51,11 @@ public:
 public:
 	LuaScript*		m_mainLuaScript;
 	String			m_texturePath;
+
+	Map*			m_map;
+	bool			m_drawMap;
+
+	Vector2			m_cameraPos;
 
 };
 
