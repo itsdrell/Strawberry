@@ -42,10 +42,12 @@ MapEditor::~MapEditor()
 //-----------------------------------------------------------------------------------------------
 void MapEditor::Update()
 {
-	m_map->Update();
 	HandleInput();
 	GenerateAllBounds();
 	m_mapEditorModes[m_currentMode]->Update();
+	
+	// needs to be last since it handles cleaning up the mesh if it gets dirty
+	m_map->Update();
 }
 
 //-----------------------------------------------------------------------------------------------

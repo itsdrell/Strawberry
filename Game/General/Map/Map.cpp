@@ -164,10 +164,7 @@ void Map::UpdateTileMesh(int tileIndex, const Tile& changedTile)
 	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 2, Rgba::WHITE);
 	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 3, Rgba::WHITE);
 
-	if (m_tileMesh)
-		delete m_tileMesh;
-
-	m_tileMesh = m_tileBuilder->CreateMesh<Vertex3D_PCU>(false);
+	m_mapMeshIsDirty = true;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -210,9 +207,21 @@ void Map::GenerateTileMesh()
 }
 
 //-----------------------------------------------------------------------------------------------
+Tile& Map::GetTileByTilePos(const IntVector2& pos)
+{
+	return GetTileByIndex(GetTileIndexFromWorldPos(pos.ToVector2()));
+}
+
+//-----------------------------------------------------------------------------------------------
 void Map::Update()
 {
+	if (m_mapMeshIsDirty)
+	{
+		if (m_tileMesh)
+			delete m_tileMesh;
 
+		m_tileMesh = m_tileBuilder->CreateMesh<Vertex3D_PCU>(false);
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -248,8 +257,8 @@ void Map::RenderGrid() const
 	AABB2 mapBounds = GetBounds();
 	for (uint i = 1; i < (uint)m_dimensions.x; i++)
 	{
-		float xpos = RangeMapFloat((float)i, 0.f, m_dimensions.x, mapBounds.mins.x, mapBounds.maxs.x);
-		float ypos = RangeMapFloat((float)i, 0.f, m_dimensions.y, mapBounds.mins.y, mapBounds.maxs.y);
+		float xpos = RangeMapFloat((float)i, 0.f, (float) m_dimensions.x, mapBounds.mins.x, mapBounds.maxs.x);
+		float ypos = RangeMapFloat((float)i, 0.f, (float) m_dimensions.y, mapBounds.mins.y, mapBounds.maxs.y);
 
 		Vector2 verticalStart = Vector2(xpos, mapBounds.maxs.y);
 		Vector2 verticalEnd = Vector2(xpos, mapBounds.mins.y);
@@ -303,6 +312,12 @@ void Map::ChangeTileAtMousePos(const Vector2& mousePos, TileSpriteInfo& spriteIn
 
 	theTile.m_spriteInfo = spriteInfo;
 	UpdateTileMesh(index * 4, theTile);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::ChangeTileAtTilePos(const IntVector2& tilePos, TileSpriteInfo& spriteInfo)
+{
+	ChangeTileAtMousePos(Vector2(tilePos.x * TILE_SIZE, tilePos.y * TILE_SIZE), spriteInfo);
 }
 
 //-----------------------------------------------------------------------------------------------

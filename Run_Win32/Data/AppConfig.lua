@@ -1,10 +1,10 @@
-webName="Demo" 
-startupGame="Map"
+webName="LD45" 
+startupGame="LD45"
 --release=true
 
-resolution1="600,400"
+resolution3="600,400"
 resolution2="900,600"
-resolution3="1200,800"
+resolution1="1200,800"
 
 
 --[[

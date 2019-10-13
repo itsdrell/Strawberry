@@ -244,7 +244,7 @@ int LuaDrawSprite(lua_State* theState)
 	
 	float ppu = LuaGetFloat(theState, 9, 1.f);
 
-	Vector2 dimensions = Vector2(width * SPRITE_DIMENSION * .5f, height * SPRITE_DIMENSION * .5f);
+	Vector2 dimensions = Vector2(width * SPRITE_DIMENSION, height * SPRITE_DIMENSION );
 	AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndexAndDimensions(spriteIndex, IntVector2((int) width, (int) height));
 	Sprite spriteToDraw = Sprite(g_theSpriteSheet->m_texture, dimensions, uvs, ppu);
 

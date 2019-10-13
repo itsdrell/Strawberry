@@ -61,6 +61,13 @@ T Min(T a, T b)
 		return a;
 }
 
+
+template <typename T>
+bool IsEquivalent(T a, T b, T tolerance)
+{
+	return (abs(a - b) < tolerance);
+}
+
 //====================================================================================
 // Written by Zachary Bracken : [3/1/2019]
 //====================================================================================

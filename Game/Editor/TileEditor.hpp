@@ -8,6 +8,7 @@
 //====================================================================================
 class MapEditor;
 class Vector2;
+class MeshBuilder;
 
 //====================================================================================
 // Type Defs + Defines
@@ -48,14 +49,21 @@ private:
 	void RightClick();
 	void SelectSpriteSheetTile(const Vector2& mousePos);
 	void GenerateAllBounds();
+	void CreateTilePlacementPreview();
 
 private:
 	void RenderUI() const;
+	void RenderTilePlacementPreview() const;
 
 public:
 	MapEditor*			m_mapEditor;
 
 	TileSpriteInfo		m_selectedSpriteInfo;
+
+private:
+	Vector2					m_lastSelectedTilePosition;
+	MeshBuilder*			m_tileSelectPreviewMB;
+	std::vector<IntVector2>	m_tilesToChange;
 
 private:
 	AABB2		m_tileSelectBounds;

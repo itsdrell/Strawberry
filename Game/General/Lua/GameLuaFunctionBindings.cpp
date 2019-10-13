@@ -23,6 +23,8 @@ void BindGameSideLuaFunctions(lua_State* theState)
 // DrawMap()
 int LuaDrawMap(lua_State* theState)
 {
+	UNUSED(theState);
+	
 	g_theGame->m_drawMap = true;
 
 	Renderer* r = Renderer::GetInstance();
@@ -57,7 +59,7 @@ int LuaSetTileSprite(lua_State * theState)
 	
 	TileSpriteInfo newInfo;
 	newInfo.SetSpriteIndex(spriteIndex);
-	newInfo.SetSpriteSheet((int) floorf(spriteIndex / 256));
+	newInfo.SetSpriteSheet((int) floorf(((float)spriteIndex) / 256.f));
 
 	g_theGame->m_map->ChangeTileAtMousePos(Vector2(xPos, yPos), newInfo);
 

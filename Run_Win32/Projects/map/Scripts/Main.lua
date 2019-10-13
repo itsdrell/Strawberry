@@ -36,7 +36,6 @@ function Update(ds)
     --Print(GetTileSprite(0,0));
 
     if DoesTileHaveCollision(0,0,1) then
-       Print("hello"); 
     end
 end
 

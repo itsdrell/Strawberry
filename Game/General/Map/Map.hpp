@@ -11,6 +11,7 @@ class Vector2;
 class Mesh;
 class Tile;
 class MeshBuilder;
+class IntVector2;
 
 //====================================================================================
 // Type Defs + Defines
@@ -49,6 +50,7 @@ public:
 	void SaveMap();
 	bool LoadMap();
 	Tile& GetTileByIndex(int index) { return m_tiles.at(index); };
+	Tile& GetTileByTilePos(const IntVector2& pos);
 
 public:
 	void Update();
@@ -62,6 +64,7 @@ public:
 	AABB2 GetBounds() const;
 	int GetTileIndexFromWorldPos(const Vector2& pos);
 	void ChangeTileAtMousePos(const Vector2& mousePos, TileSpriteInfo& spriteInfo);
+	void ChangeTileAtTilePos(const IntVector2& tilePos, TileSpriteInfo& spriteInfo);
 	void ChangeTilesCollisionChannel(const Vector2& mousePos, Byte flagsToChange);
 
 public:
@@ -69,6 +72,7 @@ public:
 	IntVector2				m_dimensions = IntVector2(128, 128);
 	Mesh*					m_tileMesh;
 	MeshBuilder*			m_tileBuilder;
+	bool					m_mapMeshIsDirty = false;
 
 private:
 	Tiles					m_tiles;

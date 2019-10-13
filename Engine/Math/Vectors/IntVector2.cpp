@@ -1,5 +1,6 @@
 #include "IntVector2.hpp"
 #include "Engine/Core/Utils/StringUtils.hpp"
+#include "Engine/Math/Vectors/Vector2.hpp"
 
 //===============================================================================================
 IntVector2::IntVector2()
@@ -45,6 +46,12 @@ const bool IntVector2::operator!=(const IntVector2& vecToCompare) const
 std::string IntVector2::ToString() const
 {
 	return std::to_string(x) + "," + std::to_string(y);
+}
+
+//-----------------------------------------------------------------------------------------------
+Vector2 IntVector2::ToVector2() const
+{
+	return Vector2((float)x, (float)y);
 }
 
 //-----------------------------------------------------------------------------------------------

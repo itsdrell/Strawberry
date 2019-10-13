@@ -220,6 +220,7 @@ void App::ReloadAndRunGame()
 		g_theGame->CleanUp();
 
 		delete g_theGame;
+		g_theGame = nullptr;
 	}
 	
 	if(g_theGame == nullptr)
