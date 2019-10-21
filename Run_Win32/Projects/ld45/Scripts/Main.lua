@@ -118,9 +118,11 @@ end
 
 ------------------------------------------------------------
 function MoveCamera()
-    cameraX = player.x - 256 * .5;
-    camerY = player.y - 256 * .5;
-    Camera(cameraX, camerY);
+    --cameraX = player.x - 256 * .5;
+    --camerY = player.y - 256 * .5;
+    --Camera(cameraX, camerY);
+
+    CameraLookAt(player.x, player.y, true);
     
 end
 

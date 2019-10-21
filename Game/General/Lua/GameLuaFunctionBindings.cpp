@@ -7,16 +7,17 @@
 #include "Game/General/Map/Tile.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Lua/LuaScript.hpp"
+#include "Engine/Core/General/Camera.hpp"
 
 //===============================================================================================
 void BindGameSideLuaFunctions(lua_State* theState)
 {
 	BindFunctionToScript(theState, LuaDrawMap, "DrawMap");
 	BindFunctionToScript(theState, LuaMoveCamera, "Camera");
+	BindFunctionToScript(theState, LuaCameraLookAt, "CameraLookAt");
 	BindFunctionToScript(theState, LuaSetTileSprite, "SetTileSprite");
 	BindFunctionToScript(theState, LuaGetTileSprite, "GetTileSprite");
 	BindFunctionToScript(theState, LuaDoesTileHaveThisCollision, "DoesTileHaveCollision");
-
 }
 
 //===============================================================================================
@@ -41,6 +42,30 @@ int LuaMoveCamera(lua_State* theState)
 {
 	float xPos = LuaGetFloat(theState, 1, 0.f);
 	float yPos = LuaGetFloat(theState, 2, 0.f);
+
+	g_theGame->m_cameraPos = Vector2(xPos, yPos);
+
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// CameraLookAt(x, y, bool)
+int LuaCameraLookAt(lua_State* theState)
+{
+	float xPos = LuaGetFloat(theState, 1, 0.f);
+	float yPos = LuaGetFloat(theState, 2, 0.f);
+	bool clampWithMap = LuaGetBool(theState, 3, false);
+
+	float padding = 128;
+	xPos = (xPos - padding);
+	yPos = (yPos - padding);
+
+	if (clampWithMap)
+	{
+		AABB2 bounds = g_theGame->m_map->GetBounds();
+		xPos = ClampFloat(xPos, 0, bounds.maxs.x - (padding * 2));
+		yPos = ClampFloat(yPos, 0, bounds.maxs.y - (padding * 2));
+	}
 
 	g_theGame->m_cameraPos = Vector2(xPos, yPos);
 

@@ -14,7 +14,9 @@ void BindGameSideLuaFunctions(lua_State* theState);
 
 static int LuaDrawMap(lua_State* theState);
 
+// move camera is pivoted bottom left, look at is centered
 static int LuaMoveCamera(lua_State* theState);
+static int LuaCameraLookAt(lua_State* theState);
 
 static int LuaSetTileSprite(lua_State* theState);
 static int LuaGetTileSprite(lua_State* theState);
