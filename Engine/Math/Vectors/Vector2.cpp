@@ -1,5 +1,6 @@
 #include "Engine/Math/Vectors/Vector2.hpp"
 #include "Engine/Core/Utils/StringUtils.hpp"
+#include "Engine/Math/Vectors/IntVector2.hpp"
 
 //===============================================================================================
 Vector2::Vector2()
@@ -33,6 +34,12 @@ const Vector2 Vector2::operator+(const Vector2& vecToAdd) const
 std::string Vector2::ToString() const
 {
 	return std::to_string(x) + "," + std::to_string(y);
+}
+
+//-----------------------------------------------------------------------------------------------
+IntVector2 Vector2::GetAsIntVector2() const
+{
+	return IntVector2((int)x, (int)y);
 }
 
 //-----------------------------------------------------------------------------------------------

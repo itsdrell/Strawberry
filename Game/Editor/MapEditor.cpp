@@ -95,7 +95,15 @@ void MapEditor::RenderUI() const
 	Renderer* r = Renderer::GetInstance();
 
 	// mouse
-	r->DrawCircleFilled2D(GetMousePosition(m_cameraBounds), 1.f, Rgba(0, 255, 0, 255));
+	Vector2 cameraPos = GetMousePosition(m_cameraBounds);
+	r->DrawCircleFilled2D(cameraPos, 1.f, Rgba(0, 255, 0, 255));
+
+	// print mousePos
+	if (m_map->GetBounds().IsPointInBox(cameraPos))
+	{
+		AABB2 textBox = GetAABB2FromAABB2(Vector2(.4f, .01f), Vector2(.6f, .05f), m_cameraBounds);
+		r->DrawWrappedTextInBox2D(cameraPos.GetAsIntVector2().ToString(), textBox, 8.f);
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -108,7 +116,7 @@ void MapEditor::KeyboardMovement()
 	float speed = 10.f;
 	Vector2 dir;
 
-	if (IsKeyPressed(KEYBOARD_LSHIFT))
+	if (IsKeyPressed(KEYBOARD_SPACE))
 	{
 		speed *= 4.f;
 	}
