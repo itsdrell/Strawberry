@@ -64,6 +64,10 @@ function Update(ds)
     end
 
     g_totalTime = g_totalTime + ds;
+
+    if IsKeyPressed("y") then
+        dPrint(g_totalTime, 0, "random")
+    end
 end
 
 ------------------------------------------------------------

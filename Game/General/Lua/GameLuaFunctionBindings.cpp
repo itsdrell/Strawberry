@@ -59,7 +59,7 @@ int LuaCameraLookAt(lua_State* theState)
 	float padding = 128;
 	xPos = (xPos - padding);
 	yPos = (yPos - padding);
-
+ 
 	if (clampWithMap)
 	{
 		AABB2 bounds = g_theGame->m_map->GetBounds();

@@ -5,6 +5,7 @@
 #include "Engine/Core/Tools/Clock.hpp"
 #include "Engine/Core/Tools/Command.hpp"
 #include "Engine/Core/Tools/Console.hpp"
+#include "Engine/Core/Tools/DebugRendering.hpp"
 
 #ifdef EMSCRIPTEN_PORT
 #else
@@ -43,4 +44,9 @@ void EngineShutdown()
 
 	delete Renderer::GetInstance();
 	//g_theRenderer = nullptr;
+
+	if (DebugRenderingSystem::IsInitialized())
+	{
+		delete DebugRenderingSystem::GetInstance();
+	}
 }

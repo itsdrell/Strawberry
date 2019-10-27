@@ -11,6 +11,7 @@
 #include "Engine/Renderer/Images/Sprite.hpp"
 #include "Engine/Core/Tools/Console.hpp"
 #include "Engine/Renderer/Images/SpriteSheet.hpp"
+#include "Engine/Core/Tools/DebugRendering.hpp"
 #include <cstdlib>
 #include <cmath>
 
@@ -20,6 +21,7 @@ void BindLuaFunctionsToScript(lua_State * theState)
 {
 	BindFunctionToScript(theState, DrawTestTriangle, "DrawTestTriangle");
 	BindFunctionToScript(theState, PrintString, "Print");
+	BindFunctionToScript(theState, LuaDebugPrintLog, "dPrint");
 
 // rendering
 	BindFunctionToScript(theState, LuaClearScreen, "Cls");
@@ -107,6 +109,19 @@ int PrintString(lua_State* theState)
  	PrintLog(value.c_str()); // calling C++ function with this argument...
 	AddConsoleDialogue(value, Rgba::WHITE);
 	return 0; // nothing to return!
+}
+
+//-----------------------------------------------------------------------------------------------
+// dPrint( stringMessage, length, color )
+int LuaDebugPrintLog(lua_State* theState)
+{
+	String value = LuaGetString(theState, 1, "idk man");
+	float length = LuaGetFloat(theState, 2, 0.f);
+	Rgba color = LuaGetRgba(theState, 3, Rgba::WHITE);
+
+	DebugRenderLog(value, length, color);
+
+	return 0;
 }
 
 //-----------------------------------------------------------------------------------------------

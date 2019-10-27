@@ -17,6 +17,7 @@
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Game/General/Map/Map.hpp"
 #include "Game/General/Lua/GameLuaFunctionBindings.hpp"
+#include "Engine/Core/Tools/DebugRendering.hpp"
 
 //===============================================================================================
 Game* g_theGame = nullptr;
@@ -99,6 +100,7 @@ void Game::Render() const
 	else
 	{
 		RenderGame();
+		DebugUpdateAndRender();
 	}
 }
 

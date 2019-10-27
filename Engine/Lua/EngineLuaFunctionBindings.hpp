@@ -25,6 +25,7 @@ void BindFunctionToScript( lua_State* theState, FunctionForLua theFunction, cons
 //===============================================================================================
 static int DrawTestTriangle( lua_State* theState );
 static int PrintString( lua_State* theState );
+static int LuaDebugPrintLog(lua_State* theState);
 
 //-----------------------------------------------------------------------------------------------
 // Rendering

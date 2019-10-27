@@ -176,6 +176,7 @@
     <ClInclude Include="Core\Platform\File.hpp" />
     <ClInclude Include="Renderer\Systems\MeshBuilder.hpp" />
     <ClInclude Include="Renderer\Components\Mesh.hpp" />
+    <ClInclude Include="Core\Tools\DebugRendering.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -416,6 +417,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Components\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Tools\DebugRendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
