@@ -11,6 +11,7 @@
 #include "Engine/Core/Tools/Clock.hpp"
 #include "Game/Editor/TileEditor.hpp"
 #include "Game/Editor/CollisionEditor.hpp"
+#include "Engine/Core/Tools/DebugRendering.hpp"
 
 //===============================================================================================
 MapEditor::MapEditor()
@@ -55,6 +56,7 @@ void MapEditor::HandleInput()
 {
 	if (IsKeyPressed(KEYBOARD_CTRL) && WasKeyJustPressed('s'))
 	{
+		DebugRenderLog("MAP SAVED", 3.f);
 		m_map->SaveMap();
 	}
 

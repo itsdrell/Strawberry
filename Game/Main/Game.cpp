@@ -100,7 +100,6 @@ void Game::Render() const
 	else
 	{
 		RenderGame();
-		DebugUpdateAndRender();
 	}
 }
 

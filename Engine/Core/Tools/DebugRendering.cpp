@@ -138,6 +138,7 @@ DebugRenderingLogTask::DebugRenderingLogTask(float length, const std::string& me
 	m_message = message;
 }
 
+//-----------------------------------------------------------------------------------------------
 void DebugRenderingLogTask::Execute()
 {
 	DebugRenderingTask::Execute();

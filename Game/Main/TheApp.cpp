@@ -24,6 +24,7 @@
 #include "Engine/Core/Tools/Command.hpp"
 #include "Engine/Core/Platform/File.hpp"
 #include "Engine/Renderer/Images/SpriteSheet.hpp"
+#include "Engine/Core/Tools/DebugRendering.hpp"
 
 
 //===============================================================================================
@@ -205,6 +206,7 @@ void App::Render() const
 		g_theEditor->Render();
 	
 	Playground::RenderTest();
+	DebugUpdateAndRender();
 
 	Console::GetInstance()->Render();
 }
