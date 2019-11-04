@@ -17,7 +17,21 @@ LuaScript::LuaScript(const String & path, GameSideLuaFunctionBinding gameSideBin
 		gameSideBinding(m_state);
 	AddBindingsToScript();
 
-	int resultOfLoad = luaL_loadfile(m_state, m_filePath.c_str());
+	FILE* theFile;
+	fopen_s(&theFile, m_filePath.c_str(), "r");
+
+	std::string theString;
+	int c;
+	while ((c = std::fgetc(theFile)) != EOF) 
+	{ 
+		std::putchar(c);
+		theString.push_back((char)c);
+	}
+
+	ModifyLoadedLuaFileString(&theString);
+
+	int resultOfLoad = luaL_loadstring(m_state, theString.c_str());
+
 	if(resultOfLoad != LUA_OK)
 	{
 		m_errorCode = resultOfLoad;
@@ -58,6 +72,45 @@ void LuaScript::AddLibrariesToLuaScript()
 void LuaScript::AddBindingsToScript()
 {
 	BindLuaFunctionsToScript(m_state);
+}
+
+//-----------------------------------------------------------------------------------------------
+void LuaScript::ModifyLoadedLuaFileString(String* stringToModify)
+{
+	// we can do some includes
+	
+	// swap all operators we used to lua friendly versions
+	// ex var += 1 becomes var = var + 1
+	ChangeOperator(stringToModify, "+=");
+	ChangeOperator(stringToModify, "-=");
+	ChangeOperator(stringToModify, "*=");
+	ChangeOperator(stringToModify, "/=");
+}
+
+//-----------------------------------------------------------------------------------------------
+void LuaScript::ChangeOperator(String* stringToModify, const String& operatorToLookFor)
+{
+	String& theString = *stringToModify;
+
+	int foundPosition = (int)theString.find(operatorToLookFor);
+
+	while (foundPosition != (int)std::string::npos)
+	{
+		int stepBackPos = foundPosition - 2;
+		while ((stepBackPos >= 0) && (theString.at(stepBackPos) != ' ') && (theString.at(stepBackPos) != '\n'))
+		{
+			stepBackPos -= 1;
+		}
+
+		String variableName = theString.substr(stepBackPos + 1, foundPosition - stepBackPos - 2);
+
+		theString.erase(theString.begin() + foundPosition);
+
+		String replacement = variableName + " " + operatorToLookFor.at(0) + " ";
+		theString.insert(foundPosition + 2, replacement);
+
+		foundPosition = (int)theString.find(operatorToLookFor, foundPosition);
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

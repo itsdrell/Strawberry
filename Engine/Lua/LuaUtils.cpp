@@ -1,6 +1,30 @@
 #include "LuaUtils.hpp"
 #include "Engine/Lua/LuaScript.hpp"
 
+//===============================================================================================
+int LuaExecute(const String& command)
+{
+	lua_State* theState = luaL_newstate();
+	int errorCode = luaL_dostring(theState, command.c_str());
+	lua_close(theState);
+
+	return errorCode;
+}
+
+//-----------------------------------------------------------------------------------------------
+void LuaThrowError(lua_State* theState, const String& message)
+{
+	luaL_error(theState, message.c_str());
+}
+
+//-----------------------------------------------------------------------------------------------
+void LuaGuaranteeOrDie(lua_State* theState, bool conditional, const String& message)
+{
+	if (!conditional)
+	{
+		LuaThrowError(theState, message);
+	}
+}
 
 //===============================================================================================
 String LuaGetString(lua_State * theState, int stackIndex, const String & defaultValue)

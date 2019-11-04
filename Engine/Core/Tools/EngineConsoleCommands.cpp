@@ -4,6 +4,7 @@
 #include "Engine/Core/Platform/File.hpp"
 #include "Engine/Core/General/BuiltInAssets.hpp"
 #include "Engine/Renderer/Images/Image.hpp"
+#include "Engine/Lua/LuaUtils.hpp"
 
 
 #ifndef EMSCRIPTEN_PORT
@@ -21,6 +22,7 @@ void BindAllEngineCommands()
 	CommandRegister("projects", "projects", "shows all projects", ShowAllProjectNames, false);
 	CommandRegister("folder", "folder", "opens folder to project in explorer", OpenFolder, false);
 	CommandRegister("web", "", "", BuildForWeb);
+	CommandRegister("lua", "lua", "execute lua code", ExecuteLuaCommand, false);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -165,4 +167,17 @@ void BuildForWeb(Command& command)
 	LogStringToFile("BuildWeb.bat", GetWebBatchFile().c_str(), true);
 
 	system("BuildWeb.bat");
+}
+
+//-----------------------------------------------------------------------------------------------
+void ExecuteLuaCommand(Command& command)
+{
+	// todo : this doesn't work but it seems to be the right step???
+	
+	int result = LuaExecute(command.GetNextString());
+
+	if (result != 0)
+	{
+		AddConsoleErrorMessage("Error running lua script");
+	}
 }

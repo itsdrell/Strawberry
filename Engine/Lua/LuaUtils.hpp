@@ -12,7 +12,6 @@ struct lua_State;
 // Type Defs + Defines
 //====================================================================================
 
-
 //====================================================================================
 // ENUMS
 //====================================================================================
@@ -21,6 +20,11 @@ struct lua_State;
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
+
+int LuaExecute(const String& command);
+void LuaThrowError(lua_State* theState, const String& message);
+void LuaGuaranteeOrDie(lua_State* theState, bool conditional, const String& message);
+#define LUA_GUARANTEE_OR_DIE (state, conditional, message) (LuaGuaranteeOrDie(state, conditional, message))
 
 //-----------------------------------------------------------------------------------------------
 // Lua stack variables helpers

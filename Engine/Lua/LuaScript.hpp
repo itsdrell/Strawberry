@@ -40,6 +40,8 @@ public:
 private:
 	void AddLibrariesToLuaScript();
 	void AddBindingsToScript();
+	void ModifyLoadedLuaFileString( String* stringToModify );
+	void ChangeOperator(String* stringToModify, const String& operatorToLookFor);
 
 public:
 	lua_State* GetLuaState() { return m_state; }

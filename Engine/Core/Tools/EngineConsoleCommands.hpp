@@ -19,6 +19,7 @@ void LoadProject(Command& command);
 void ShowAllProjectNames(Command& command);
 void OpenFolder(Command& command);
 void BuildForWeb(Command& command);
+void ExecuteLuaCommand(Command& command);
 
 //====================================================================================
 // Externs
