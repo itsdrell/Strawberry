@@ -25,7 +25,15 @@ typedef void(*GameSideLuaFunctionBinding)(lua_State* theState);
 //====================================================================================
 // Structs
 //====================================================================================
+struct IncludeFileData 
+{
+	IncludeFileData(const String& path, int lineCount)
+		: m_path(path)
+		, m_lineCount(lineCount) {}
 
+	String	m_path;
+	int		m_lineCount;
+};
 
 //====================================================================================
 // Classes
@@ -34,14 +42,16 @@ class LuaScript
 {
 public:
 	// null for data
-	LuaScript( const String& path , GameSideLuaFunctionBinding gameSideBinding = nullptr);
+	LuaScript( const String& path , const String& includeDir = "", GameSideLuaFunctionBinding gameSideBinding = nullptr);
 	~LuaScript();
 
 private:
 	void AddLibrariesToLuaScript();
 	void AddBindingsToScript();
-	void ModifyLoadedLuaFileString( String* stringToModify );
+	void ModifyLoadedLuaFileString( String* stringToModify, const String& includeDir );
 	void ChangeOperator(String* stringToModify, const String& operatorToLookFor);
+	void GatherIncludeFilePaths(String* stringToModify, const String& includeDir);
+	int GetIncludeFileContent(const String& path, String* outContent);
 
 public:
 	lua_State* GetLuaState() { return m_state; }
@@ -59,6 +69,8 @@ private:
 	
 	int				m_errorCode = 0; // uses LUA defines
 	String			m_errorMessage = "no errors";
+
+	std::vector<IncludeFileData>	m_includes;
 };
 
 //====================================================================================

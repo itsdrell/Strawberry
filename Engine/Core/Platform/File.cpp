@@ -146,5 +146,25 @@ Strings GetAllLinesFromFile(char const* filename)
 		result.push_back(line);
 	}
 
+	infile.close();
+
+	return result;
+}
+
+//-----------------------------------------------------------------------------------------------
+String GetFileContentAsString(char const* filePath)
+{
+	String result;
+
+	std::ifstream infile(filePath);
+
+	char aChar;
+	while (infile.get(aChar))
+	{
+		result.push_back(aChar);
+	}
+
+	infile.close();
+
 	return result;
 }

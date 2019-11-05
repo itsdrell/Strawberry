@@ -29,7 +29,7 @@ Game::Game()
 	Renderer* r = Renderer::GetInstance();
 	
 	std::string fullLuaPath = path + "/Scripts/Main.lua";
-	m_mainLuaScript = new LuaScript(fullLuaPath, BindGameSideLuaFunctions);
+	m_mainLuaScript = new LuaScript(fullLuaPath, path, BindGameSideLuaFunctions);
 	if (m_mainLuaScript == nullptr)
 		PrintLog("Error creating main lua script");
 

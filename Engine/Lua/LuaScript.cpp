@@ -1,9 +1,13 @@
 #include "LuaScript.hpp"
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 #include "Engine/Lua/EngineLuaFunctionBindings.hpp"
+#include "Engine/Core/Utils/StringUtils.hpp"
+#include "Engine/Core/Platform/File.hpp"
+
+#pragma warning( disable : 4310 ) // cast truncate constant value (when we cast npos to int)
 
 //===============================================================================================
-LuaScript::LuaScript(const String & path, GameSideLuaFunctionBinding gameSideBinding)
+LuaScript::LuaScript(const String & path, const String& includeDir, GameSideLuaFunctionBinding gameSideBinding)
 {
 	m_filePath = path;
 
@@ -17,21 +21,12 @@ LuaScript::LuaScript(const String & path, GameSideLuaFunctionBinding gameSideBin
 		gameSideBinding(m_state);
 	AddBindingsToScript();
 
-	FILE* theFile;
-	fopen_s(&theFile, m_filePath.c_str(), "r");
+	std::string theString = GetFileContentAsString(m_filePath.c_str()) + "\n"; // need padding for appends
+	m_includes.push_back(IncludeFileData("Main.lua", (int) CountHowManyLinesAreInAString(theString)));
 
-	std::string theString;
-	int c;
-	while ((c = std::fgetc(theFile)) != EOF) 
-	{ 
-		std::putchar(c);
-		theString.push_back((char)c);
-	}
-
-	ModifyLoadedLuaFileString(&theString);
+	ModifyLoadedLuaFileString(&theString, includeDir);
 
 	int resultOfLoad = luaL_loadstring(m_state, theString.c_str());
-
 	if(resultOfLoad != LUA_OK)
 	{
 		m_errorCode = resultOfLoad;
@@ -75,9 +70,10 @@ void LuaScript::AddBindingsToScript()
 }
 
 //-----------------------------------------------------------------------------------------------
-void LuaScript::ModifyLoadedLuaFileString(String* stringToModify)
+void LuaScript::ModifyLoadedLuaFileString(String* stringToModify, const String& includeDir)
 {
 	// we can do some includes
+	GatherIncludeFilePaths(stringToModify, includeDir);
 	
 	// swap all operators we used to lua friendly versions
 	// ex var += 1 becomes var = var + 1
@@ -111,6 +107,41 @@ void LuaScript::ChangeOperator(String* stringToModify, const String& operatorToL
 
 		foundPosition = (int)theString.find(operatorToLookFor, foundPosition);
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void LuaScript::GatherIncludeFilePaths(String* stringToModify, const String& includeDir)
+{
+	String& theString = *stringToModify;
+	String includeString = "#include ";
+
+	int foundPosition = (int)theString.find(includeString);
+	while (foundPosition != (int)std::string::npos)
+	{
+		int endOfInclude = (int) theString.find('\n', foundPosition);
+		String path = theString.substr(foundPosition + 10, endOfInclude - foundPosition - 11);
+
+		String content;
+		String fullPath = includeDir + "/Scripts/" + path;
+		int lineCount = GetIncludeFileContent(fullPath, &content);
+
+		theString.append(content);
+		m_includes.push_back(IncludeFileData(path, lineCount));
+
+		theString.erase(foundPosition, endOfInclude + 1);
+		foundPosition = (int)theString.find(includeString);
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+int LuaScript::GetIncludeFileContent(const String& path, String* outContent)
+{
+	String fullPath = path;
+	String content = GetFileContentAsString(fullPath.c_str());
+	content += " \n";
+	
+	*outContent = content;
+	return CountHowManyLinesAreInAString(content);
 }
 
 //-----------------------------------------------------------------------------------------------
