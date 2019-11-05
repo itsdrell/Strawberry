@@ -26,6 +26,11 @@ LuaScript::LuaScript(const String & path, const String& includeDir, GameSideLuaF
 
 	ModifyLoadedLuaFileString(&theString, includeDir);
 
+#ifndef EMSCRIPTEN_PORT
+	if(gameSideBinding != nullptr)
+		LogStringToFile("Data/fullScript.lua", theString.c_str(), true);
+#endif
+
 	int resultOfLoad = luaL_loadstring(m_state, theString.c_str());
 	if(resultOfLoad != LUA_OK)
 	{
@@ -129,6 +134,7 @@ void LuaScript::GatherIncludeFilePaths(String* stringToModify, const String& inc
 		m_includes.push_back(IncludeFileData(path, lineCount));
 
 		theString.erase(foundPosition, endOfInclude + 1);
+		m_includes.at(0).m_lineCount -= 1;
 		foundPosition = (int)theString.find(includeString);
 	}
 }
@@ -145,6 +151,39 @@ int LuaScript::GetIncludeFileContent(const String& path, String* outContent)
 }
 
 //-----------------------------------------------------------------------------------------------
+void LuaScript::GetLineNumberAndIncludedFileName(const String& lineNumber, String* newLineNumber, String* fileName)
+{
+	// early out
+	int line = ParseString(lineNumber, 0);
+	if (m_includes.size() == 1 || line <= m_includes.at(0).m_lineCount)
+	{
+		*newLineNumber = std::to_string(line);
+		*fileName = "Main.lua";
+		return;
+	}
+	else
+	{
+		int previousTotal = 0;
+		for (int i = 1; i < m_includes.size(); i++)
+		{
+			previousTotal += m_includes.at(i - 1).m_lineCount;
+			int totalLine = (previousTotal + m_includes.at(i).m_lineCount);
+
+			if (line <= totalLine)
+			{
+				// the plus 2 is weird cause it makes our syntax errors exact
+				// but our runtime are off by 1 (needs a + 3). I think its
+				// on luas end for not being 100% accurate :l 
+				int realLineNumber = line - previousTotal; 
+				*newLineNumber = std::to_string(realLineNumber);
+				*fileName = m_includes.at(i).m_path;
+				return;
+			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
 void LuaScript::LogError()
 {
 	PrintLog("\n//---------------------------------------------------------------------------- \n");
@@ -156,9 +195,14 @@ void LuaScript::LogError()
 	size_t rightColonPos = msg.find( ':', leftColonPos + 1 );
 	String lineNumber = String( msg, leftColonPos+1, (rightColonPos - leftColonPos - 1));
 
+	String modifiedLineNumber;
+	String fileName;
+	GetLineNumberAndIncludedFileName(lineNumber, &modifiedLineNumber, &fileName);
+
 	m_errorMessage = 
 		loadErrorMessage + 
-		" \n On Line: " + lineNumber +  
+		" \n In file: " + fileName +
+		" \n Around Line: " + modifiedLineNumber +
 		" \n Reason: " + String(msg) + " \n";
 	lua_pop(m_state, 1);  /* remove message */
 

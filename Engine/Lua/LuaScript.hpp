@@ -52,6 +52,7 @@ private:
 	void ChangeOperator(String* stringToModify, const String& operatorToLookFor);
 	void GatherIncludeFilePaths(String* stringToModify, const String& includeDir);
 	int GetIncludeFileContent(const String& path, String* outContent);
+	void GetLineNumberAndIncludedFileName(const String& lineNumber, String* newLineNumber, String* fileName);
 
 public:
 	lua_State* GetLuaState() { return m_state; }
