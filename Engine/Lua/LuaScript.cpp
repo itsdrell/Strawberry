@@ -81,11 +81,15 @@ void LuaScript::ModifyLoadedLuaFileString(String* stringToModify, const String& 
 	GatherIncludeFilePaths(stringToModify, includeDir);
 	
 	// swap all operators we used to lua friendly versions
-	// ex var += 1 becomes var = var + 1
+	// ex var += 2 becomes var = var + 2
 	ChangeOperator(stringToModify, "+=");
 	ChangeOperator(stringToModify, "-=");
 	ChangeOperator(stringToModify, "*=");
 	ChangeOperator(stringToModify, "/=");
+
+	// var++ becomes var = var + 1
+	ChangeOperator(stringToModify, "--");
+	ChangeOperator(stringToModify, "++");
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -93,7 +97,7 @@ void LuaScript::ChangeOperator(String* stringToModify, const String& operatorToL
 {
 	String& theString = *stringToModify;
 
-	int foundPosition = (int)theString.find(operatorToLookFor);
+	int foundPosition = (int)theString.find(operatorToLookFor, 2);
 
 	while (foundPosition != (int)std::string::npos)
 	{
@@ -103,14 +107,34 @@ void LuaScript::ChangeOperator(String* stringToModify, const String& operatorToL
 			stepBackPos -= 1;
 		}
 
-		String variableName = theString.substr(stepBackPos + 1, foundPosition - stepBackPos - 2);
+		if (operatorToLookFor[0] == operatorToLookFor[1]) // ++ --
+		{
+			// since lua comments use -- we have to do some checks :l  
+			if ((foundPosition < 3) || (theString[foundPosition - 1] == ' ') || (theString[foundPosition - 1] == '\n'))
+			{
+				int endOfLine = (int)theString.find("\n", foundPosition);
+				foundPosition = (int)theString.find(operatorToLookFor, endOfLine);
+				continue;
+			}
+			
+			String variableName = theString.substr(stepBackPos + 1, foundPosition - stepBackPos - 1);
+			theString.erase(theString.begin() + (foundPosition - variableName.size()) ,theString.begin() + foundPosition +2);
 
-		theString.erase(theString.begin() + foundPosition);
-
-		String replacement = variableName + " " + operatorToLookFor.at(0) + " ";
-		theString.insert(foundPosition + 2, replacement);
-
-		foundPosition = (int)theString.find(operatorToLookFor, foundPosition);
+			String replacement = variableName + " = " + variableName + " " + operatorToLookFor.at(0) + " 1";
+			
+			theString.insert(foundPosition - variableName.size(), replacement);
+			foundPosition = (int)theString.find(operatorToLookFor, foundPosition + (variableName.size() + 10));
+		}
+		else
+		{
+			String variableName = theString.substr(stepBackPos + 1, foundPosition - stepBackPos - 2);
+			theString.erase(theString.begin() + foundPosition);
+			
+			String replacement = variableName + " " + operatorToLookFor.at(0) + " ";
+			
+			theString.insert(foundPosition + 2, replacement);
+			foundPosition = (int)theString.find(operatorToLookFor, foundPosition);
+		}
 	}
 }
 
