@@ -255,6 +255,7 @@
     <ClInclude Include="Lua\EngineLuaFunctionBindings.hpp" />
     <ClInclude Include="Lua\LuaScript.hpp" />
     <ClInclude Include="Lua\LuaUtils.hpp" />
+    <ClInclude Include="Lua\NativeLuaFunctions.hpp" />
     <ClInclude Include="Math\Geometry\AABB2.hpp" />
     <ClInclude Include="Math\MathUtils.hpp" />
     <ClInclude Include="Math\Matrices\Matrix44.hpp" />

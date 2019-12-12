@@ -3,6 +3,7 @@
 #include "Engine/Lua/EngineLuaFunctionBindings.hpp"
 #include "Engine/Core/Utils/StringUtils.hpp"
 #include "Engine/Core/Platform/File.hpp"
+#include "Engine/Lua/NativeLuaFunctions.hpp"
 
 #pragma warning( disable : 4310 ) // cast truncate constant value (when we cast npos to int)
 
@@ -90,6 +91,9 @@ void LuaScript::ModifyLoadedLuaFileString(String* stringToModify, const String& 
 	// var++ becomes var = var + 1
 	ChangeOperator(stringToModify, "--");
 	ChangeOperator(stringToModify, "++");
+
+	// Add our native lua helpers 
+	*stringToModify += g_NativeLuaLibrary;
 }
 
 //-----------------------------------------------------------------------------------------------

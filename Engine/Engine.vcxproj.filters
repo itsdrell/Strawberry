@@ -177,6 +177,7 @@
     <ClInclude Include="Renderer\Systems\MeshBuilder.hpp" />
     <ClInclude Include="Renderer\Components\Mesh.hpp" />
     <ClInclude Include="Core\Tools\DebugRendering.hpp" />
+    <ClInclude Include="Lua\NativeLuaFunctions.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
