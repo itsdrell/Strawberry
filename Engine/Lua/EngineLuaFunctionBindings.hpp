@@ -74,6 +74,8 @@ static int LuaDotProduct(lua_State* theState);
 static int LuaInterpolate(lua_State* theState);
 static int LuaChance(lua_State* theState);
 static int LuaGetFractionOf(lua_State* theState);
+static int LuaGetDistance(lua_State* theState);
+static int LuaGetDistanceSquared(lua_State* theState);
 
 //====================================================================================
 // Externs

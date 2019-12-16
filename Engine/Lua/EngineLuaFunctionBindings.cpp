@@ -62,7 +62,8 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaInterpolate, "Lerp");
 	BindFunctionToScript(theState, LuaChance, "Chance");
 	BindFunctionToScript(theState, LuaGetFractionOf, "Fract");
-
+	BindFunctionToScript(theState, LuaGetDistance, "GetDistance");
+	BindFunctionToScript(theState, LuaGetDistanceSquared, "GetDistanceSquared");
 
 // goes at the end
 	lua_pcall(theState, 0, 0, 0);
@@ -591,6 +592,38 @@ int LuaGetFractionOf(lua_State* theState)
 {
 	float value = LuaGetFloat(theState, 1, 50.f);
 	float result = GetFractionOf(value);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// GetDistance(startX, startY, endX, endY)
+int LuaGetDistance(lua_State* theState)
+{
+	float startX = LuaGetFloat(theState, 1, 0.f);
+	float startY = LuaGetFloat(theState, 2, 0.f);
+	float endX = LuaGetFloat(theState, 3, 0.f);
+	float endY = LuaGetFloat(theState, 4, 0.f);
+
+	float result = GetDistance(Vector2(startX, startY), Vector2(endX, endY));
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// GetDistance(startX, startY, endX, endY)
+int LuaGetDistanceSquared(lua_State* theState)
+{
+	float startX = LuaGetFloat(theState, 1, 0.f);
+	float startY = LuaGetFloat(theState, 2, 0.f);
+	float endX = LuaGetFloat(theState, 3, 0.f);
+	float endY = LuaGetFloat(theState, 4, 0.f);
+
+	float result = GetDistanceSquared(Vector2(startX, startY), Vector2(endX, endY));
 
 	lua_pushnumber(theState, result);
 

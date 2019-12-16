@@ -37,6 +37,8 @@ float	SquareRoot(float value);
 
 float	DotProduct(const Vector2& a, const Vector2& b);
 float	GetDistance(const Vector2& a, const Vector2& b);
+float	GetDistanceSquared(const Vector2& a, const Vector2& b);
+
 
 
 //===============================================================================================

@@ -151,3 +151,12 @@ float GetDistance(const Vector2& a, const Vector2& b)
 
 	return answer;
 }
+
+//-----------------------------------------------------------------------------------------------
+float GetDistanceSquared(const Vector2& a, const Vector2& b)
+{
+	// this is just distance formula without the square root
+	// (b.x - a.x)2 + (b.y - a.y)2
+	return ((b.x - a.x) * (b.x - a.x))
+		+ ((b.y - a.y) * (b.y - a.y));
+}
