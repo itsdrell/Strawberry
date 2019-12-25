@@ -23,6 +23,8 @@ void BindAllEngineCommands()
 	CommandRegister("folder", "folder", "opens folder to project in explorer", OpenFolder, false);
 	CommandRegister("web", "", "", BuildForWeb);
 	CommandRegister("lua", "lua", "execute lua code", ExecuteLuaCommand, false);
+	CommandRegister("luac", "luac  <filename>", "", CreateLuaFile, false);
+	CommandRegister("vsc", "vsc <filename>", "", OpenVisualStudioCode, false);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -180,4 +182,40 @@ void ExecuteLuaCommand(Command& command)
 	{
 		AddConsoleErrorMessage("Error running lua script");
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void CreateLuaFile(Command & command)
+{
+	if (g_currentProjectName == "")
+		return;
+
+	String currentPath = GetWorkingDirectoryPath() + "\\Projects\\";
+	String scriptPath = currentPath + (g_currentProjectName + "\\Scripts\\");
+	String luaFilePath = scriptPath + command.GetNextString() + ".lua";
+
+	String theTextCommand = "code -r " + luaFilePath + " -a " + scriptPath;
+
+#ifndef EMSCRIPTEN_PORT
+	CreateAndLogStringToFile(luaFilePath.c_str(), GetNewLuaFileString().c_str());
+	system(theTextCommand.c_str());
+#endif
+}
+
+//-----------------------------------------------------------------------------------------------
+void OpenVisualStudioCode(Command & command)
+{
+	UNUSED(command);
+
+	if (g_currentProjectName == "")
+		return;
+
+	String currentPath = GetWorkingDirectoryPath() + "\\Projects\\";
+	currentPath += (g_currentProjectName + "\\Scripts\\");
+
+	String theTextCommand = "code -r " + currentPath;
+
+#ifndef EMSCRIPTEN_PORT
+	system(theTextCommand.c_str());
+#endif
 }

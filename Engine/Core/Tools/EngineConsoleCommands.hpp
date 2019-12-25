@@ -21,6 +21,9 @@ void OpenFolder(Command& command);
 void BuildForWeb(Command& command);
 void ExecuteLuaCommand(Command& command);
 
+void CreateLuaFile(Command& command);
+void OpenVisualStudioCode(Command& command);
+
 //====================================================================================
 // Externs
 //====================================================================================
