@@ -50,6 +50,8 @@ public:
 public:
 	std::string ToString() const;
 	IntVector2 GetAsIntVector2() const;
+	Vector2 GetNormalized() const;
+	float GetLength() const;
 
 public:
 	float x,y;

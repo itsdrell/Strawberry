@@ -70,7 +70,7 @@ public:
 public:
 	unsigned int			m_totalAmountOfTiles;
 	IntVector2				m_dimensions = IntVector2(128, 128);
-	Mesh*					m_tileMesh;
+	Mesh*					m_tileMesh = nullptr;
 	MeshBuilder*			m_tileBuilder;
 	bool					m_mapMeshIsDirty = false;
 

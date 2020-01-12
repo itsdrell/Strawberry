@@ -76,6 +76,7 @@ static int LuaChance(lua_State* theState);
 static int LuaGetFractionOf(lua_State* theState);
 static int LuaGetDistance(lua_State* theState);
 static int LuaGetDistanceSquared(lua_State* theState);
+static int LuaNormalizeVector2D(lua_State* theState);
 
 //====================================================================================
 // Externs

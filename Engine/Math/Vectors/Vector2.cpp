@@ -1,6 +1,7 @@
 #include "Engine/Math/Vectors/Vector2.hpp"
 #include "Engine/Core/Utils/StringUtils.hpp"
 #include "Engine/Math/Vectors/IntVector2.hpp"
+#include <cmath>
 
 //===============================================================================================
 Vector2::Vector2()
@@ -40,6 +41,30 @@ std::string Vector2::ToString() const
 IntVector2 Vector2::GetAsIntVector2() const
 {
 	return IntVector2((int)x, (int)y);
+}
+
+//-----------------------------------------------------------------------------------------------
+Vector2 Vector2::GetNormalized() const
+{
+	//First we need to find the distance
+	float dis = GetLength();
+
+	// todo check to see if length > 0
+	if (dis == 0) { return Vector2(0.f, 0.f); }
+
+	// Then we divide x,y by distance
+	float xx = x / dis;
+	float yy = y / dis;
+
+	Vector2 answer = Vector2(xx, yy);
+	return answer;
+}
+
+//-----------------------------------------------------------------------------------------------
+float Vector2::GetLength() const
+{
+	float answer = std::sqrtf((x * x) + (y * y));
+	return answer;
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -39,6 +39,7 @@ public:
 	Mesh() {}
 
 public:
+	// definition in cpp
 	template< typename VERTTYPE >
 	void FromBuilderForType(MeshBuilder &mb);
 
@@ -72,31 +73,7 @@ public:
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-template< typename VERTTYPE >
-void Mesh::FromBuilderForType(MeshBuilder &mb)
-{
-	uint vcount = (uint)mb.m_vertices.size();
-	VERTTYPE *temp = (VERTTYPE*)malloc(sizeof(VERTTYPE) * vcount);
 
-	for (uint i = 0; i < vcount; ++i)
-	{
-		// copy each vertex
-		temp[i] = VERTTYPE(mb.GetVertex(i));
-	}
-
-	//SetVertices<VERTTYPE>( vcount, temp );
-	SetVertices(vcount, temp);
-
-	// update indices as normal;
-	if (mb.m_draw.usingIndices)
-		SetIndices((uint)mb.m_indices.size(), mb.m_indices.data());
-
-
-	SetDrawInstruction(mb.m_draw);
-
-	// free our temp buffer
-	free(temp);
-}
 
 //====================================================================================
 // Externs

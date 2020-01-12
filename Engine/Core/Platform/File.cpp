@@ -10,6 +10,7 @@
 namespace fs = std::filesystem;
 
 #endif
+#include "../Tools/ErrorWarningAssert.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -154,9 +155,15 @@ Strings GetAllLinesFromFile(char const* filename)
 //-----------------------------------------------------------------------------------------------
 String GetFileContentAsString(char const* filePath)
 {
+	PrintLog("Getting FileContentAsString from: " + std::string(filePath));
+	
 	String result;
-
 	std::ifstream infile(filePath);
+
+	if(!infile.is_open())
+	{
+		PrintLog("ERROR: Unable to get content from file: " + std::string(filePath));
+	}
 
 	char aChar;
 	while (infile.get(aChar))

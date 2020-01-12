@@ -44,9 +44,10 @@ public:
 
 public:
 	static void LoadOrReloadSpriteSheet();
+	static Game* GetInstance();
 
 public:
-	static Game* GetInstance();
+	void ShakeCamera();
 
 public:
 	LuaScript*		m_mainLuaScript;
@@ -56,6 +57,8 @@ public:
 	bool			m_drawMap;
 
 	Vector2			m_cameraPos;
+	float			m_cameraAngle = 0.f;
+	float			m_screenshakeAmount = 0.f; // [0-1]
 
 };
 

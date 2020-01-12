@@ -42,6 +42,7 @@ class VertexLayout
 {
 public:
 	VertexLayout(uint stride, const VertexAttributeT data[]);
+	~VertexLayout();
 
 	uint						GetAttributeCount(); 
 	VertexAttributeT&			GetAttribute( int const idx );  

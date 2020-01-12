@@ -86,8 +86,11 @@ void Game::CleanUp()
 //-----------------------------------------------------------------------------------------------
 void Game::Update()
 {
-	if(!m_mainLuaScript->HasError())
+	if (!m_mainLuaScript->HasError())
+	{
 		LuaUpdate(*m_mainLuaScript, g_theGameClock->deltaTime);
+		ShakeCamera();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -116,6 +119,7 @@ void Game::RenderGame() const
 	g_theGameCamera->SetProjectionOrtho2D(
 		Vector2(-padding + m_cameraPos.x, m_cameraPos.y), 
 		Vector2(m_cameraPos.x + size + padding, m_cameraPos.y + size));
+	g_theGameCamera->m_projectionMatrix.Append(Matrix44::MakeRotationDegrees2D(m_cameraAngle));
 
 	r->SetCamera(g_theGameCamera);
 	r->SetShader(r->m_defaultShader);
@@ -124,8 +128,10 @@ void Game::RenderGame() const
 	LuaRender(*m_mainLuaScript);
 	
 	// side bars to be aspect ratio and only show one cell at a time
-	r->DrawAABB2Filled(AABB2(Vector2(-padding + m_cameraPos.x, m_cameraPos.y), Vector2(m_cameraPos.x, m_cameraPos.y + size)), Rgba(0, 0, 0, 255));
-	r->DrawAABB2Filled(AABB2(Vector2(m_cameraPos.x + size, m_cameraPos.y), Vector2(m_cameraPos.x + size + padding, m_cameraPos.y + size)), Rgba(0, 0, 0, 255));
+	r->DrawAABB2Filled(AABB2(Vector2(-padding + m_cameraPos.x, m_cameraPos.y), 
+		Vector2(m_cameraPos.x, m_cameraPos.y + size)), Rgba(0, 0, 0, 255));
+	r->DrawAABB2Filled(AABB2(Vector2(m_cameraPos.x + size, m_cameraPos.y), 
+		Vector2(m_cameraPos.x + size + padding, m_cameraPos.y + size)), Rgba(0, 0, 0, 255));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -170,4 +176,26 @@ void Game::LoadOrReloadSpriteSheet()
 Game* Game::GetInstance()
 {
 	return g_theGame;
+}
+
+//-----------------------------------------------------------------------------------------------
+void Game::ShakeCamera()
+{
+	if (m_screenshakeAmount > 0.f)
+	{
+		float maxAmount = 4.f;
+		float maxAngle = 2.f;
+
+		// Todo make the GetRandomFloat into a noise function
+		m_cameraAngle = maxAngle * m_screenshakeAmount * GetRandomFloat(-1.f, 1.f);
+
+		m_cameraPos.x = maxAmount * m_screenshakeAmount * GetRandomFloat(-1.f, 1.f);
+		m_cameraPos.y = maxAmount * m_screenshakeAmount * GetRandomFloat(-1.f, 1.f);
+
+		m_screenshakeAmount -= g_theGameClock->deltaTime;
+	}
+	else
+	{
+		m_cameraAngle = 0.f;
+	}
 }

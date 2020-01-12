@@ -22,16 +22,25 @@ LuaScript::LuaScript(const String & path, const String& includeDir, GameSideLuaF
 		gameSideBinding(m_state);
 	AddBindingsToScript();
 
+#ifndef EMSCRIPTEN_PORT
 	std::string theString = GetFileContentAsString(m_filePath.c_str()) + "\n"; // need padding for appends
 	m_includes.push_back(IncludeFileData("Main.lua", (int) CountHowManyLinesAreInAString(theString)));
 
 	ModifyLoadedLuaFileString(&theString, includeDir);
 
-#ifndef EMSCRIPTEN_PORT
 	if(gameSideBinding != nullptr)
 		LogStringToFile("Data/fullScript.lua", theString.c_str(), true);
+#else
+	std::string theString;
+	if (gameSideBinding != nullptr)
+	{
+		theString = GetFileContentAsString("/Data/fullScript.lua");
+	}
+	else
+	{
+		theString = GetFileContentAsString(m_filePath.c_str()) + "\n"; // need padding for appends
+	}
 #endif
-
 	int resultOfLoad = luaL_loadstring(m_state, theString.c_str());
 	if(resultOfLoad != LUA_OK)
 	{
@@ -94,6 +103,8 @@ void LuaScript::ModifyLoadedLuaFileString(String* stringToModify, const String& 
 
 	// Add our native lua helpers 
 	*stringToModify += g_NativeLuaLibrary;
+
+	PrintLog(*stringToModify);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -114,7 +125,8 @@ void LuaScript::ChangeOperator(String* stringToModify, const String& operatorToL
 		if (operatorToLookFor[0] == operatorToLookFor[1]) // ++ --
 		{
 			// since lua comments use -- we have to do some checks :l  
-			if ((foundPosition < 3) || (theString[foundPosition - 1] == ' ') || (theString[foundPosition - 1] == '\n'))
+			if ((foundPosition < 3) || (theString[foundPosition - 1] == ' ') || (theString[foundPosition - 1] == '\n') 
+				|| (theString[foundPosition -1]) == ']')
 			{
 				int endOfLine = (int)theString.find("\n", foundPosition);
 				foundPosition = (int)theString.find(operatorToLookFor, endOfLine);

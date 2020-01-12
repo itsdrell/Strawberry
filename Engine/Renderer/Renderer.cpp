@@ -1133,7 +1133,8 @@ void Renderer::BindRenderState(const RenderState &state)
 	//EnableDepth(state.m_depthCompare, state.m_depthWrite);
 
 	// Fill mode
-	glPolygonMode(GL_FRONT_AND_BACK, ToGLFillMode(state.m_fillMode));
+	// commented out cause emscripten hates it and it doesn't seem to matter
+	//glPolygonMode(GL_FRONT_AND_BACK, ToGLFillMode(state.m_fillMode));
 
 	// Cull mode
 	if (state.m_cullMode == CULLMODE_NONE)

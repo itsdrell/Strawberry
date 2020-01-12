@@ -8,6 +8,7 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Lua/LuaScript.hpp"
 #include "Engine/Core/General/Camera.hpp"
+#include <cmath>
 
 //===============================================================================================
 void BindGameSideLuaFunctions(lua_State* theState)
@@ -18,6 +19,7 @@ void BindGameSideLuaFunctions(lua_State* theState)
 	BindFunctionToScript(theState, LuaSetTileSprite, "SetTileSprite");
 	BindFunctionToScript(theState, LuaGetTileSprite, "GetTileSprite");
 	BindFunctionToScript(theState, LuaDoesTileHaveThisCollision, "DoesTileHaveCollision");
+	BindFunctionToScript(theState, LuaScreenShake, "Screenshake");
 }
 
 //===============================================================================================
@@ -84,7 +86,7 @@ int LuaSetTileSprite(lua_State * theState)
 	
 	TileSpriteInfo newInfo;
 	newInfo.SetSpriteIndex(spriteIndex);
-	newInfo.SetSpriteSheet((int) floorf(((float)spriteIndex) / 256.f));
+	newInfo.SetSpriteSheet((int) std::floorf(((float)spriteIndex) / 256.f));
 
 	g_theGame->m_map->ChangeTileAtMousePos(Vector2(xPos, yPos), newInfo);
 
@@ -124,4 +126,15 @@ int LuaDoesTileHaveThisCollision(lua_State * theState)
 
 	lua_pushboolean(theState, result);
 	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Screenshake(amountZeroToOne)
+int LuaScreenShake(lua_State* theState)
+{
+	float amount = LuaGetFloat(theState, 1, 0.f);
+
+	g_theGame->m_screenshakeAmount = ClampFloat(g_theGame->m_screenshakeAmount + amount, 0.f, 1.f);
+	
+	return 0;
 }

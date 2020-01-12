@@ -100,7 +100,8 @@ void TileEditor::RightClick()
 	AABB2 mapBounds = m_mapEditor->m_map->GetBounds();
 	if (mapBounds.IsPointInBox(mousePos) && !m_selectedSpriteInfo.IsDefault())
 	{
-		m_mapEditor->m_map->ChangeTileAtMousePos(mousePos, DEFAULT_TILE_SPRITE_INFO);
+		TileSpriteInfo theInfo = DEFAULT_TILE_SPRITE_INFO; // emscripten complaint
+		m_mapEditor->m_map->ChangeTileAtMousePos(mousePos, theInfo);
 		return;
 	}
 }

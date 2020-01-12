@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include "Engine/Input/InputSystem.hpp"
 #include "Engine/Renderer/RenderTypes.hpp"
+#include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 
 //===============================================================================================
 Map::Map(const IntVector2& dimensions)
@@ -170,8 +171,15 @@ void Map::UpdateTileMesh(int tileIndex, const Tile& changedTile)
 //-----------------------------------------------------------------------------------------------
 void Map::GenerateTileMesh()
 {
+	PrintLog("started Generate Tile Mesh");
 	Vector2 currentPos = Vector2(0.f, 0.f);
+	
+	PrintLog("reserving");
+	// 65536 verts, ind 98304 (trying to save memory)
+	m_tileBuilder->m_vertices.reserve(65536);
+	m_tileBuilder->m_indices.reserve(98304);
 
+	PrintLog("starting for loop");
 	for (uint yIndex = 0; yIndex < (uint)m_dimensions.y; yIndex++)
 	{
 		for (uint xIndex = 0; xIndex < (uint)m_dimensions.x; xIndex++)
@@ -200,10 +208,16 @@ void Map::GenerateTileMesh()
 		currentPos.y += TILE_SIZE;
 	}
 
+	PrintLog("finished loop");
 	if (m_tileMesh != nullptr)
+	{
+		PrintLog("deleting mesh");
 		delete m_tileMesh;
-
+	}
+	PrintLog("creating mesh");
 	m_tileMesh = m_tileBuilder->CreateMesh<Vertex3D_PCU>(false);
+
+	PrintLog("finished");
 }
 
 //-----------------------------------------------------------------------------------------------

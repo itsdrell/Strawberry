@@ -64,6 +64,7 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaGetFractionOf, "Fract");
 	BindFunctionToScript(theState, LuaGetDistance, "GetDistance");
 	BindFunctionToScript(theState, LuaGetDistanceSquared, "GetDistanceSquared");
+	BindFunctionToScript(theState, LuaNormalizeVector2D, "Normalize");
 
 // goes at the end
 	lua_pcall(theState, 0, 0, 0);
@@ -628,4 +629,19 @@ int LuaGetDistanceSquared(lua_State* theState)
 	lua_pushnumber(theState, result);
 
 	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+int LuaNormalizeVector2D(lua_State* theState)
+{
+	float x = LuaGetFloat(theState, 1, 0.f);
+	float y = LuaGetFloat(theState, 2, 0.f);
+
+	Vector2 theVector = Vector2(x, y);
+	Vector2 normalized = theVector.GetNormalized();
+
+	lua_pushnumber(theState, normalized.x);
+	lua_pushnumber(theState, normalized.y);
+
+	return 2;
 }

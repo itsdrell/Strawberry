@@ -211,9 +211,10 @@ void OpenVisualStudioCode(Command & command)
 		return;
 
 	String currentPath = GetWorkingDirectoryPath() + "\\Projects\\";
-	currentPath += (g_currentProjectName + "\\Scripts\\");
+	String scriptPath = currentPath + (g_currentProjectName + "\\Scripts\\");
+	String luaFilePath = scriptPath + "Main.lua";
 
-	String theTextCommand = "code -r " + currentPath;
+	String theTextCommand = "code -r " + luaFilePath + " -a " + scriptPath;
 
 #ifndef EMSCRIPTEN_PORT
 	system(theTextCommand.c_str());
