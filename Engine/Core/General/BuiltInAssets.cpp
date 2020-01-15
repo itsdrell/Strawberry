@@ -261,6 +261,132 @@ REM didnt use GLEW -s USE_GLFW=3
 }
 
 //-----------------------------------------------------------------------------------------------
+String GetPowershellFileContent()
+{
+	const char* webPowershellFile =
+		R"(
+#---------------------------------------------------------------
+# Parameters
+#---------------------------------------------------------------
+param 
+(
+    $NameOfGame
+)
+
+#---------------------------------------------------------------
+# Functions
+#---------------------------------------------------------------
+function Write-Banner()
+{
+    param
+    (
+        $Message
+    )
+
+    Write-Host "-------------------------------------"
+    Write-Host $Message
+    Write-Host "-------------------------------------"
+}
+
+#---------------------------------------------------------------
+# Start of script
+#---------------------------------------------------------------
+Write-Banner "Setting variables!"
+$Env:SCRIPT_ROOT = $PSScriptRoot
+$Env:ENGINE_BINARIES = $Env:SCRIPT_ROOT + "\Data\Web\Resources\Engine.bc"
+$Env:WHERE_TO_PUT_IT = $Env:SCRIPT_ROOT + "\Builds\WebBuilds\$NameOfGame\" 
+$NAME_OF_GAME_FILE = $Env:SCRIPT_ROOT + "\Data\Web\NameOfGame.lua"
+$HTML_FILE_LOCATION = $Env:SCRIPT_ROOT + "\Data\Web\Resources\WebPage\index.html"
+
+Write-Host "Engine Binary paths: " $Env:ENGINE_BINARIES
+Write-Host "Where to put the build: " $Env:WHERE_TO_PUT_IT
+Write-Host "Name of the game file: " $NAME_OF_GAME_FILE
+Write-Host "HTML file location: " $HTML_FILE_LOCATION
+
+#---------------------------------------------------------------
+# emscripten commands
+#---------------------------------------------------------------
+$IMAGE_FILE_COMMAND = "--preload-file Projects/$NameOfGame/Images "
+$SCRIPT_FILE_COMMAND = "--preload-file  Projects/$NameOfGame/Scripts "
+$AUDIO_FILE_COMMAND = "--preload-file  Projects/$NameOfGame/Audio "
+$ENGINE_RESOURCES_COMMAND = "--preload-file  Data "
+$Env:ALL_RESOURCE_COMMANDS = $IMAGE_FILE_COMMAND + $SCRIPT_FILE_COMMAND + $AUDIO_FILE_COMMAND + $ENGINE_RESOURCES_COMMAND
+
+Write-Host "Emscripten Resource command: " $Env:ALL_RESOURCE_COMMANDS
+
+#---------------------------------------------------------------
+Write-Banner 'Deleting old files to prevent garbage (trust nothing)'
+Get-ChildItem -Path $Env:WHERE_TO_PUT_IT -Recurse | Remove-Item
+
+#---------------------------------------------------------------
+Write-Banner "Moving index.html over"
+Write-Host "Index location: " $HTML_FILE_LOCATION
+Write-Host "Destination: " $Env:WHERE_TO_PUT_IT
+
+if(-not (Test-Path $Env:WHERE_TO_PUT_IT))
+{
+    New-Item -Path $Env:WHERE_TO_PUT_IT -ItemType Directory
+}
+Copy-Item -Force -Path $HTML_FILE_LOCATION -Destination $Env:WHERE_TO_PUT_IT
+
+#---------------------------------------------------------------
+# content of file is: webName="jump" 
+Write-Banner "Create GameName.lua"
+
+$content = ('webName="{0}"' -f $NameOfGame)
+Write-Host ("Creating a file: {0} with contents: {1}" -f $NAME_OF_GAME_FILE, $content)
+New-Item -Path $NAME_OF_GAME_FILE -ItemType "file" -Value $content -Force
+
+#---------------------------------------------------------------
+Write-Banner "Compiling the Game, Engine, and resources"
+Set-Location $PSScriptRoot
+
+cmd.exe --% /c echo %cd% & em++ -std=c++14 %ENGINE_BINARIES% %ALL_RESOURCE_COMMANDS% -s FULL_ES2=1 --memory-init-file 0 -O0 -o %WHERE_TO_PUT_IT%\Game.js -v -g -I %SCRIPT_ROOT% -s ASSERTIONS=2 -s USE_SDL=2 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap']" -s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s USE_WEBGL2=1
+
+#---------------------------------------------------------------
+Write-Banner "Delete GameName.lua"
+
+if(-not (Test-Path -Path $NAME_OF_GAME_FILE))
+{
+    Write-Error -Message "NameOfGame.lua did not exist so we couldn't delete :("
+}
+Remove-Item -Path $NAME_OF_GAME_FILE
+
+#---------------------------------------------------------------
+#Write-Banner "Open and Run in browser"
+#Start-Process "http://localhost:8080/Index.html"
+#python -m SimpleHTTPServer 8080
+ 
+#---------------------------------------------------------------
+Write-Banner "Delete self"
+Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
+
+#---------------------------------------------------------------
+# Notes
+#---------------------------------------------------------------
+<#
+@echo off
+REM cmd.exe /c em++ -std=c++14 %allEngineAndGameCpps% %allAssetFiles% -s FULL_ES2=1 -DEMSCRIPTEN_PORT=1 --memory-init-file 0 -O0 -o Web/ProtoGame.js -v -g -I%myPath% -s ASSERTIONS=2 -s USE_SDL=2 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap']" -s ALLOW_MEMORY_GROWTH=1 -s DEMANGLE_SUPPORT=1 -s USE_WEBGL2=1
+REM if you are having weird linker errors (for your functions), make sure you didn't forget to include the cpp
+REM using -s FULL_ES2=1 instead of -s FULL_ES3=1 because i am targetting 2
+REM -s ERROR_ON_UNDEFINED_SYMBOLS=0 disables erros from linker erros so you can open it in the web and see whats causing them
+REM -s DEMANGLE_SUPPORT=1 fixes a crash in chrome? :l 
+REM -s ALLOW_MEMORY_GROWTH=1 may need to be used since audio? May not be efficient tho (see dev console in chrome)
+REM this is for fmod -s "EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap']"
+REM use USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 if using those libraries
+REM cmd.exe /c before the em++ makes runs the last successful build if there is an error
+REM GL_PREINITIALIZED_CONTEXT=1
+REM -O3 is good for release, -O0 good for debug
+REM type emsdk and enter and itll show you some helpers
+REM -s WASM=0 is bad don't use it
+REM didnt use GLEW -s USE_GLFW=3
+#>
+)";
+
+	return String(webPowershellFile);
+}
+
+//-----------------------------------------------------------------------------------------------
 String GetNewLuaFileString()
 {
 	const char* fileContent =

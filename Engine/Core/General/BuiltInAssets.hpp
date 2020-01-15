@@ -14,6 +14,7 @@ String GetLuaGameConfigString();
 String GetMusicTextString();
 String GetSFXTextString();
 String GetWebBatchFile();
+String GetPowershellFileContent();
 String GetNewLuaFileString();
 
 //====================================================================================

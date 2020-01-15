@@ -166,9 +166,14 @@ void BuildForWeb(Command& command)
 		return;
 
 	// Do the batch file
-	LogStringToFile("BuildWeb.bat", GetWebBatchFile().c_str(), true);
+	LogStringToFile("BuildWeb.ps1", GetPowershellFileContent().c_str(), true);
 
-	system("BuildWeb.bat");
+	// make sure you can run scripts this may be needed?
+	//system("start powershell.exe Set-ExecutionPolicy RemoteSigned \n");
+	// You can add -NoExit after powershell.exe if you need it to not close
+	String cmd = Stringf("start powershell.exe %s\\BuildWeb.ps1 -NameOfGame %s", 
+		workingDirectory.c_str(), g_currentProjectName.c_str());
+	system(cmd.c_str());
 }
 
 //-----------------------------------------------------------------------------------------------
