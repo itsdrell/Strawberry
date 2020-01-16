@@ -171,9 +171,21 @@ void BuildForWeb(Command& command)
 	// make sure you can run scripts this may be needed?
 	//system("start powershell.exe Set-ExecutionPolicy RemoteSigned \n");
 	// You can add -NoExit after powershell.exe if you need it to not close
-	String cmd = Stringf("start powershell.exe %s\\BuildWeb.ps1 -NameOfGame %s", 
+	String cmd = Stringf("start /WAIT powershell.exe %s\\BuildWeb.ps1 -NameOfGame %s", 
 		workingDirectory.c_str(), g_currentProjectName.c_str());
-	system(cmd.c_str());
+	
+	LogStringToFile("BuildForWeb.bat", cmd.c_str(), true);
+
+	int exitCode = system("BuildForWeb.bat");
+	if(exitCode == 0)
+	{
+		Console::GetInstance()->AddConsoleDialogue("Web Build Completed");
+	}
+	else
+	{
+		Console::GetInstance()->AddErrorMessage("Web Build Failed");
+	}
+	system("\n DEL BuildForWeb.bat");
 }
 
 //-----------------------------------------------------------------------------------------------
