@@ -261,7 +261,7 @@ REM didnt use GLEW -s USE_GLFW=3
 }
 
 //-----------------------------------------------------------------------------------------------
-String GetPowershellFileContent()
+String GetWebPowershellBuildString()
 {
 	const char* webPowershellFile =
 		R"(
@@ -270,7 +270,8 @@ String GetPowershellFileContent()
 #---------------------------------------------------------------
 param 
 (
-    $NameOfGame
+    $NameOfGame,
+	$BuildName
 )
 
 #---------------------------------------------------------------
@@ -291,10 +292,19 @@ function Write-Banner()
 #---------------------------------------------------------------
 # Start of script
 #---------------------------------------------------------------
+Write-Banner "See if buildName is null and replace with timestamp if so"
+
+Write-Host "BuildName is: " $BuildName
+if($BuildName -eq $null)
+{
+	$BuildName = Get-Date -Format o | ForEach-Object { $_ -replace ":", "." }
+}
+
+#---------------------------------------------------------------
 Write-Banner "Setting variables!"
 $Env:SCRIPT_ROOT = $PSScriptRoot
 $Env:ENGINE_BINARIES = $Env:SCRIPT_ROOT + "\Data\Web\Resources\Engine.bc"
-$Env:WHERE_TO_PUT_IT = $Env:SCRIPT_ROOT + "\Builds\WebBuilds\$NameOfGame\" 
+$Env:WHERE_TO_PUT_IT = $Env:SCRIPT_ROOT + "\Builds\WebBuilds\$NameOfGame\$BuildName\" 
 $NAME_OF_GAME_FILE = $Env:SCRIPT_ROOT + "\Data\Web\NameOfGame.lua"
 $HTML_FILE_LOCATION = $Env:SCRIPT_ROOT + "\Data\Web\Resources\WebPage\index.html"
 
@@ -302,6 +312,7 @@ Write-Host "Engine Binary paths: " $Env:ENGINE_BINARIES
 Write-Host "Where to put the build: " $Env:WHERE_TO_PUT_IT
 Write-Host "Name of the game file: " $NAME_OF_GAME_FILE
 Write-Host "HTML file location: " $HTML_FILE_LOCATION
+
 
 #---------------------------------------------------------------
 # emscripten commands
@@ -315,8 +326,13 @@ $Env:ALL_RESOURCE_COMMANDS = $IMAGE_FILE_COMMAND + $SCRIPT_FILE_COMMAND + $AUDIO
 Write-Host "Emscripten Resource command: " $Env:ALL_RESOURCE_COMMANDS
 
 #---------------------------------------------------------------
-Write-Banner 'Deleting old files to prevent garbage (trust nothing)'
-Get-ChildItem -Path $Env:WHERE_TO_PUT_IT -Recurse | Remove-Item
+Write-Banner 'Deleting old files if they exist to prevent garbage (trust nothing)'
+
+if(Test-Path $Env:WHERE_TO_PUT_IT)
+{
+	Write-Host "Found files. Deleting them"
+	Get-ChildItem -Path $Env:WHERE_TO_PUT_IT -Recurse | Remove-Item
+}
 
 #---------------------------------------------------------------
 Write-Banner "Moving index.html over"
@@ -351,6 +367,10 @@ if(-not (Test-Path -Path $NAME_OF_GAME_FILE))
     Write-Error -Message "NameOfGame.lua did not exist so we couldn't delete :("
 }
 Remove-Item -Path $NAME_OF_GAME_FILE
+
+#---------------------------------------------------------------
+# Open in explorer
+explorer.exe $Env:WHERE_TO_PUT_IT
 
 #---------------------------------------------------------------
 #Write-Banner "Open and Run in browser"
@@ -405,5 +425,105 @@ String GetNewLuaFileString()
 )";
 
 	return String(fileContent);
+}
+
+//-----------------------------------------------------------------------------------------------
+String GetPCPowershellBuildString()
+{
+	const char* pcPowershellFile =
+		R"(
+param
+(
+    $GameName,
+	$BuildName
+)
+
+#---------------------------------------------------------------
+# Functions
+#---------------------------------------------------------------
+function Write-Banner()
+{
+    param
+    (
+        $Message
+    )
+
+    Write-Host "-------------------------------------"
+    Write-Host $Message
+    Write-Host "-------------------------------------"
+}
+
+#---------------------------------------------------------------
+# Start of script
+#---------------------------------------------------------------
+Write-Banner "Setting variables!"
+$Env:SCRIPT_ROOT = $PSScriptRoot
+
+if($BuildName -eq $null)
+{
+	$BuildName = Get-Date -Format o | ForEach-Object { $_ -replace ":", "." }
+}
+
+$PCBuildDestinationPath = $Env:SCRIPT_ROOT + "\Builds\PCBuilds\" + $GameName + "\" + $BuildName
+
+Write-Host "NameOfBuild: " $BuildName
+Write-Host "PCBuildDestination: " $PCBuildDestinationPath
+
+#---------------------------------------------------------------
+# Need to move the Project/GameName folder
+Write-Banner "Moving the resources"
+$resourcesPath = $Env:SCRIPT_ROOT + "\Projects\" + $GameName
+$resourcesDestination = $PCBuildDestinationPath + "\Projects\" + $GameName 
+
+Write-Host "Resource Path: " $resourcesPath
+Write-Host "Resource Destination: " $resourcesDestination
+
+Copy-Item -Path $resourcesPath -Destination $resourcesDestination -Recurse
+
+#---------------------------------------------------------------
+# Need to move all of Data
+Write-Banner "Moving all of data"
+$dataLocation = $Env:SCRIPT_ROOT + "\Data"
+$dataDestination = $PCBuildDestinationPath + "\Data\" 
+
+Copy-Item -Path $dataLocation -Destination $dataDestination -Recurse
+
+#---------------------------------------------------------------
+# Need to create the gamename.lua
+Write-Banner "Creating NameOfGame.lua"
+$nameOfGamePath = $dataDestination + "\NameOfGame.lua"
+$contentOfNameOfGame = ('gameName="{0}"' -f $GameName)
+
+New-Item -Path $nameOfGamePath -Value $contentOfNameOfGame -Force
+
+#---------------------------------------------------------------
+# Need to add the release flag to the appconfig
+Write-Banner "Adding release flag to app config"
+
+Add-Content -Path ($dataDestination + "/AppConfig.lua") -Value "release=true"
+
+#---------------------------------------------------------------
+# Move all the dependencies (fmod.dll, SDL2.dll, Strawberry.exe)
+# Rename Strawberry to be gamename.exe
+Write-Banner "Moving c++ Dependencies"
+
+Copy-Item -Path "$Env:SCRIPT_ROOT\fmod.dll" -Destination $PCBuildDestinationPath
+Copy-Item -Path "$Env:SCRIPT_ROOT\fmod64.dll" -Destination $PCBuildDestinationPath
+Copy-Item -Path "$Env:SCRIPT_ROOT\SDL2.dll" -Destination $PCBuildDestinationPath
+Copy-Item -Path "$Env:SCRIPT_ROOT\Strawberry.exe" -Destination $PCBuildDestinationPath
+
+Rename-Item -Path ($PCBuildDestinationPath + "\Strawberry.exe") -NewName ($GameName + ".exe")
+
+#---------------------------------------------------------------
+# Open in explorer
+explorer.exe $PCBuildDestinationPath
+
+#---------------------------------------------------------------
+Write-Banner "Delete self"
+Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
+
+)";
+
+	return String(pcPowershellFile);
 }
 

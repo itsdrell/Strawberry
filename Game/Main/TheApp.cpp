@@ -87,18 +87,25 @@ void App::StartUp()
 	Console::GetInstance()->Open();
 
 	String startupGame = g_theEngineBlackboard->GetValue("startupGame", "idk");
+
+	// in our export script we will set the flag to true
+	if(g_theEngineBlackboard->GetValue("release", false))
+	{
+		BlackBoard temp = BlackBoard("Data/NameOfGame.lua", DATA_BLACKBOARD);
+		startupGame = temp.GetValue("gameName", "idk");
+		m_isReleaseVersion = true;
+	}
+
 	if (startupGame != "idk")
 	{
 		g_currentProjectName = startupGame;
 		PrintLog("Project Name is: " + g_currentProjectName);
 		ReloadAndRunGame();
-
-		m_isReleaseVersion = g_theEngineBlackboard->GetValue("release", false);
 	}
 
 #else
-	BlackBoard temp = BlackBoard("Data/Web/NameOfGame.lua", DATA_BLACKBOARD);
-	g_currentProjectName = temp.GetValue("webName", "idk");
+	BlackBoard temp = BlackBoard("Data/NameOfGame.lua", DATA_BLACKBOARD);
+	g_currentProjectName = temp.GetValue("gameName", "idk");
 	PrintLog("Project Name is: " + g_currentProjectName);
 	ReloadAndRunGame();
 #endif

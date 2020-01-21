@@ -21,10 +21,11 @@ void BindAllEngineCommands()
 	CommandRegister("load", "load <projectName>", "loads project", LoadProject, false);
 	CommandRegister("projects", "projects", "shows all projects", ShowAllProjectNames, false);
 	CommandRegister("folder", "folder", "opens folder to project in explorer", OpenFolder, false);
-	CommandRegister("web", "", "", BuildForWeb);
 	CommandRegister("lua", "lua", "execute lua code", ExecuteLuaCommand, false);
 	CommandRegister("luac", "luac  <filename>", "", CreateLuaFile, false);
 	CommandRegister("vsc", "vsc <filename>", "", OpenVisualStudioCode, false);
+	CommandRegister("export", "export", "export either <web or PC>", ExportGame, false);
+	//CommandRegister("web", "", "", BuildForWeb);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -150,45 +151,6 @@ void OpenFolder(Command& command)
 }
 
 //-----------------------------------------------------------------------------------------------
-void BuildForWeb(Command& command)
-{
-	if (command.m_commandArguements.size() != 0)
-		g_currentProjectName = command.m_commandArguements.at(0);
-
-	// you need a name!
-	if (g_currentProjectName == "")
-		return;
-
-	String workingDirectory = GetWorkingDirectoryPath();
-	String fullPath = workingDirectory + "/" + "Projects/" + g_currentProjectName;
-
-	if (!DoesDirectoryExist(fullPath.c_str()))
-		return;
-
-	// Do the batch file
-	LogStringToFile("BuildWeb.ps1", GetPowershellFileContent().c_str(), true);
-
-	// make sure you can run scripts this may be needed?
-	//system("start powershell.exe Set-ExecutionPolicy RemoteSigned \n");
-	// You can add -NoExit after powershell.exe if you need it to not close
-	String cmd = Stringf("start /WAIT powershell.exe %s\\BuildWeb.ps1 -NameOfGame %s", 
-		workingDirectory.c_str(), g_currentProjectName.c_str());
-	
-	LogStringToFile("BuildForWeb.bat", cmd.c_str(), true);
-
-	int exitCode = system("BuildForWeb.bat");
-	if(exitCode == 0)
-	{
-		Console::GetInstance()->AddConsoleDialogue("Web Build Completed");
-	}
-	else
-	{
-		Console::GetInstance()->AddErrorMessage("Web Build Failed");
-	}
-	system("\n DEL BuildForWeb.bat");
-}
-
-//-----------------------------------------------------------------------------------------------
 void ExecuteLuaCommand(Command& command)
 {
 	// todo : this doesn't work but it seems to be the right step???
@@ -236,4 +198,113 @@ void OpenVisualStudioCode(Command & command)
 #ifndef EMSCRIPTEN_PORT
 	system(theTextCommand.c_str());
 #endif
+}
+
+//-----------------------------------------------------------------------------------------------
+// Export <Web or PC>
+void ExportGame(Command& command)
+{
+	String platformType = command.GetNextString();
+
+	// you need a name!
+	if (g_currentProjectName == "")
+		return;
+
+	if(platformType == "web")
+	{
+		BuildForWeb(command);
+	}
+	else
+	{
+		BuildForWin32(command);
+	}
+}
+
+//===============================================================================================
+// Standalone functions
+//===============================================================================================
+void BuildForWeb(Command& command)
+{
+	//if (command.m_commandArguements.size() != 0)
+	//	g_currentProjectName = command.m_commandArguements.at(0);
+
+	// you need a name!
+	if (g_currentProjectName == "")
+		return;
+
+	String workingDirectory = GetWorkingDirectoryPath();
+	String fullPath = workingDirectory + "/" + "Projects/" + g_currentProjectName;
+
+	if (!DoesDirectoryExist(fullPath.c_str()))
+		return;
+
+	// Do the batch file
+	LogStringToFile("BuildWeb.ps1", GetWebPowershellBuildString().c_str(), true);
+
+	// make sure you can run scripts this may be needed?
+	//system("start powershell.exe Set-ExecutionPolicy RemoteSigned \n");
+	// You can add -NoExit after powershell.exe if you need it to not close
+	String cmd = Stringf("start /WAIT powershell.exe %s\\BuildWeb.ps1 -NameOfGame %s",
+		workingDirectory.c_str(), g_currentProjectName.c_str());
+
+	String buildName = command.GetNextString();
+	if (buildName != "")
+	{
+		cmd += (" -BuildName " + buildName);
+	}
+
+	LogStringToFile("BuildForWeb.bat", cmd.c_str(), true);
+
+	int exitCode = system("BuildForWeb.bat");
+	if (exitCode == 0)
+	{
+		Console::GetInstance()->AddConsoleDialogue("Web Build Completed");
+	}
+	else
+	{
+		Console::GetInstance()->AddErrorMessage("Web Build Failed");
+	}
+	system("\n DEL BuildForWeb.bat");
+}
+
+//-----------------------------------------------------------------------------------------------
+void BuildForWin32(Command& command)
+{
+	// you need a name!
+	if (g_currentProjectName == "")
+		return;
+
+	String workingDirectory = GetWorkingDirectoryPath();
+	String fullPath = workingDirectory + "/" + "Projects/" + g_currentProjectName;
+
+	if (!DoesDirectoryExist(fullPath.c_str()))
+		return;
+
+	// Do the batch file
+	LogStringToFile("BuildPC.ps1", GetPCPowershellBuildString().c_str(), true);
+
+	// make sure you can run scripts this may be needed?
+	//system("start powershell.exe Set-ExecutionPolicy RemoteSigned \n");
+	// You can add -NoExit after powershell.exe if you need it to not close
+	String cmd = Stringf("start /WAIT powershell.exe %s\\BuildPC.ps1 -GameName %s",
+		workingDirectory.c_str(), g_currentProjectName.c_str());
+
+	String buildName = command.GetNextString();
+	if(buildName != "")
+	{
+		cmd += (" -BuildName " + buildName);
+	}
+
+	LogStringToFile("BuildForPC.bat", cmd.c_str(), true);
+
+	int exitCode = system("BuildForPC.bat");
+	if (exitCode == 0)
+	{
+		Console::GetInstance()->AddConsoleDialogue("PC Build Completed");
+	}
+	else
+	{
+		Console::GetInstance()->AddErrorMessage("PC Build Failed");
+	}
+	system("\n DEL BuildForPC.bat");
 }

@@ -106,3 +106,5 @@ data/config/user.config
 
 # visual studio settings?
 *.user
+
+Run_win32/Builds/*
