@@ -25,12 +25,14 @@ typedef void(*GameSideLuaFunctionBinding)(lua_State* theState);
 //====================================================================================
 // Structs
 //====================================================================================
-struct IncludeFileData 
+struct LuaScriptData 
 {
-	IncludeFileData(const String& path, int lineCount)
+	LuaScriptData(const String& path, const String& data, int lineCount)
 		: m_path(path)
+		, m_data(data)
 		, m_lineCount(lineCount) {}
 
+	String	m_data;
 	String	m_path;
 	int		m_lineCount;
 };
@@ -46,11 +48,13 @@ public:
 	~LuaScript();
 
 private:
+	String CreateMainLuaScript(const String& includeDir);
 	void AddLibrariesToLuaScript();
 	void AddBindingsToScript();
-	void ModifyLoadedLuaFileString( String* stringToModify, const String& includeDir );
+	void ModifyLoadedLuaFileString( String* stringToModify);
 	void ChangeOperator(String* stringToModify, const String& operatorToLookFor);
 	void GatherIncludeFilePaths(String* stringToModify, const String& includeDir);
+	void RemoveIncludesFromScriptData(LuaScriptData* scriptData);
 	int GetIncludeFileContent(const String& path, String* outContent);
 	void GetLineNumberAndIncludedFileName(const String& lineNumber, String* newLineNumber, String* fileName);
 
@@ -71,7 +75,7 @@ private:
 	int				m_errorCode = 0; // uses LUA defines
 	String			m_errorMessage = "no errors";
 
-	std::vector<IncludeFileData>	m_includes;
+	std::vector<LuaScriptData>	m_includes;
 };
 
 //====================================================================================

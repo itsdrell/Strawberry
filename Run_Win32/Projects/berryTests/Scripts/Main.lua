@@ -1,15 +1,8 @@
-#include "Vector2.lua"
-#include "Disc.lua"
-#include "AABB2.lua"
-#include "BerryUtils.lua"
-
-Berry = {}
-
 displayTimer = 10
 
 -- this doesnt seem to work :l 
 -- it might be because I add all includes to the bottom of the script :l 
---zerovec = Vector2:Create(0,0)
+zerovec = Vector2:Create(0,0)
 
 -------------------------------------------------------------
 -- Called once at the start
@@ -32,6 +25,30 @@ end
 -- called after update, does all drawing
 function Draw()
     Cls()
+
+    vec2Start = Vector2:Create(0,128)
+    vec2End = Vector2:Create(256, 128)
+    Berry.DrawLine(vec2Start, vec2End, "white")
+
+    discOutline = Disc:Create(64, 128, 6)
+    Berry.DrawCircle(discOutline, "random")
+
+    discOutline = Disc:Create(196, 128, 12)
+    Berry.DrawCircleFill(discOutline, "random")
+
+    box = AABB2:Create(64,196, 80, 212)
+    Berry.DrawAABB2(box, "random")
+
+    box = AABB2:Create(112, 64, 146, 96)
+    Berry.DrawAABB2Fill(box, "random")
+
+    vec2TextPos = Vector2:Create(164,164)
+    Berry.DrawText("ART", vec2TextPos, 6, "Random")
+
+    textBox = AABB2:Create(0,0,64,64)
+    Berry.DrawTextWrapped(".... .... .... ....", textBox, 6)
+    --Berry.DrawAABB2(textBox, "white")
+
 end
 
 ------------------------------------------------------------

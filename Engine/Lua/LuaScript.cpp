@@ -21,15 +21,19 @@ LuaScript::LuaScript(const String & path, const String& includeDir, GameSideLuaF
 	if(gameSideBinding)
 		gameSideBinding(m_state);
 	AddBindingsToScript();
+	AddLibrariesToLuaScript();
 
 #ifndef EMSCRIPTEN_PORT
-	std::string theString = GetFileContentAsString(m_filePath.c_str()) + "\n"; // need padding for appends
-	m_includes.push_back(IncludeFileData("Main.lua", (int) CountHowManyLinesAreInAString(theString)));
-
+	String theString;
 	if (gameSideBinding != nullptr)
 	{
-		ModifyLoadedLuaFileString(&theString, includeDir);
+		theString = CreateMainLuaScript(includeDir);
+		ModifyLoadedLuaFileString(&theString);
 		LogStringToFile("Data/fullScript.lua", theString.c_str(), true);
+	}
+	else
+	{
+		theString = CreateMainLuaScript("");
 	}
 #else
 	std::string theString;
@@ -61,7 +65,6 @@ LuaScript::LuaScript(const String & path, const String& includeDir, GameSideLuaF
 		}
 	}
 
-	AddLibrariesToLuaScript();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -69,6 +72,37 @@ LuaScript::~LuaScript()
 {
 	if(m_state != NULL)
 		lua_close(m_state);
+}
+
+//-----------------------------------------------------------------------------------------------
+String LuaScript::CreateMainLuaScript(const String& includeDir)
+{
+	std::string originalString = GetFileContentAsString(m_filePath.c_str()) + "\n"; // need padding for appends
+	LuaScriptData& originalData = LuaScriptData("Main.lua", originalString, (int)CountHowManyLinesAreInAString(originalString));
+	m_includes.push_back(originalData);
+
+	if(includeDir != "")
+	{
+		// we can do some includes
+		GatherIncludeFilePaths(&originalData.m_data, includeDir);
+
+		RemoveIncludesFromScriptData(&originalData);
+
+		m_includes.push_back(LuaScriptData("nativeLuaFunctions", g_NativeLuaLibrary, CountHowManyLinesAreInAString(g_NativeLuaLibrary)));
+	}
+
+	// now that we have all of the files in m_includes, lets add them into one string
+	// includes need to be on top
+	std::string finalString = "";
+	for(int i = 1; i < m_includes.size(); i++)
+	{
+		String current = m_includes.at(i).m_data;
+		finalString += current;
+	}
+
+	finalString += originalData.m_data;
+
+	return finalString;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -87,15 +121,8 @@ void LuaScript::AddBindingsToScript()
 }
 
 //-----------------------------------------------------------------------------------------------
-void LuaScript::ModifyLoadedLuaFileString(String* stringToModify, const String& includeDir)
+void LuaScript::ModifyLoadedLuaFileString(String* stringToModify)
 {
-	// Add our native lua helpers 
-	*stringToModify += g_NativeLuaLibrary;
-	m_includes.push_back(IncludeFileData("nativeLuaFunctions", CountHowManyLinesAreInAString(g_NativeLuaLibrary)));
-
-	// we can do some includes
-	GatherIncludeFilePaths(stringToModify, includeDir);
-	
 	// swap all operators we used to lua friendly versions
 	// ex var += 2 becomes var = var + 2
 	ChangeOperator(stringToModify, "+=");
@@ -173,11 +200,26 @@ void LuaScript::GatherIncludeFilePaths(String* stringToModify, const String& inc
 		String fullPath = includeDir + "/Scripts/" + path;
 		int lineCount = GetIncludeFileContent(fullPath, &content);
 
-		theString.append(content);
-		m_includes.push_back(IncludeFileData(path, lineCount));
+		m_includes.push_back(LuaScriptData(path, content, lineCount));
+
+		foundPosition = (int)theString.find(includeString, endOfInclude);
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void LuaScript::RemoveIncludesFromScriptData(LuaScriptData* scriptData)
+{
+	LuaScriptData& data = *scriptData;
+	String& theString = scriptData->m_data;
+	String includeString = "#include ";
+
+	int foundPosition = (int)theString.find(includeString);
+	while (foundPosition != (int)std::string::npos)
+	{
+		int endOfInclude = (int)theString.find('\n', foundPosition);
 
 		theString.erase(foundPosition, endOfInclude + 1);
-		m_includes.at(0).m_lineCount -= 1;
+		scriptData->m_lineCount -= 1;
 		foundPosition = (int)theString.find(includeString);
 	}
 }
@@ -196,34 +238,30 @@ int LuaScript::GetIncludeFileContent(const String& path, String* outContent)
 //-----------------------------------------------------------------------------------------------
 void LuaScript::GetLineNumberAndIncludedFileName(const String& lineNumber, String* newLineNumber, String* fileName)
 {
-	// early out
 	int line = ParseString(lineNumber, 0);
-	if (m_includes.size() == 1 || line <= m_includes.at(0).m_lineCount)
+	int previousTotal = 0;
+	for (int i = 1; i < m_includes.size(); i++)
 	{
-		*newLineNumber = std::to_string(line);
-		*fileName = "Main.lua";
-		return;
-	}
-	else
-	{
-		int previousTotal = 0;
-		for (int i = 1; i < m_includes.size(); i++)
-		{
-			previousTotal += m_includes.at(i - 1).m_lineCount;
-			int totalLine = (previousTotal + m_includes.at(i).m_lineCount);
+		int totalLine = (previousTotal + m_includes.at(i).m_lineCount);
 
-			if (line <= totalLine)
-			{
-				// the plus 2 is weird cause it makes our syntax errors exact
-				// but our runtime are off by 1 (needs a + 3). I think its
-				// on luas end for not being 100% accurate :l 
-				int realLineNumber = line - previousTotal; 
-				*newLineNumber = std::to_string(realLineNumber);
-				*fileName = m_includes.at(i).m_path;
-				return;
-			}
+		if (line <= totalLine)
+		{
+			// the plus 2 is weird cause it makes our syntax errors exact
+			// but our runtime are off by 1 (needs a + 3). I think its
+			// on luas end for not being 100% accurate :l 
+			int realLineNumber = line - previousTotal;
+			*newLineNumber = std::to_string(realLineNumber);
+			*fileName = m_includes.at(i).m_path;
+			return;
 		}
+		
+		previousTotal += m_includes.at(i).m_lineCount;
 	}
+
+	// then its in main.lua
+	int realLineNumber = line - previousTotal;
+	*newLineNumber = std::to_string(realLineNumber);
+	*fileName = m_includes.at(0).m_path;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -233,6 +271,7 @@ void LuaScript::LogError()
 	
 	String loadErrorMessage = LuaErrorCodeToString(m_errorCode);
 	String msg = lua_tostring(m_state, -1);
+	msg = RemoveCharacterFromString(msg, "-"); // been printing out comment blocks?
 
 	size_t leftColonPos = msg.find( ':' );
 	size_t rightColonPos = msg.find( ':', leftColonPos + 1 );
