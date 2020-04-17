@@ -42,6 +42,7 @@ static int LuaDrawAABB2WireFrame(lua_State* theState);
 
 static int LuaDrawSprite(lua_State* theState);
 static int LuaDrawText(lua_State* theState);
+static int LuaDrawTextWrapped(lua_State* theState);
 
 static int LuaSetCameraPosition(lua_State* theState);
 
@@ -70,13 +71,28 @@ static int LuaMax(lua_State* theState);
 static int LuaSquareRoot(lua_State* theState);
 static int LuaClamp(lua_State* theState);
 static int LuaRandomRange(lua_State* theState);
-static int LuaDotProduct(lua_State* theState);
 static int LuaInterpolate(lua_State* theState);
 static int LuaChance(lua_State* theState);
 static int LuaGetFractionOf(lua_State* theState);
+static int LuaRangeMap(lua_State* theState);
+
+// vec2
 static int LuaGetDistance(lua_State* theState);
 static int LuaGetDistanceSquared(lua_State* theState);
 static int LuaNormalizeVector2D(lua_State* theState);
+static int LuaDotProduct(lua_State* theState);
+static int LuaGetLength(lua_State* theState);
+static int LuaGetLengthSquared(lua_State* theState);
+
+// Disc
+static int LuaIsPointInsideDisc(lua_State* theState);
+
+// AABB2
+static int LuaGetIsPointInBox(lua_State* theState);
+static int LuaAABB2GrowToSquare(lua_State* theState);
+static int LuaAABB2ShrinkToSquare(lua_State* theState);
+static int LuaGetAABB2FromAABB2(lua_State* theState);
+static int LuaGetPositionInsideBox(lua_State* theState);
 
 //====================================================================================
 // Externs

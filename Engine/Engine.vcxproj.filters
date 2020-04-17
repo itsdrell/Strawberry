@@ -178,6 +178,7 @@
     <ClInclude Include="Renderer\Components\Mesh.hpp" />
     <ClInclude Include="Core\Tools\DebugRendering.hpp" />
     <ClInclude Include="Lua\NativeLuaFunctions.hpp" />
+    <ClInclude Include="Math\Geometry\Disc.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -423,5 +424,11 @@
     <ClCompile Include="Core\Tools\DebugRendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Math\Geometry\Disc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ThirdParty\SDL2\SDL2.lib" />
   </ItemGroup>
 </Project>

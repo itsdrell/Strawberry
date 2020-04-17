@@ -1,0 +1,28 @@
+hit_001.wav
+leviclaassen
+https://freesound.org/people/leviclaassen/sounds/107788/
+
+Turret Power Down
+MnG-PowerDown.wav by SA_Ionov
+https://freesound.org/people/SA_Ionov/sounds/467405/
+
+Turret shoot sound
+Retro_Laser_Shot_03.wav by MATTIX
+https://freesound.org/people/MATTIX/sounds/414885/
+
+Explosion
+8-bit Explosions2.aif by timgormly
+https://freesound.org/people/timgormly/sounds/170144/
+
+TurretRepair
+Power Up 1 SFX by Eschwabe3
+https://freesound.org/people/Eschwabe3/sounds/460131/
+
+BaseDamage
+damage4.mp3 by Taira Komori
+https://freesound.org/people/Taira%20Komori/sounds/214211/
+
+Background Music
+Blippy Trance by Kevin MacLeod
+Link: https://incompetech.filmmusic.io/song/5759-blippy-trance
+License: http://creativecommons.org/licenses/by/4.0/

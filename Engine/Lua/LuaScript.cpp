@@ -26,10 +26,11 @@ LuaScript::LuaScript(const String & path, const String& includeDir, GameSideLuaF
 	std::string theString = GetFileContentAsString(m_filePath.c_str()) + "\n"; // need padding for appends
 	m_includes.push_back(IncludeFileData("Main.lua", (int) CountHowManyLinesAreInAString(theString)));
 
-	ModifyLoadedLuaFileString(&theString, includeDir);
-
-	if(gameSideBinding != nullptr)
+	if (gameSideBinding != nullptr)
+	{
+		ModifyLoadedLuaFileString(&theString, includeDir);
 		LogStringToFile("Data/fullScript.lua", theString.c_str(), true);
+	}
 #else
 	std::string theString;
 	if (gameSideBinding != nullptr)
@@ -39,6 +40,7 @@ LuaScript::LuaScript(const String & path, const String& includeDir, GameSideLuaF
 	else
 	{
 		theString = GetFileContentAsString(m_filePath.c_str()) + "\n"; // need padding for appends
+		PrintLog(theString);
 	}
 #endif
 	int resultOfLoad = luaL_loadstring(m_state, theString.c_str());
@@ -87,6 +89,10 @@ void LuaScript::AddBindingsToScript()
 //-----------------------------------------------------------------------------------------------
 void LuaScript::ModifyLoadedLuaFileString(String* stringToModify, const String& includeDir)
 {
+	// Add our native lua helpers 
+	*stringToModify += g_NativeLuaLibrary;
+	m_includes.push_back(IncludeFileData("nativeLuaFunctions", CountHowManyLinesAreInAString(g_NativeLuaLibrary)));
+
 	// we can do some includes
 	GatherIncludeFilePaths(stringToModify, includeDir);
 	
@@ -100,9 +106,6 @@ void LuaScript::ModifyLoadedLuaFileString(String* stringToModify, const String& 
 	// var++ becomes var = var + 1
 	ChangeOperator(stringToModify, "--");
 	ChangeOperator(stringToModify, "++");
-
-	// Add our native lua helpers 
-	*stringToModify += g_NativeLuaLibrary;
 
 	PrintLog(*stringToModify);
 }

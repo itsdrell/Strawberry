@@ -95,6 +95,7 @@ int LuaSetTileSprite(lua_State * theState)
 
 //-----------------------------------------------------------------------------------------------
 // GetTileSprite(x,y)
+// Takes a world pos not tile pos
 int LuaGetTileSprite(lua_State * theState)
 {
 	AABB2 mapBounds = g_theGame->m_map->GetBounds();

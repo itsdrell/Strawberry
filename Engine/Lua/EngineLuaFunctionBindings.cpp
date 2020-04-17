@@ -12,6 +12,7 @@
 #include "Engine/Core/Tools/Console.hpp"
 #include "Engine/Renderer/Images/SpriteSheet.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
+#include "Engine/Math/Geometry/Disc.hpp"
 #include <cstdlib>
 #include <cmath>
 
@@ -33,6 +34,7 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaDrawAABB2WireFrame, "DrawAABB2");
 	BindFunctionToScript(theState, LuaDrawSprite, "DrawSprite");
 	BindFunctionToScript(theState, LuaDrawText, "DrawText");
+	BindFunctionToScript(theState, LuaDrawTextWrapped, "DrawTextWrapped");
 
 	//BindFunctionToScript(theState, LuaSetCameraPosition, "Camera");
 
@@ -58,13 +60,29 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaSquareRoot, "Sqrt");
 	BindFunctionToScript(theState, LuaClamp, "Clamp");
 	BindFunctionToScript(theState, LuaRandomRange, "RandomRange");
-	BindFunctionToScript(theState, LuaDotProduct, "Dot");
 	BindFunctionToScript(theState, LuaInterpolate, "Lerp");
 	BindFunctionToScript(theState, LuaChance, "Chance");
 	BindFunctionToScript(theState, LuaGetFractionOf, "Fract");
+	BindFunctionToScript(theState, LuaRangeMap, "RangeMap");
+
+// vector2
+	BindFunctionToScript(theState, LuaDotProduct, "Dot");
 	BindFunctionToScript(theState, LuaGetDistance, "GetDistance");
 	BindFunctionToScript(theState, LuaGetDistanceSquared, "GetDistanceSquared");
 	BindFunctionToScript(theState, LuaNormalizeVector2D, "Normalize");
+	BindFunctionToScript(theState, LuaGetLength, "GetLength");
+	BindFunctionToScript(theState, LuaGetLengthSquared, "GetLengthSquared");
+
+// Disc2
+	BindFunctionToScript(theState, LuaIsPointInsideDisc, "IsPointInsideDisc");
+
+// AABB2
+	BindFunctionToScript(theState, LuaGetIsPointInBox, "AABB2IsPointInside");
+	BindFunctionToScript(theState, LuaAABB2GrowToSquare, "AABB2GrowToSquare");
+	BindFunctionToScript(theState, LuaAABB2ShrinkToSquare, "AABB2ShrinkToSquare");
+	BindFunctionToScript(theState, LuaGetAABB2FromAABB2, "AABB2GetAABB2FromAABB2");
+	BindFunctionToScript(theState, LuaGetPositionInsideBox, "AABB2GetPositionInside");
+
 
 // goes at the end
 	lua_pcall(theState, 0, 0, 0);
@@ -285,6 +303,24 @@ int LuaDrawText(lua_State* theState)
 
 	Renderer* r = Renderer::GetInstance();
 	r->DrawText2D(Vector2(x, y), text, height, color);
+
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// DrawTextWrapped string, minx, miny, maxx, maxy, height, color
+int LuaDrawTextWrapped(lua_State* theState)
+{
+	String text = LuaGetString(theState, 1, "idk man");
+	float minx = LuaGetFloat(theState, 2, 0);
+	float miny = LuaGetFloat(theState, 3, 0);
+	float maxx = LuaGetFloat(theState, 4, 1.f);
+	float maxy = LuaGetFloat(theState, 5, 0.f);
+	float height = LuaGetFloat(theState, 6, 1.f);
+	Rgba color = LuaGetRgba(theState, 7, Rgba::WHITE);
+
+	Renderer* r = Renderer::GetInstance();
+	r->DrawWrappedTextInBox2D(text, AABB2(Vector2(minx,miny),Vector2(maxx, maxy)), height, 1.77, color);
 
 	return 0;
 }
@@ -562,6 +598,160 @@ int LuaDotProduct(lua_State * theState)
 }
 
 //-----------------------------------------------------------------------------------------------
+int LuaGetLength(lua_State * theState)
+{
+	float x1 = LuaGetFloat(theState, 1, 0.f);
+	float y1 = LuaGetFloat(theState, 2, 0.f);
+	
+	float result = Vector2(x1, y1).GetLength();
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+int LuaGetLengthSquared(lua_State * theState)
+{
+	float x1 = LuaGetFloat(theState, 1, 0.f);
+	float y1 = LuaGetFloat(theState, 2, 0.f);
+
+	float result = Vector2(x1, y1).GetLengthSquared();
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// IsPointInsideDisc( center x, centery, radius, pointx, pointy)
+int LuaIsPointInsideDisc(lua_State* theState)
+{
+	float centerx = LuaGetFloat(theState, 1, 0.f);
+	float centery = LuaGetFloat(theState, 2, 1.f);
+	float radius = LuaGetFloat(theState, 3, 1.f);
+	float pointx = LuaGetFloat(theState, 4, .5f);
+	float pointy = LuaGetFloat(theState, 5, .5f);
+
+	Disc2 theDisc = Disc2( Vector2(centerx, centery ), radius);
+	bool result = theDisc.IsPointInside(pointx, pointy);
+
+	lua_pushboolean(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// AABB2:IsPointInBox(minx, miny, maxx, maxy, pointx, pointy)
+int LuaGetIsPointInBox(lua_State * theState)
+{
+	float minx = LuaGetFloat(theState, 1, 0.f);
+	float miny = LuaGetFloat(theState, 2, 0.f);
+	float maxx = LuaGetFloat(theState, 3, 1.f);
+	float maxy = LuaGetFloat(theState, 4, 1.f);
+
+	float pointx = LuaGetFloat(theState, 5, 0.f);
+	float pointy = LuaGetFloat(theState, 6, 1.f);
+	
+	AABB2 theBox = AABB2(minx, miny, maxx, maxy);
+	bool result = theBox.IsPointInBox(Vector2(pointx, pointy));
+
+	lua_pushboolean(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// AABB2GrowToSquare(minx, miny, maxx, maxy)
+int LuaAABB2GrowToSquare(lua_State * theState)
+{
+	float minx = LuaGetFloat(theState, 1, 0.f);
+	float miny = LuaGetFloat(theState, 2, 0.f);
+	float maxx = LuaGetFloat(theState, 3, 1.f);
+	float maxy = LuaGetFloat(theState, 4, 1.f);
+
+	AABB2 theBox = AABB2(minx, miny, maxx, maxy);
+	theBox.GrowToSquare();
+
+	lua_pushnumber(theState, theBox.mins.x);
+	lua_pushnumber(theState, theBox.mins.y);
+	lua_pushnumber(theState, theBox.maxs.x);
+	lua_pushnumber(theState, theBox.maxs.y);
+
+	return 4;
+}
+
+//-----------------------------------------------------------------------------------------------
+//	AABB2 ShrinkToSquare(minx, miny, maxx, maxy)
+int LuaAABB2ShrinkToSquare(lua_State* theState)
+{
+	float minx = LuaGetFloat(theState, 1, 0.f);
+	float miny = LuaGetFloat(theState, 2, 0.f);
+	float maxx = LuaGetFloat(theState, 3, 1.f);
+	float maxy = LuaGetFloat(theState, 4, 1.f);
+
+	AABB2 theBox = AABB2(minx, miny, maxx, maxy);
+	theBox.ShrinkToSquare();
+
+	lua_pushnumber(theState, theBox.mins.x);
+	lua_pushnumber(theState, theBox.mins.y);
+	lua_pushnumber(theState, theBox.maxs.x);
+	lua_pushnumber(theState, theBox.maxs.y);
+
+	return 4;
+}
+
+//-----------------------------------------------------------------------------------------------
+// AABB2: GetAABB2FromAABB2(minx, miny, maxx, maxy, minperx, minpery, maxperx, maxpery)
+int LuaGetAABB2FromAABB2(lua_State * theState)
+{
+	float minx = LuaGetFloat(theState, 1, 0.f);
+	float miny = LuaGetFloat(theState, 2, 0.f);
+	float maxx = LuaGetFloat(theState, 3, 1.f);
+	float maxy = LuaGetFloat(theState, 4, 1.f);
+
+	float minpercentx = LuaGetFloat(theState, 5, 0.f);
+	float minpercenty = LuaGetFloat(theState, 6, 0.f);
+
+	float maxpercentx = LuaGetFloat(theState, 7, 1.f);
+	float maxpercenty = LuaGetFloat(theState, 8, 1.f);
+
+	AABB2 box = AABB2(minx, miny, maxx, maxy);
+	Vector2 mins = Vector2(minpercentx, minpercenty);
+	Vector2 maxs = Vector2(maxpercentx, maxpercenty);
+
+	AABB2 newBox = GetAABB2FromAABB2(mins, maxs, box);
+
+	lua_pushnumber(theState, newBox.mins.x);
+	lua_pushnumber(theState, newBox.mins.y);
+	lua_pushnumber(theState, newBox.maxs.x);
+	lua_pushnumber(theState, newBox.maxs.y);
+	
+	return 4;
+}
+
+//-----------------------------------------------------------------------------------------------
+// AABB2: GetPositionInsideBox(minx, miny, maxx, maxy, percentx, percenty)
+int LuaGetPositionInsideBox(lua_State * theState)
+{
+	float minx = LuaGetFloat(theState, 1, 0.f);
+	float miny = LuaGetFloat(theState, 2, 0.f);
+	float maxx = LuaGetFloat(theState, 3, 1.f);
+	float maxy = LuaGetFloat(theState, 4, 1.f);
+
+	float pointx = LuaGetFloat(theState, 5, 0.f);
+	float pointy = LuaGetFloat(theState, 6, 1.f);
+
+	AABB2 theBox = AABB2(minx, miny, maxx, maxy);
+	Vector2 result = theBox.GetPositionWithinBox(Vector2(pointx, pointy));
+
+	lua_pushnumber(theState, result.x);
+	lua_pushnumber(theState, result.y);
+
+	return 2;
+}
+
+//-----------------------------------------------------------------------------------------------
 // Lerp ( start, end, t )
 int LuaInterpolate(lua_State * theState)
 {
@@ -581,7 +771,7 @@ int LuaInterpolate(lua_State * theState)
 int LuaChance(lua_State* theState)
 {
 	float chance = LuaGetFloat(theState, 1, 50.f);
-	float result = Chance(chance);
+	bool result = Chance(chance);
 
 	lua_pushnumber(theState, result);
 
@@ -644,4 +834,21 @@ int LuaNormalizeVector2D(lua_State* theState)
 	lua_pushnumber(theState, normalized.y);
 
 	return 2;
+}
+
+//-----------------------------------------------------------------------------------------------
+int LuaRangeMap(lua_State* theState)
+{
+	
+	float currentValue = LuaGetFloat(theState, 1, 0.f);
+	float currentRangMin = LuaGetFloat(theState, 2, 0.f);
+	float currentRangMax = LuaGetFloat(theState, 2, 0.f);
+	float newRangeMin = LuaGetFloat(theState, 2, 0.f);
+	float newRangeMax = LuaGetFloat(theState, 2, 0.f);
+
+	float result = RangeMapFloat(currentValue, currentRangMin, currentRangMax, newRangeMin, newRangeMax);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
 }

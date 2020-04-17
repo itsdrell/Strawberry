@@ -12,6 +12,7 @@ struct TileSpriteInfo;
 //====================================================================================
 
 constexpr int TILE_SIZE = 16;
+constexpr float TILE_SIZE_FLOAT = 16.f;
 constexpr uint16 DEFAULT_TILE_SPRITE_INFO_FLAG = 0b0000'0111'1111'1111;
 
 constexpr uint16 SPRITE_INDEX_MASK	= 0b0000'0000'1111'1111;

@@ -4,6 +4,7 @@
 #include "Engine/Core/Platform/File.hpp"
 #include "Engine/Core/General/BuiltInAssets.hpp"
 #include "Engine/Renderer/Images/Image.hpp"
+#include "Engine/Core/Utils/StringUtils.hpp"
 #include "Engine/Lua/LuaUtils.hpp"
 
 
@@ -225,6 +226,7 @@ void ExportGame(Command& command)
 //===============================================================================================
 void BuildForWeb(Command& command)
 {
+#ifndef EMSCRIPTEN_PORT 
 	//if (command.m_commandArguements.size() != 0)
 	//	g_currentProjectName = command.m_commandArguements.at(0);
 
@@ -265,11 +267,13 @@ void BuildForWeb(Command& command)
 		Console::GetInstance()->AddErrorMessage("Web Build Failed");
 	}
 	system("\n DEL BuildForWeb.bat");
+#endif
 }
 
 //-----------------------------------------------------------------------------------------------
 void BuildForWin32(Command& command)
 {
+#ifndef EMSCRIPTEN_PORT 
 	// you need a name!
 	if (g_currentProjectName == "")
 		return;
@@ -307,4 +311,5 @@ void BuildForWin32(Command& command)
 		Console::GetInstance()->AddErrorMessage("PC Build Failed");
 	}
 	system("\n DEL BuildForPC.bat");
+#endif
 }

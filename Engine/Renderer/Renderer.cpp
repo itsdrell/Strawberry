@@ -797,7 +797,8 @@ void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, 
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawCircleFilled2D(const Vector2 & center, float radius, const Rgba & color, int numberOfEdges)
 {
-	float distanceInDegrees = 360.f / ((float) numberOfEdges * .3f);
+	// HACK: idk what that number means but we need it
+	float distanceInDegrees = 360.f / ((float) numberOfEdges * .3333333335);
 	float degrees = 0.f;
 
 	SetCurrentTexture(0, m_defaultTexture);

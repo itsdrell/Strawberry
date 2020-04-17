@@ -68,6 +68,13 @@ float Vector2::GetLength() const
 }
 
 //-----------------------------------------------------------------------------------------------
+float Vector2::GetLengthSquared() const
+{
+	float answer = (x * x) + (y * y);
+	return answer;
+}
+
+//-----------------------------------------------------------------------------------------------
 const Vector2 Vector2::operator-(const Vector2& vecToSubtract) const
 {
 	float newX = this->x - vecToSubtract.x;

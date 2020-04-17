@@ -2,6 +2,14 @@
 Strawberry:
 -------------------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------------
+Key:
+-------------------------------------------------------------------------------------------
+I use automation to export from this so this is what these mean 
+    square brackets are areas I wanna take function info from 
+    - descriptions of functions 
+    * are parameters
+    < are return values
 
 -------------------------------------------------------------------------------------------
 Console Commands:
@@ -33,27 +41,55 @@ Console Commands:
     folder
         - Opens the file explorer in the project folder
 
+    luac <FileName.lua>
+        - Creates a lua file under the current game 
+    
+    vsc <AnyFileNameInProject>
+        - Opens visual studio code with all of the current games lua files
+            loaded 
+
+    export <Platform>
+        - Creates a web or pc export of the current loaded project 
+        - A pc build is a copy of strawberry exe with only one project (the game you want to export)
+            inside. Auto loads the game when the exe launches
+        - <Platform> is either "web" or "pc"
+    
+
 -------------------------------------------------------------------------------------------
 Functions:
 -------------------------------------------------------------------------------------------
 
 General:
-
+- All functions that take a color can be specified by:
+    1. pass in a (r, g, b, a)
+    2. pass in a "name" of a color that can be found in the GameConfig.lua
+    3. Don't pass one and the default color (set by SetColor) will be used instead
+[
     Print(string)
-        - Prints a String to the debugger, Web browser dev console, as well as the in
-            in game console.
+        - Prints a String to the debugger, Web browser dev console, as well as the in game console.
 
-    Cls(r,g,b,a) or Cls("nameOfColor")
+    dPrint(string, timeLength, color)
+        - Prints a timed message in the top left of the screen thats a certain color
+        * timeLength : How long for it to stay up on the screen
+
+    Cls(r,g,b,a)
         - Clears the Screen. 
-        - Currently does not do it immediately, just informs the renderer to clear the Screen
-            before rendering
+        Adv: Currently does not do it immediately, just informs the renderer to clear the Screen before rendering
     
-    SetColor(r,g,b,a) or SetColor("nameOfColor")
+    SetColor(r,g,b,a)
         - Sets the default color to use if no color given in a function that takes a color
 
     Camera(x , y)
-        - Moves the Cameras position
+        - Moves the Cameras position. This camera is not centered
 
+    CameraLookAt(x, y, clampToMap)
+        - Centers the camera around a position
+        * clampToMap : makes sure the camera doesn't go outside of the map
+
+    Screenshake(amountZeroToOne)
+        - Creates an impulse based screenshake that decays over time
+        * amountZeroToOne : a float 0 -> 1. 1 being a bunch of screenshake for that frame, 0 being none
+]
 -------------------------------------------------------------------------------------------
 Draw Functions
 
@@ -61,22 +97,35 @@ Draw Functions
     1. pass in a (r, g, b, a)
     2. pass in a "name" of a color that can be found in the GameConfig.lua
     3. Don't pass one and the default color (set by SetColor) will be used instead
+[
+    DrawLine( startX, startY, endX, endY, color)
+	    - Draws a 2D line from one point to another
 
+    DrawCircle( centerX, centerY, radius, color)
+	    - Draws an outline of a circle (not filled!)	
 
-    DrawLine ( startX, startY, endX, endY, color)
+    DrawCircleFill( centerX, centerY, radius, color )
+	    - Draws a circle that is filled a certain color
 
-    DrawCircle ( centerX, centerY, radius, color);
+    DrawAABB2Fill( minX, minY, maxX, maxY, color )
+	    - Draws a box that is filled a certain color
 
-    DrawCircleFill ( centerX, centerY, radius, color )
+    DrawAABB2( minX, minY, maxX, maxY, color )
+	    - Draws an outline of a box (not filled!)
 
-    DrawAABB2Fill ( minX, minY, maxX, maxY, color )
+    DrawSprite(index, x, y, rotation, width, height, flipX, flipY, ppu)
+	    - Draws a sprite from the sprite sheet based on the index given
+	    * index : the index on the sprite sheet. Sprite sheet viewer can help you find this!
+	    * x,y : the center position of the sprite
+	    * rotation : 0-360 rotation of the sprite (counter clockwise)
+	    * width and height : how many sprite indices to go. if you want to draw a 32x16 pixel sprite your width is 2 and height is 1
+	    * flipx and flipy : bools that you can turn on to flip/inverse a sprite in a dir
+	    * ppu : scaling of the sprite
 
-    DrawAABB2 ( minX, minY, maxX, maxY, color )
-
-    DrawSprite (index, x, y, rotation, width, height, flipX, flipY, ppu)
-
-    DrawText ( x, y, height, color)
-
+    DrawText( x, y, height, color)
+	    - Draws text using the font.png found in Data
+	    * height : how tall to draw the font. The width will be determines based off aspect and the height you choose
+]
 -------------------------------------------------------------------------------------------
 Input
 
@@ -96,16 +145,19 @@ Current Named Keys are:
 
 - Input currently only supports the named keys listed above as well as any letter key 
 
-
+[
     IsKeyPressed ( KeyCode )
         - Checks if a key is being held down
+	    * Keycode : Ex would be "a" for a key
 
     WasKeyJustPressed ( KeyCode )
         - Checks if the key was just pressed down during that frame
+	    * Keycode : Ex would be "a" for a key
 
     WasKeyJustReleased ( KeyCode )
         - Checks if the key was just relased during that frame
-
+	    * Keycode : Ex would be "a" for a key
+]
 
 -------------------------------------------------------------------------------------------
 Music/SFX
@@ -126,50 +178,114 @@ add the folders to the path when using the lua functions
     PlayMusic("theCoolSound.wav") -- DOES NOT WORK
 
 Audio Functions:
-
-    PlayOneShot ( nameOfFile, volume )
+[
+    PlayOneShot( nameOfFile, volume )
         - Plays a SFX (or music!) ONCE. This is non looping
 
-    PlayMusic ( nameOfFile, volume )
+    PlayMusic( nameOfFile, volume )
         - Plays music that is looped
 
-    StopMusic ( nameOfFile )
+    StopMusic( nameOfFile )
         - Stops the music from playing it's loop
+]
+
+-------------------------------------------------------------------------------------------
+Map
+    - x,y positions use WORLD POSITIONS not tile positions when interacting with tiles. 
+        Functions will do the math for you under the hood
+
+    TODO: explain map and collision editor
+
+[
+    DrawMap()
+        - Call this in Draw() if you want the map to be drawn 
+
+    SetTileSprite(x,y,spriteIndex)
+        - Changes the sprite of a tile on the map 
+        * x,y : are in world position not tile pos. It will figure the tilePos out for you
+        * spriteIndex : sprite to use from the spritesheet
+
+    GetTileSprite(x,y)
+        - Gets the sprite index of a tile based on a world position
+        * x,y : are in world position not tile pos. It will figure the tilePos out for you
+        < returns a int representing the sprite index 
+
+    DoesTileHaveCollision(x,y,channelToCheck)
+        - checks if a tile has a certain collision flag
+        * channelToCheck is 1-16 based on a combinations of bits set in the editor
+        < returns a bool 
+]
+
 
 -------------------------------------------------------------------------------------------
 Math
-    Abs
+[
+    Abs(number)
+        - Get the absolute value. Calls std::abs under the hood
 
-    ATan2
+    ATan2(x,y)
+        - calculates atan2f on a pos
 
-    CosDegrees
+    CosDegrees(degrees)
+        - calculates cos
+        * degrees : 0-360
 
-    SinDegrees
+    SinDegrees(degrees)
+        * calculates sin
+        * degrees : 0-360
 
-    Floor
+    Floor(value)
+        - Floors a value for you
 
-    Ceil
+    Ceil(value)
+        - Raises a value 
 
-    Min
+    Min(a,b)
+        - returns the lesser value
+        * a,b : are treated as floats
+        < returns a float
 
-    Max
+    Max(a,b)
+        - returns the lesser value
+        * a,b : are treated as floats
+        < returns a float
 
-    Sqrt
+    Sqrt(value)
+        - Calculates the sqrt
 
-    Clamp
+    Clamp(value, min, max)
+        - clamps a value between min and max
 
-    RandomRange
+    RandomRange(min, max)
+        - Gives you a random value from min to max
 
-    Dot
+    Dot(x1,y1,x2,y2)
+        - Calculates the dot product of the two vectors
+        < returns a float (not normalized)
 
-    Lerp
+    Lerp(start, end, t)
+        - Lerps from start to end based on t 
 
-    Chance
+    Chance(percentChance)
+        - rolls a dice for you and see if the chance passes
+        * percentChance : 0-100% 
+        < returns a bool if it passed or failed
 
-    Fract
--------------------------------------------------------------------------------------------
+    Fract(value)
+        - gets the fraction part of the value
 
+    GetDistance(startX,startY, endX,endY)
+        - Gets the distace from start to end positions
 
--------------------------------------------------------------------------------------------
-Porting To Web:
+    GetDistanceSquared(startX,startY, endX,endY)
+        - Gets the distance from start to end postions (but without using a square root to be faster)
+
+    Normalize(x,y)
+        - Normalizes a vector 
+        < returns a normalized x,y
+
+    RangeMap(currentValue, currentRangeMin, currentRangeMax, newRangeMin, newRangeMax)
+        - Takes a value with a range and translates it to another range 
+        < returns the value based on the new range
+]
 -------------------------------------------------------------------------------------------

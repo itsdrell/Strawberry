@@ -62,14 +62,15 @@ void Map::SaveMap()
 	String path = "Projects/" + g_currentProjectName + "/" + g_currentProjectName + ".mapdata";
 
 	FILE* theFile;
-	fopen_s(&theFile, path.c_str(), "wb");
+	fopen_s(&theFile, path.c_str(), "w");
 
 	if (theFile == NULL)
 		return;
 
-	m_fileData.reserve(m_dimensions.x * m_dimensions.y);
+	int amountOfTiles = m_dimensions.x * m_dimensions.y;
+	m_fileData.reserve(amountOfTiles);
 
-	for (int i = 0; i < m_tiles.size(); i++)
+	for (int i = 0; i < amountOfTiles; i++)
 	{
 		Tile currentTile = m_tiles.at(i);
 
@@ -90,9 +91,12 @@ void Map::SaveMap()
 //-----------------------------------------------------------------------------------------------
 bool Map::LoadMap()
 {
-#ifndef EMSCRIPTEN_PORT
 	String path = "Projects/" + g_currentProjectName + "/" + g_currentProjectName + ".mapdata";
 	
+	//-----------------------------------------------------------------------------------------------
+	// THIS NEEDS TO BE EMSCRIPTEN FRIENDLY OR IT WONT WORK ON THE WEB
+	//  [4/10/2020 Zac]
+	//-----------------------------------------------------------------------------------------------
 	FILE* theFile;
 	fopen_s(&theFile, path.c_str(), "rb");
 
@@ -115,10 +119,6 @@ bool Map::LoadMap()
 
 	return true;
 
-#endif
-
-	// if somehow we got here in web, id rather return false and create a new map idk??
-	return false;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -305,10 +305,9 @@ AABB2 Map::GetBounds() const
 //-----------------------------------------------------------------------------------------------
 int Map::GetTileIndexFromWorldPos(const Vector2& pos)
 {
-	AABB2 mapBounds = GetBounds();
-
-	int tileX = (int)ClampFloat(RangeMapFloat(pos.x, mapBounds.mins.x, mapBounds.maxs.x, 0.f, (float)m_dimensions.x), 0.f, (float)(m_dimensions.x - 1));
-	int tileY = (int)ClampFloat(RangeMapFloat(pos.y, mapBounds.mins.y, mapBounds.maxs.y, 0.f, (float)m_dimensions.y), 0.f, (float)(m_dimensions.y - 1));
+	// my tiles are only positive
+	int tileX = (int)(pos.x / TILE_SIZE_FLOAT);
+	int tileY = (int)(pos.y / TILE_SIZE_FLOAT);
 
 	return (tileY * m_dimensions.x) + tileX;
 }

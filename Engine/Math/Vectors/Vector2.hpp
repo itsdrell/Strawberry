@@ -52,6 +52,7 @@ public:
 	IntVector2 GetAsIntVector2() const;
 	Vector2 GetNormalized() const;
 	float GetLength() const;
+	float GetLengthSquared() const;
 
 public:
 	float x,y;

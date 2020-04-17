@@ -10,6 +10,7 @@ deltaTime = 0;
 -------------------------------------------------------------
 -- Called once at the start
 function StartUp()
+    DrawTestTriangle()
     MakePlayer();
     CreateAllGhosts();
 end

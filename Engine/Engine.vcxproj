@@ -257,6 +257,7 @@
     <ClInclude Include="Lua\LuaUtils.hpp" />
     <ClInclude Include="Lua\NativeLuaFunctions.hpp" />
     <ClInclude Include="Math\Geometry\AABB2.hpp" />
+    <ClInclude Include="Math\Geometry\Disc.hpp" />
     <ClInclude Include="Math\MathUtils.hpp" />
     <ClInclude Include="Math\Matrices\Matrix44.hpp" />
     <ClInclude Include="Math\Vectors\IntVector2.hpp" />
@@ -426,6 +427,7 @@
     <ClCompile Include="Lua\LuaScript.cpp" />
     <ClCompile Include="Lua\LuaUtils.cpp" />
     <ClCompile Include="Math\Geometry\AABB2.cpp" />
+    <ClCompile Include="Math\Geometry\Disc.cpp" />
     <ClCompile Include="Math\MathUtils.cpp" />
     <ClCompile Include="Math\Matrices\Matrix44.cpp" />
     <ClCompile Include="Math\Vectors\IntVector2.cpp" />
@@ -486,6 +488,12 @@
     <ClCompile Include="ThirdParty\Lua\lzio.c" />
     <ClCompile Include="ThirdParty\stbi\stb_image.c" />
     <ClCompile Include="ThirdParty\stbi\stb_image_write.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ThirdParty\SDL2\SDL2.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </Library>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

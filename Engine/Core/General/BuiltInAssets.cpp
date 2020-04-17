@@ -349,7 +349,7 @@ Copy-Item -Force -Path $HTML_FILE_LOCATION -Destination $Env:WHERE_TO_PUT_IT
 # content of file is: webName="jump" 
 Write-Banner "Create GameName.lua"
 
-$content = ('webName="{0}"' -f $NameOfGame)
+$content = ('gameName="{0}"' -f $NameOfGame)
 Write-Host ("Creating a file: {0} with contents: {1}" -f $NAME_OF_GAME_FILE, $content)
 New-Item -Path $NAME_OF_GAME_FILE -ItemType "file" -Value $content -Force
 

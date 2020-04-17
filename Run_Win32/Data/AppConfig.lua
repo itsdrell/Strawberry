@@ -1,10 +1,10 @@
 webName="LD45" 
-startupGame="test"
+startupGame="berryTests"
 --release=true
 
-resolution3="600,400"
+resolution1="600,400"
 resolution2="900,600"
-resolution1="1200,800"
+resolution3="1200,800"
 
 
 --[[

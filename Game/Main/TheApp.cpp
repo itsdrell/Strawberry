@@ -104,7 +104,7 @@ void App::StartUp()
 	}
 
 #else
-	BlackBoard temp = BlackBoard("Data/NameOfGame.lua", DATA_BLACKBOARD);
+	BlackBoard temp = BlackBoard("Data/Web/NameOfGame.lua", DATA_BLACKBOARD);
 	g_currentProjectName = temp.GetValue("gameName", "idk");
 	PrintLog("Project Name is: " + g_currentProjectName);
 	ReloadAndRunGame();
