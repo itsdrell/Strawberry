@@ -1,5 +1,5 @@
 webName="LD45" 
-startupGame="berryTests"
+startupGame="mouseTest"
 --release=true
 
 resolution1="600,400"

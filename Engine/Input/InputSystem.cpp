@@ -11,6 +11,27 @@
 InputSystem*		g_theInputSystem = nullptr;
 
 //-----------------------------------------------------------------------------------------------
+MouseButtons StringToMouseButtons(std::string string)
+{
+	if(string.length() == 0)
+	{
+		return NUM_OF_MOUSE_BUTTONS;
+	}
+	
+	if(string[0] == 'l' || string[0] == 'L')
+	{
+		return LEFT_MOUSE_BUTTON;
+	}
+
+	if (string[0] == 'r' || string[0] == 'R')
+	{
+		return RIGHT_MOUSE_BUTTON;
+	}
+
+	return LEFT_MOUSE_BUTTON;
+}
+
+//-----------------------------------------------------------------------------------------------
 // https://wiki.libsdl.org/SDL_Keycode
 #pragma warning( disable : 4310 ) // weird warning about "cast truncates constant value" should be fine tho :o
 //const KeyCode KEYBOARD_SPACE			= (const KeyCode) SDLK_SPACE;

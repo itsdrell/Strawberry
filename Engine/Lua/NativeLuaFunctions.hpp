@@ -88,6 +88,15 @@ function class(baseClass, body)
 end
 
 -------------------------------------------------------------------------
+-- Input
+-------------------------------------------------------------------------
+function Berry.GetMousePosition()
+	xpos,ypos = GetMousePosition()
+	
+	return Vector2:Create(xpos,ypos) 
+end
+
+-------------------------------------------------------------------------
 -- Rendering
 -------------------------------------------------------------------------
 function Berry.DrawLine(vec2startPos, vec2endPos, r, g, b, a)

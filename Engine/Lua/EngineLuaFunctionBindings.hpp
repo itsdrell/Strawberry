@@ -52,6 +52,14 @@ static int LuaIsKeyPressed(lua_State* theState);
 static int LuaWasKeyJustPressed(lua_State* theState);
 static int LuaWasKeyJustReleased(lua_State* theState);
 
+// mouse
+static int LuaIsMouseButtonPressed(lua_State* theState);
+static int LuaWasMouseButtonJustPressed(lua_State* theState);
+static int LuaWasMouseButtonJustReleased(lua_State* theState);
+
+static int LuaDidMouseWheelScrollDown(lua_State* theState);
+static int LuaDidMouseWheelScrollUp(lua_State* theState);
+
 //-----------------------------------------------------------------------------------------------
 // Audio
 static int LuaPlayOneShot(lua_State* theState);

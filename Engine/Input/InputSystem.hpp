@@ -53,6 +53,8 @@ enum MouseButtons
 	RIGHT_MOUSE_BUTTON,
 	NUM_OF_MOUSE_BUTTONS
 };
+MouseButtons StringToMouseButtons(std::string string);
+typedef bool(*MouseInputFunc)(MouseButtons);
 
 //====================================================================================
 // Structs

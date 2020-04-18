@@ -20,6 +20,7 @@ void BindGameSideLuaFunctions(lua_State* theState)
 	BindFunctionToScript(theState, LuaGetTileSprite, "GetTileSprite");
 	BindFunctionToScript(theState, LuaDoesTileHaveThisCollision, "DoesTileHaveCollision");
 	BindFunctionToScript(theState, LuaScreenShake, "Screenshake");
+	BindFunctionToScript(theState, LuaGetMousePosition, "GetMousePosition");
 }
 
 //===============================================================================================
@@ -138,4 +139,24 @@ int LuaScreenShake(lua_State* theState)
 	g_theGame->m_screenshakeAmount = ClampFloat(g_theGame->m_screenshakeAmount + amount, 0.f, 1.f);
 	
 	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// MousePos(bool)
+// This is in game not engine because we are using the game camera and map bounds
+int LuaGetMousePosition(lua_State* theState)
+{
+	AABB2 cameraBounds = g_theGameCamera->GetBounds();
+	Vector2 cameraPos = g_theGame->m_cameraPos;
+
+	Vector2 pos = GetMousePosition(cameraBounds);
+
+	// always stay inside the camera
+	pos.x = ClampFloat(pos.x, cameraPos.x, cameraPos.x + CAMERA_SCREEN_SIZE);
+	pos.y = ClampFloat(pos.y, cameraPos.y, cameraPos.y + CAMERA_SCREEN_SIZE);
+
+	lua_pushnumber(theState, pos.x);
+	lua_pushnumber(theState, pos.y);
+
+	return 2;
 }

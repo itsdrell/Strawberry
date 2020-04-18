@@ -23,7 +23,7 @@ end
 ------------------------------------------------------------
 -- called after update, does all drawing
 function Draw()
-
+	Cls()
 
 end
 

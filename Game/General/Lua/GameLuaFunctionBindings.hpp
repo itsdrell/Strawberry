@@ -25,6 +25,8 @@ static int LuaDoesTileHaveThisCollision(lua_State* theState);
 
 static int LuaScreenShake(lua_State* theState);
 
+static int LuaGetMousePosition(lua_State* theState);
+
 
 //====================================================================================
 // Written by Zachary Bracken : [10/3/2019]

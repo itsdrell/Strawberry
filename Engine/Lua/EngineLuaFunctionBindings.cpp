@@ -43,6 +43,12 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaWasKeyJustPressed, "WasKeyJustPressed");
 	BindFunctionToScript(theState, LuaWasKeyJustReleased, "WasKeyJustReleased");
 
+	BindFunctionToScript(theState, LuaIsMouseButtonPressed, "IsMouseButtonPressed");
+	BindFunctionToScript(theState, LuaWasMouseButtonJustPressed, "WasMouseButtonJustPressed");
+	BindFunctionToScript(theState, LuaWasMouseButtonJustReleased, "WasMouseButtonJustReleased");
+	BindFunctionToScript(theState, LuaDidMouseWheelScrollDown, "DidMouseWheelScrollDown");
+	BindFunctionToScript(theState, LuaDidMouseWheelScrollUp, "DidMouseWheelScrollUp");
+
 // Audio
 	BindFunctionToScript(theState, LuaPlayOneShot, "PlayOneShot");
 	BindFunctionToScript(theState, LuaPlayBackgroundMusic, "PlayMusic");
@@ -390,6 +396,66 @@ int LuaWasKeyJustReleased(lua_State * theState)
 	lua_pushboolean(theState, is->WasKeyJustReleased(keyToCheck));
 
 	return 1; // we are returning one variable
+}
+
+//-----------------------------------------------------------------------------------------------
+// Helper function
+static int LuaCheckMouseButton(lua_State* theState, MouseInputFunc func)
+{
+	String text = LuaGetString(theState, 1, "idk man");
+
+	MouseButtons theButtonToCheck = StringToMouseButtons(text);
+
+	// TODO maybe throw an assert here if there is a typo? a lua error assert 
+
+	bool result = false;
+	if (theButtonToCheck != NUM_OF_MOUSE_BUTTONS)
+	{
+		result = func(theButtonToCheck);
+	}
+
+	lua_pushboolean(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// IsMouseButtonPressed(string)
+int LuaIsMouseButtonPressed(lua_State* theState)
+{
+	return LuaCheckMouseButton(theState, IsMouseButtonPressed);
+}
+
+//-----------------------------------------------------------------------------------------------
+// WasMouseButtonJustPressed(string)
+int LuaWasMouseButtonJustPressed(lua_State* theState)
+{
+	return LuaCheckMouseButton(theState, WasMouseButtonJustPressed);
+}
+
+//-----------------------------------------------------------------------------------------------
+// WasMouseButtonJustReleased(string)
+int LuaWasMouseButtonJustReleased(lua_State * theState)
+{
+	return LuaCheckMouseButton(theState, WasMouseButtonJustReleased);
+}
+
+//-----------------------------------------------------------------------------------------------
+//	DidMouseWheelScrollDown()
+int LuaDidMouseWheelScrollDown(lua_State * theState)
+{
+	bool result = DidMouseWheelScrollDown();
+	lua_pushboolean(theState, result);
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+//	DidMouseWheelScrollUp()
+int LuaDidMouseWheelScrollUp(lua_State * theState)
+{
+	bool result = DidMouseWheelScrollUp();
+	lua_pushboolean(theState, result);
+	return 1;
 }
 
 //===============================================================================================
