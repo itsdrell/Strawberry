@@ -108,3 +108,6 @@ data/config/user.config
 *.user
 
 Run_win32/Builds/*
+
+# audio
+Run_Win32/Projects/**/Audio
