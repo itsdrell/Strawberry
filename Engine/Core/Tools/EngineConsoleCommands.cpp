@@ -26,6 +26,7 @@ void BindAllEngineCommands()
 	CommandRegister("luac", "luac  <filename>", "", CreateLuaFile, false);
 	CommandRegister("vsc", "vsc <filename>", "", OpenVisualStudioCode, false);
 	CommandRegister("export", "export", "export either <web or PC>", ExportGame, false);
+	CommandRegister("startup", "startup", "set the default project to load", StartupProject);
 	//CommandRegister("web", "", "", BuildForWeb);
 }
 
@@ -95,6 +96,7 @@ void CreateNewProject(Command& command)
 	CreateAndLogStringToFile(musicPath.c_str(), musicText.c_str());
 	CreateAndLogStringToFile(sfxPath.c_str(), sfxText.c_str());
 
+	SetStartupProject(name);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -202,6 +204,33 @@ void OpenVisualStudioCode(Command & command)
 }
 
 //-----------------------------------------------------------------------------------------------
+void StartupProject(Command& command)
+{
+	String requestedProjectName = command.GetNextString();
+	Strings allFolders = GetAllFoldersInADirectory("Projects");
+
+	bool found = false;
+	for (String project : allFolders)
+	{
+		String currentProjectName = String(project, 9); // it included the path Project in name
+		if (currentProjectName == requestedProjectName)
+		{
+			found = true;
+			break;
+		}
+	}
+
+	if (found == false)
+	{
+		// Can't set it to a project that doesn't exist
+		AddConsoleErrorMessage("Unable to find project: " + requestedProjectName);
+		return;
+	}
+
+	SetStartupProject(requestedProjectName);
+}
+
+//-----------------------------------------------------------------------------------------------
 // Export <Web or PC>
 void ExportGame(Command& command)
 {
@@ -268,6 +297,28 @@ void BuildForWeb(Command& command)
 	}
 	system("\n DEL BuildForWeb.bat");
 #endif
+}
+
+//-----------------------------------------------------------------------------------------------
+void SetStartupProject(const String& projectName)
+{
+	String workingDirectory = GetWorkingDirectoryPath();
+	String configPath = workingDirectory + "\\Data\\AppConfig.lua";
+
+	Strings content = GetAllLinesFromFile(configPath.c_str());
+
+	for (uint i = 0; i < content.size(); i++)
+	{
+		std::string line = content.at(i);
+		if(line.find("startupGame") != std::string::npos)
+		{
+			line = "startupGame='" + projectName + "'";
+			content[i] = line;
+			break;
+		}
+	}
+
+	LogStringsToFile(configPath.c_str(), content, true);
 }
 
 //-----------------------------------------------------------------------------------------------

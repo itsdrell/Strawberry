@@ -118,7 +118,11 @@ STATIC SDL_Window* Window::GetWindowReference()
 //-----------------------------------------------------------------------------------------------
 void Window::GetAllResolutions()
 {
+#ifndef EMSCRIPTEN_PORT
 	IntVector2 resolution1 = g_theEngineBlackboard->GetValue("resolution1", IntVector2(600, 400));
+#else
+	IntVector2 resolution1 = g_theEngineBlackboard->GetValue("resolution1", IntVector2(900, 600));
+#endif
 	IntVector2 resolution2 = g_theEngineBlackboard->GetValue("resolution2", IntVector2(0, 0));
 	IntVector2 resolution3 = g_theEngineBlackboard->GetValue("resolution3", IntVector2(0, 0));
 

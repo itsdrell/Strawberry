@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Core/General/EngineCommon.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -22,12 +23,14 @@ void OpenFolder(Command& command);
 void ExecuteLuaCommand(Command& command);
 void CreateLuaFile(Command& command);
 void OpenVisualStudioCode(Command& command);
+void StartupProject(Command& command);
 
 //-----------------------------------------------------------------------------------------------
 // Private helper functions
 void ExportGame(Command& command);
 void BuildForWin32(Command& command);
 void BuildForWeb(Command& command);
+void SetStartupProject(const String& projectName);
 
 //====================================================================================
 // Externs

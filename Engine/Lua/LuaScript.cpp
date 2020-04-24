@@ -78,17 +78,17 @@ LuaScript::~LuaScript()
 String LuaScript::CreateMainLuaScript(const String& includeDir)
 {
 	std::string originalString = GetFileContentAsString(m_filePath.c_str()) + "\n"; // need padding for appends
-	LuaScriptData& originalData = LuaScriptData("Main.lua", originalString, (int)CountHowManyLinesAreInAString(originalString));
+	LuaScriptData originalData = LuaScriptData("Main.lua", originalString, (int)CountHowManyLinesAreInAString(originalString));
 	m_includes.push_back(originalData);
 
 	if(includeDir != "")
 	{
+		m_includes.push_back(LuaScriptData("nativeLuaFunctions", g_NativeLuaLibrary, CountHowManyLinesAreInAString(g_NativeLuaLibrary)));
+		
 		// we can do some includes
 		GatherIncludeFilePaths(&originalData.m_data, includeDir);
 
 		RemoveIncludesFromScriptData(&originalData);
-
-		m_includes.push_back(LuaScriptData("nativeLuaFunctions", g_NativeLuaLibrary, CountHowManyLinesAreInAString(g_NativeLuaLibrary)));
 	}
 
 	// now that we have all of the files in m_includes, lets add them into one string

@@ -771,16 +771,17 @@ int LuaAABB2ShrinkToSquare(lua_State* theState)
 // AABB2: GetAABB2FromAABB2(minx, miny, maxx, maxy, minperx, minpery, maxperx, maxpery)
 int LuaGetAABB2FromAABB2(lua_State * theState)
 {
-	float minx = LuaGetFloat(theState, 1, 0.f);
-	float miny = LuaGetFloat(theState, 2, 0.f);
-	float maxx = LuaGetFloat(theState, 3, 1.f);
-	float maxy = LuaGetFloat(theState, 4, 1.f);
+	float minpercentx = LuaGetFloat(theState, 1, 0.f);
+	float minpercenty = LuaGetFloat(theState, 2, 0.f);
 
-	float minpercentx = LuaGetFloat(theState, 5, 0.f);
-	float minpercenty = LuaGetFloat(theState, 6, 0.f);
+	float maxpercentx = LuaGetFloat(theState, 3, 1.f);
+	float maxpercenty = LuaGetFloat(theState, 4, 1.f);
+	
+	float minx = LuaGetFloat(theState, 5, 0.f);
+	float miny = LuaGetFloat(theState, 6, 0.f);
+	float maxx = LuaGetFloat(theState, 7, 1.f);
+	float maxy = LuaGetFloat(theState, 8, 1.f);
 
-	float maxpercentx = LuaGetFloat(theState, 7, 1.f);
-	float maxpercenty = LuaGetFloat(theState, 8, 1.f);
 
 	AABB2 box = AABB2(minx, miny, maxx, maxy);
 	Vector2 mins = Vector2(minpercentx, minpercenty);

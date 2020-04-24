@@ -108,6 +108,7 @@ void App::StartUp()
 	g_currentProjectName = temp.GetValue("gameName", "idk");
 	PrintLog("Project Name is: " + g_currentProjectName);
 	ReloadAndRunGame();
+	m_isReleaseVersion = true;
 #endif
 	
 	printf("Done with startup \n");	

@@ -49,7 +49,7 @@ end
 --------------------------------------------------------------------------
 -- helper for making classes
 -- taken from Game Coding Complete v4
-function class(baseClass, body)
+function Class(baseClass, body)
     local ret = body or {};
     
     -- if there's a base class, attach our new class to it
@@ -442,7 +442,7 @@ end
 
 -------------------------------------------------------------------------
 function AABB2:GetAABB2FromSelf(vec2MinPercentage, vec2MaxPercentage)
-    newminx, newminy, newmaxx, newmaxy = AABB2GetAABB2FromAABB2(self.mins.x, self.mins.y, self.maxs.x, self.maxs.y, vec2MinPercentage.x, vec2MinPercentage.y, vec2MaxPercentage.x, vec2MaxPercentage.y)
+    newminx, newminy, newmaxx, newmaxy = AABB2GetAABB2FromAABB2(vec2MinPercentage.x, vec2MinPercentage.y, vec2MaxPercentage.x, vec2MaxPercentage.y, self.mins.x, self.mins.y, self.maxs.x, self.maxs.y)
 
     return AABB2:Create(newminx, newminy,newmaxx, newmaxy)
 end

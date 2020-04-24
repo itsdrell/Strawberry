@@ -40,6 +40,18 @@ void LogStringToFile(const char* filename, const char* text, bool overwrite /*= 
 }
 
 //-----------------------------------------------------------------------------------------------
+void LogStringsToFile(const char* filename, const Strings& theStrings, bool overwrite /*= false*/)
+{
+	String stringToLog = "";
+	for (String current : theStrings)
+	{
+		stringToLog += (current + "\n");
+	}
+
+	LogStringToFile(filename, stringToLog.c_str(), overwrite);
+}
+
+//-----------------------------------------------------------------------------------------------
 String RemoveFileFromDirectoryPath(const char* filepath)
 {
 	String filePath = String(filepath);

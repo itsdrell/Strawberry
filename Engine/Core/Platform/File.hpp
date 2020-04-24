@@ -7,6 +7,7 @@
 void CreateAndLogStringToFile(const char* filename, const char* text);
 void CreateADirectory(const char* filename);
 void LogStringToFile(const char* filename, const char* text, bool overwrite = false);
+void LogStringsToFile(const char* filename, const Strings& theStrings, bool overwrite = false);
 String RemoveFileFromDirectoryPath(const char* filepath);
 bool DoesDirectoryExist(const char* path);
 Strings GetAllFoldersInADirectory(const char* directoryPath);

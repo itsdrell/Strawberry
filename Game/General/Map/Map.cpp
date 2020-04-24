@@ -7,7 +7,9 @@
 #include "Engine/Math/Vectors/Vector2.hpp"
 #include "Engine/Renderer/Systems/MeshBuilder.hpp"
 
+#include <iostream>
 #include <stdio.h>
+#include <fstream>
 #include "Engine/Input/InputSystem.hpp"
 #include "Engine/Renderer/RenderTypes.hpp"
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
@@ -93,32 +95,25 @@ bool Map::LoadMap()
 {
 	String path = "Projects/" + g_currentProjectName + "/" + g_currentProjectName + ".mapdata";
 	
-	//-----------------------------------------------------------------------------------------------
-	// THIS NEEDS TO BE EMSCRIPTEN FRIENDLY OR IT WONT WORK ON THE WEB
-	//  [4/10/2020 Zac]
-	//-----------------------------------------------------------------------------------------------
-	FILE* theFile;
-	fopen_s(&theFile, path.c_str(), "rb");
+	std::ifstream infile(path.c_str());
 
-	if (theFile == NULL)
-		return false;
-
-	// read the buffer
-	int c; // note: int, not char, required to handle EOF
-	while ((c = fgetc(theFile)) != EOF)
+	if (!infile.is_open())
 	{
-		putchar(c);
-		m_fileData.push_back((uint16) c);
+		PrintLog("ERROR: Unable to get map content from file: " + std::string(path.c_str()));
 	}
 
-	// terminate
-	fclose(theFile);
+	char aChar;
+	while (infile.get(aChar))
+	{
+		m_fileData.push_back((uint16)aChar);
+	}
+
+	infile.close();
 
 	// map tiles from data
 	CreateTilesFromData();
 
 	return true;
-
 }
 
 //-----------------------------------------------------------------------------------------------
