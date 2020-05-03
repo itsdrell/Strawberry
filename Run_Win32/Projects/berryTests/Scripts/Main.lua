@@ -1,12 +1,23 @@
+#include "Berry"
+
 displayTimer = 10
 
 -- this doesnt seem to work :l 
 -- it might be because I add all includes to the bottom of the script :l 
 zerovec = Vector2:Create(0,0)
 
+testTable = {}
+
 -------------------------------------------------------------
 -- Called once at the start
 function StartUp()
+    theTimer = Timer:Create(3)
+
+    add(testTable, 1)
+    add(testTable, 2)
+    add(testTable, 3)
+    add(testTable, 4)
+    add(testTable, 5)
 end
 
 ------------------------------------------------------------
@@ -18,6 +29,22 @@ function Update(ds)
         DiscUnitTests()
         AABB2Tests()
     end
+
+    dPrint(Berry.BoolToString(theTimer:HasElapsed()))
+    --assert(3 == 2, "this is a test")
+    test(3)
+    if theTimer:CheckAndReset() then
+        dPrint("We finished", 2)
+    end
+
+    dPrint(theTimer:GetNormalizedElapsedTime())
+
+end
+
+
+function test(vec)
+    --error(type(vec) ~= "table",2)
+   -- Print(debug.traceback())
 
 end
 

@@ -88,6 +88,7 @@ void Game::Update()
 {
 	if (!m_mainLuaScript->HasError())
 	{
+		LuaUpdateTimers(*m_mainLuaScript, g_theGameClock->deltaTime);
 		LuaUpdate(*m_mainLuaScript, g_theGameClock->deltaTime);
 		ShakeCamera();
 	}

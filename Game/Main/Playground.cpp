@@ -8,6 +8,7 @@
 #include "Engine/Core/Tools/DebugRendering.hpp"
 #include "Engine/Input/InputSystem.hpp"
 #include "Engine/Core/General/Rgba.hpp"
+#include <vector>
 
 
 // turn off unused variable warnings
@@ -16,7 +17,6 @@
 //===============================================================================================
 void Playground::RunTestOnce()
 {
-
 }
 
 //-----------------------------------------------------------------------------------------------

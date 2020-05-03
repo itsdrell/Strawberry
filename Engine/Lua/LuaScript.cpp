@@ -5,6 +5,8 @@
 #include "Engine/Core/Platform/File.hpp"
 #include "Engine/Lua/NativeLuaFunctions.hpp"
 
+#include <filesystem>
+
 #pragma warning( disable : 4310 ) // cast truncate constant value (when we cast npos to int)
 
 //===============================================================================================
@@ -83,7 +85,7 @@ String LuaScript::CreateMainLuaScript(const String& includeDir)
 
 	if(includeDir != "")
 	{
-		m_includes.push_back(LuaScriptData("nativeLuaFunctions", g_NativeLuaLibrary, CountHowManyLinesAreInAString(g_NativeLuaLibrary)));
+		//m_includes.push_back(LuaScriptData("nativeLuaFunctions", g_NativeLuaLibrary, CountHowManyLinesAreInAString(g_NativeLuaLibrary)));
 		
 		// we can do some includes
 		GatherIncludeFilePaths(&originalData.m_data, includeDir);
@@ -155,8 +157,9 @@ void LuaScript::ChangeOperator(String* stringToModify, const String& operatorToL
 		if (operatorToLookFor[0] == operatorToLookFor[1]) // ++ --
 		{
 			// since lua comments use -- we have to do some checks :l  
+			bool result = theString[foundPosition - 1] == ' ';
 			if ((foundPosition < 3) || (theString[foundPosition - 1] == ' ') || (theString[foundPosition - 1] == '\n') 
-				|| (theString[foundPosition -1]) == ']')
+				|| (theString[foundPosition -1]) == ']' || (theString[foundPosition - 1]) == '\t')
 			{
 				int endOfLine = (int)theString.find("\n", foundPosition);
 				foundPosition = (int)theString.find(operatorToLookFor, endOfLine);
@@ -197,13 +200,39 @@ void LuaScript::GatherIncludeFilePaths(String* stringToModify, const String& inc
 		String path = theString.substr(foundPosition + 10, endOfInclude - foundPosition - 11);
 
 		String content;
-		String fullPath = includeDir + "/Scripts/" + path;
-		int lineCount = GetIncludeFileContent(fullPath, &content);
+		int lineCount = 0;
+		if (path.find("Berry") != std::string::npos)
+		{
+			lineCount = GetBerryContent(&content); 
+		}
+		else
+		{
+			String fullPath = includeDir + "/Scripts/" + path;
+			lineCount = GetIncludeFileContent(fullPath, &content);
+		} 
 
 		m_includes.push_back(LuaScriptData(path, content, lineCount));
 
 		foundPosition = (int)theString.find(includeString, endOfInclude);
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+int LuaScript::GetBerryContent(String* outContent)
+{
+	String allFiles = "";
+	for(uint i = 0; i < c_berryPaths.size(); i++)
+	{
+		String currentPath = "Data/Berry/" + c_berryPaths.at(i) + ".lua";
+		
+		String content = GetFileContentAsString(currentPath.c_str());
+		content += " \n";
+
+		allFiles += content;
+	}
+
+	*outContent = allFiles;
+	return CountHowManyLinesAreInAString(allFiles);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -328,6 +357,26 @@ bool LuaStartUp(LuaScript& mainScript)
 	mainScript.SetErrorCode( lua_pcall(theState, 0, 0, 0) );
 
  	if (mainScript.HasError())
+	{
+		mainScript.LogError();
+		return false;
+	}
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------------------------
+bool LuaUpdateTimers(LuaScript& mainScript, float ds)
+{
+	lua_State* theState = mainScript.GetLuaState();
+	if (theState == nullptr) return false;
+
+	lua_getglobal(theState, "UpdateAllTimers");
+	lua_pushnumber(theState, ds);
+
+	mainScript.SetErrorCode(lua_pcall(theState, 1, 0, 0));
+
+	if (mainScript.HasError())
 	{
 		mainScript.LogError();
 		return false;

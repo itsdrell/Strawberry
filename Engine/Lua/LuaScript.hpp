@@ -54,6 +54,7 @@ private:
 	void ModifyLoadedLuaFileString( String* stringToModify);
 	void ChangeOperator(String* stringToModify, const String& operatorToLookFor);
 	void GatherIncludeFilePaths(String* stringToModify, const String& includeDir);
+	int GetBerryContent(String* outContent);
 	void RemoveIncludesFromScriptData(LuaScriptData* scriptData);
 	int GetIncludeFileContent(const String& path, String* outContent);
 	void GetLineNumberAndIncludedFileName(const String& lineNumber, String* newLineNumber, String* fileName);
@@ -67,6 +68,12 @@ public:
 	bool HasError();
 	String LuaErrorCodeToString(int theCode);
 	String GetErrorMessage();
+
+private:
+	// if you add a new file to berry just add it to this list
+	// by making it a list in engine, it makes me be in control of what is in berry
+	// could just get all .lua files but idk
+	const Strings c_berryPaths = { "BerryUtils", "AABB2", "Vector2","Disc", "BerryMath", "Timer", "Queue" };
 
 private:
 	lua_State*		m_state;
@@ -84,6 +91,7 @@ private:
 // These are the three functions I wanna use in my game like Love2D does
 // We could "offer more" like unity does and then move these to another location
 bool LuaStartUp( LuaScript& mainScript );
+bool LuaUpdateTimers(LuaScript& mainScript, float ds);
 bool LuaUpdate( LuaScript& mainScript, float ds );
 bool LuaRender( LuaScript& mainScript );
 

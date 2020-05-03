@@ -4,7 +4,7 @@
 String GetMainLuaFileAsString()
 {
 	const char* mainLuaFile = 
-R"(
+R"(#include "Berry"
 
 -------------------------------------------------------------
 -- Called once at the start

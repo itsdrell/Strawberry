@@ -25,7 +25,7 @@ function Entity:Add(anEntity, index)
     if index ~= nil then
         g_allEntities[index] = anEntity
     else
-        table.insert(g_allEntities, anEntity)
+        add(g_allEntities, anEntity)
     end
 end
 

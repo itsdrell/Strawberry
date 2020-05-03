@@ -1,5 +1,5 @@
 webName="LD45" 
-startupGame='LD46'
+startupGame='Collision'
 --release=true
 
 resolution1="600,400"

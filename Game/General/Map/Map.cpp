@@ -70,6 +70,7 @@ void Map::SaveMap()
 		return;
 
 	int amountOfTiles = m_dimensions.x * m_dimensions.y;
+	m_fileData.clear();
 	m_fileData.reserve(amountOfTiles);
 
 	for (int i = 0; i < amountOfTiles; i++)
@@ -100,6 +101,7 @@ bool Map::LoadMap()
 	if (!infile.is_open())
 	{
 		PrintLog("ERROR: Unable to get map content from file: " + std::string(path.c_str()));
+		return false;
 	}
 
 	char aChar;

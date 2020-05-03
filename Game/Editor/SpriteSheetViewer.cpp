@@ -105,8 +105,8 @@ void SpriteSheetView::RenderGrid() const
 {
 	Renderer* r = Renderer::GetInstance();
 
-	// white backgroud
-	r->DrawAABB2Filled(m_textureBounds, Rgba(255, 255, 255, 255));
+	// magenta so it wont have the same color as a sprite backgroud
+	r->DrawAABB2Filled(m_textureBounds, Rgba(255, 0, 255, 0));
 
 	Rgba gridColor = Rgba(171, 183, 183, 150);
 	for (uint i = 1; i < (uint) g_theSpriteSheet->m_spriteLayout.x; i++)

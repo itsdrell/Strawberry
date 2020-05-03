@@ -1,3 +1,4 @@
+#include "Berry"
 #include "Entity.lua"
 #include "Player.lua"
 #include "SlimeOrb.lua"
@@ -30,7 +31,7 @@ function StartUp()
     
     g_allStates[g_currentState]:Enter()
 
-    PlayMusic("bg.mp3")
+    PlayMusic("bg.mp3", .1)
 end
 
 -------------------------------------------------------------
@@ -59,7 +60,9 @@ end
 -- called after update, does all drawing
 function Draw()
 	Cls()
-	g_allStates[g_currentState]:Draw(ds)
+    g_allStates[g_currentState]:Draw(ds)
+    
+    --Berry.DrawAABB2(nil, "blue")
 end
 
 

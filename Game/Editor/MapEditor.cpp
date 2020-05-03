@@ -97,14 +97,20 @@ void MapEditor::RenderUI() const
 	Renderer* r = Renderer::GetInstance();
 
 	// mouse
-	Vector2 cameraPos = GetMousePosition(m_cameraBounds);
-	r->DrawCircleFilled2D(cameraPos, 1.f, Rgba(0, 255, 0, 255));
+	Vector2 mousePos = GetMousePosition(m_cameraBounds);
+	r->DrawCircleOutline2D(mousePos, 1.f, Rgba(0, 255, 0, 255));
 
 	// print mousePos
-	if (m_map->GetBounds().IsPointInBox(cameraPos))
+	if (m_map->GetBounds().IsPointInBox(mousePos))
 	{
-		AABB2 textBox = GetAABB2FromAABB2(Vector2(.4f, .01f), Vector2(.6f, .05f), m_cameraBounds);
-		r->DrawWrappedTextInBox2D(cameraPos.GetAsIntVector2().ToString(), textBox, 8.f);
+		IntVector2 tilePos = Vector2(mousePos.x / 16, mousePos.y / 16).GetAsIntVector2();
+		IntVector2 worldPos = mousePos.GetAsIntVector2();
+		String positions = "T(" + tilePos.ToString() + ") W(" + worldPos.ToString() + ")";
+		
+		// Kinda hacky way to get the font to not be really small based on the zoomed in level :l 
+		AABB2 textBox = GetAABB2FromAABB2(Vector2(.31f, .01f), Vector2(.6f, .05f), m_cameraBounds);
+		float textSize = RangeMapFloat(m_currentZoom, MIN_ZOOMED_IN_LEVEL, MAX_ZOOMED_OUT_LEVEL, 2, 8);
+		r->DrawText2D(textBox.mins, positions, textSize);
 	}
 }
 
