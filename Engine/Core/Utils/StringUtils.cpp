@@ -244,6 +244,35 @@ bool ParseString(std::string text, bool defaultValue)
 // }
 
 //-----------------------------------------------------------------------------------------------
+void RemoveLeadingWhitespace(String* theString)
+{
+	if(theString->empty()) { return; }
+	
+	if(theString->at(0) == ' ')
+	{
+		theString->erase(theString->begin());
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void RemoveEndingWhitespace(String* theString)
+{
+	if (theString->empty()) { return; }
+
+	if (theString->at(theString->size() - 1) == ' ')
+	{
+		theString->erase(theString->end() - 1);
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void RemoveLeadingAndEndingWhitespace(String* theString)
+{
+	RemoveLeadingWhitespace(theString);
+	RemoveEndingWhitespace(theString);
+}
+
+//-----------------------------------------------------------------------------------------------
 uint GetLargestLengthInStrings(Strings listToCheck)
 {
 	uint result = 0;

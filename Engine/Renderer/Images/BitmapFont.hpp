@@ -36,8 +36,11 @@ private:
 public:
 	AABB2		GetUVsForGlyph(int glyphUnicode) const; //
 	float		GetGlyphAspect() const { return m_baseAspect; } // will change later
-	float		GetStringWidth(const std::string& asciiText, float cellHeight, float aspectScale);
 	float		GetWidthOfAGlyph(float cellHeight, float aspectScale = 1.f);
+	
+	float		GetStringWidth(const std::string& asciiText, float cellHeight, float aspectScale);
+	float		GetHeightOfStrings(const Strings& text, float cellHeight, float padding = .5f);
+	void		GetTextWrapped(const Strings& words, const AABB2& bounds, float cellHeight, Strings* result, float aspect = 1.77f);
 
 	Texture*	GetTexture() const { return m_spriteSheet->m_texture; }
 

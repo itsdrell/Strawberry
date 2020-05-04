@@ -46,7 +46,7 @@ void CollisionChannelButton::Render() const
 	r->DrawAABB2Outline(m_buttonBounds, Rgba::WHITE);
 	r->DrawAABB2Outline(m_textBounds, Rgba(255, 255, 255, 255));
 
-	r->DrawWrappedTextInBox2D(m_nameOfChannel, m_textBounds, m_textBounds.GetHeight() * .2f);
+	r->DrawTextInBox(m_nameOfChannel, m_textBounds, m_textBounds.GetHeight() * .2f, DRAW_TEXT_MODE_WRAPPED);
 }
 
 //===============================================================================================

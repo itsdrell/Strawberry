@@ -34,6 +34,16 @@ struct RenderState;
 //====================================================================================
 enum PrimitiveType;
 
+//-----------------------------------------------------------------------------------------------
+enum DrawTextMode
+{
+	DRAW_TEXT_MODE_WRAPPED, // Goes to new line
+	DRAW_TEXT_MODE_SHRINKED, // shrinks to fit in bounds
+	DRAW_TEXT_MODE_OVERFLOW, // keeps going past bounds
+
+	NUM_OF_DRAW_TEXT_MODES
+};
+
 //====================================================================================
 // Structs
 //====================================================================================
@@ -96,9 +106,23 @@ public:
 public:
 	void DrawText2D(const Vector2& drawMins, const String& text, float cellHeight, 
 		const Rgba& tint = Rgba::WHITE, float aspectScale = 1.7f, BitmapFont* font = nullptr);
+	
+	void DrawTextInBox(const String& test, const AABB2& bounds, float cellHeight, DrawTextMode mode = DRAW_TEXT_MODE_OVERFLOW, 
+		const Vector2& alignment = Vector2(0, 0), const Rgba& color = Rgba::WHITE, float aspect = 1.77f, BitmapFont* font = nullptr);
+		
 
-	void DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, float aspectScale = 1.77f,
-		const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
+private: // Do not call these, use DrawTextInBox instead!!!
+	void DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0,0),
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
+
+	void DrawShrinkToFitTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
+
+	void DrawOverflowTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
+
+	void DrawTextWithAlignment(const Strings& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
 
 public:
 	void DrawMeshImmediate( PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices );

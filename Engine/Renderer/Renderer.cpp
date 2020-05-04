@@ -747,7 +747,7 @@ void Renderer::DrawText2D(const Vector2& startPos, const String& text, float cel
 }
 
 //-----------------------------------------------------------------------------------------------
-void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight , float aspectScale, 
+void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight , const Vector2& alignment, float aspectScale,
 	const Rgba& textColor, BitmapFont* font)
 {
 	if (font == nullptr)
@@ -757,40 +757,89 @@ void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, 
 
 	SetCurrentTexture(0, font->m_spriteSheet->m_texture);
 
-	float width = boxSize.GetWidth();
-	float fontWidth = cellHeight * aspectScale;
-	float fontHeightSpace = cellHeight * 2.f;
-	Vector2 currentPosition = Vector2(boxSize.mins.x + fontWidth, boxSize.maxs.y - (fontHeightSpace));
-
-	// this gets the \n character
 	Strings vectorOfWords = SplitString(text, " ");
 
-	for (int i = 0; i < (int)vectorOfWords.size(); i++)
+	Strings lines;
+	font->GetTextWrapped(vectorOfWords, boxSize, cellHeight, &lines, aspectScale);
+
+	DrawTextWithAlignment(lines, boxSize, cellHeight, alignment, aspectScale, textColor, font);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawShrinkToFitTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, const Vector2& alignment /*= Vector2(0, 0)*/, 
+	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, BitmapFont* font /*= nullptr*/)
+{
+
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawOverflowTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, const Vector2& alignment /*= Vector2(0, 0)*/, 
+	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, BitmapFont* font /*= nullptr*/)
+{
+
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawTextWithAlignment(const Strings& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, const Vector2& alignment /*= Vector2(0, 0)*/, 
+	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, BitmapFont* font /*= nullptr*/)
+{
+	if (font == nullptr)
 	{
-		// Get the length of the word
-		String currentWord = vectorOfWords.at(i);
-		float wordSize = ((float)currentWord.size() * fontWidth);
+		font = m_defaultFont;
+	}
+	
+	SetCurrentTexture(0, font->m_spriteSheet->m_texture);
 
-		if (currentWord == "\n")
-		{
-			currentPosition.x = (boxSize.mins.x + fontWidth);
-			currentPosition.y -= fontHeightSpace;
-		}
-		else
-		{
-			float endPos = currentPosition.x + wordSize;
+	float lineHeight = .5f; // can expose this if you want
+	float lineSpacing = (cellHeight * lineHeight);
+	float heightOfText = font->GetHeightOfStrings(text, cellHeight, lineHeight);
 
-			// WRAP the x
-			if (endPos >= (boxSize.mins.x + width))
-			{
-				currentPosition.x = (boxSize.mins.x + fontWidth);
-				currentPosition.y -= fontHeightSpace;
-			}
+	float offsetFromTop = (boxSize.GetHeight() - heightOfText) * alignment.y;
+	float startingY = boxSize.maxs.y - offsetFromTop - cellHeight; // minus cell height since we draw at the bottom of the box
 
-			DrawText2D(currentPosition, currentWord, cellHeight, textColor, aspectScale, font);
+	float currentY = startingY;
+	for(uint i = 0; i < text.size(); i++)
+	{
+		String currentString = text.at(i);
+		
+		float width = font->GetStringWidth(currentString, cellHeight, aspectScale);
+		float offsetFromLeft = (boxSize.GetWidth() - width) * alignment.x;
+		float xPos = boxSize.mins.x + offsetFromLeft;
 
-			currentPosition.x += (wordSize + fontWidth);
-		}
+		DrawText2D(Vector2(xPos, currentY), currentString, cellHeight, textColor, aspectScale, font);
+
+		currentY -= (lineSpacing + cellHeight);
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawTextInBox(const String& text, const AABB2& bounds, float cellHeight, DrawTextMode mode /*= DRAW_TEXT_MODE_OVERFLOW*/, 
+	const Vector2& alignment, const Rgba& color /*= Rgba::WHITE*/, float aspect /*= 1.77f*/, BitmapFont* font /*= nullptr*/)
+{
+	float padding = 1.5f;
+
+	// make a new box that has a little bit of padding based on the cellheight 
+	// so the text is never ON the box
+	float offset = padding * cellHeight;
+	AABB2 newBox = bounds;
+	newBox.mins += Vector2(offset, offset);
+	newBox.maxs -= Vector2(offset, offset);
+	//DrawAABB2Outline(newBox, Rgba::GetRandomColor());
+	
+	switch (mode)
+	{
+	case DRAW_TEXT_MODE_WRAPPED:
+		DrawWrappedTextInBox2D(text, newBox, cellHeight, alignment, aspect, color, font);
+		break;
+	case DRAW_TEXT_MODE_SHRINKED:
+		DrawShrinkToFitTextInBox2D(text, newBox, cellHeight, alignment, aspect, color, font);
+		break;
+	case DRAW_TEXT_MODE_OVERFLOW:
+		DrawShrinkToFitTextInBox2D(text, newBox, cellHeight, alignment, aspect, color, font);
+		break;
+	default:
+		// error?
+		break;
 	}
 }
 

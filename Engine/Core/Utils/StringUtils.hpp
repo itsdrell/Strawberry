@@ -31,6 +31,10 @@ uint CountHowManyLinesAreInAString(std::string stringToCount);
 // Remove white space lines from Strings
 void RemoveWhiteSpaceLines( Strings& theStrings );
 
+void RemoveLeadingWhitespace(String* theString);
+void RemoveEndingWhitespace(String* theString);
+void RemoveLeadingAndEndingWhitespace(String* theString);
+
 uint GetLargestLengthInStrings(Strings listToCheck);
 std::string GetLargestStringInStrings(Strings listToCheck);
 

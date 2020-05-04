@@ -323,11 +323,12 @@ int LuaDrawTextWrapped(lua_State* theState)
 	float maxx = LuaGetFloat(theState, 4, 1.f);
 	float maxy = LuaGetFloat(theState, 5, 0.f);
 	float height = LuaGetFloat(theState, 6, 1.f);
-	Rgba color = LuaGetRgba(theState, 7, Rgba::WHITE);
+	float alignmentX = LuaGetFloat(theState, 7, 0.f);
+	float alignmentY = LuaGetFloat(theState, 8, 0.f);
+	Rgba color = LuaGetRgba(theState, 9, Rgba::WHITE);
 
 	Renderer* r = Renderer::GetInstance();
-	r->DrawWrappedTextInBox2D(text, AABB2(Vector2(minx,miny),Vector2(maxx, maxy)), height, 1.77, color);
-
+	r->DrawTextInBox(text, AABB2(Vector2(minx, miny), Vector2(maxx, maxy)), height, DRAW_TEXT_MODE_WRAPPED, Vector2(alignmentX, alignmentY), color);
 	return 0;
 }
 
