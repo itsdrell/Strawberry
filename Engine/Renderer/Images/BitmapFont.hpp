@@ -40,6 +40,7 @@ public:
 	
 	float		GetStringWidth(const std::string& asciiText, float cellHeight, float aspectScale);
 	float		GetHeightOfStrings(const Strings& text, float cellHeight, float padding = .5f);
+	float		GetFontSizeToFitInBox(const Strings& text, const AABB2& bounds, float cellHeight, float aspectScale = 1.77f);
 	void		GetTextWrapped(const Strings& words, const AABB2& bounds, float cellHeight, Strings* result, float aspect = 1.77f);
 
 	Texture*	GetTexture() const { return m_spriteSheet->m_texture; }

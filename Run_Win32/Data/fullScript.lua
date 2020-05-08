@@ -158,10 +158,19 @@ function Berry.DrawText(string, pos, height, r,g,b,a)
 end
 
 -------------------------------------------------------------------------
-function Berry.DrawTextWrapped(string, box, height, r,g,b,a)
-    DrawTextWrapped(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, r,g,b,a)
+function Berry.DrawTextWrapped(string, box, height, alignmentVec2, percentInString, r,g,b,a)
+    DrawTextWrapped(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r,g,b,a)
 end
 
+-------------------------------------------------------------------------
+function Berry.DrawTextOverflow(string, box, height, alignmentVec2, percentInString, r,g,b,a)
+    DrawTextOverflow(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r,g,b,a)
+end
+
+-------------------------------------------------------------------------
+function Berry.DrawTextShrink(string, box, height, alignmentVec2, percentInString, r,g,b,a)
+    DrawTextShrink(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r,g,b,a)
+end
 
 -------------------------------------------------------------------------
 -- Map
@@ -862,6 +871,7 @@ acc = Vector2:Create(0, -9.8 * 3)
 groundBox = AABB2:Create(0,64,256,72)
 solidDisc = Disc:Create(64, 180, 6)
 
+textPos = 0
 
 Player = 
 {
@@ -910,6 +920,8 @@ function Update(ds)
 	--Collision()
 	CollisionByTiles()
 	CollisionByChannel()
+
+	textPos = 	textPos + (ds * .1)
 end
 
 ------------------------------------------------------------
@@ -1050,6 +1062,12 @@ function Draw()
 	Berry.DrawAABB2(g_player.bounds.b 	, Pick( Berry.DiscvsAABB2(g_player.collision, g_player.bounds.b ), "red", "white"))
 	Berry.DrawAABB2(g_player.bounds.bl 	, Pick( Berry.DiscvsAABB2(g_player.collision, g_player.bounds.bl), "red", "white"))
 	Berry.DrawAABB2(g_player.bounds.l 	, Pick( Berry.DiscvsAABB2(g_player.collision, g_player.bounds.l ), "red", "white"))
+
+	-- Hey Emily, \nGo \nfuuuuuuuuuuuuuuuuuck yourself. \nOkay thanks :p
+	Berry.DrawAABB2Fill(AABB2(0,0,256,256), "red")
+	--Berry.DrawTextWrapped("Hey Emily, \nGo \nfuuuuuuuuuuuuuuuuuck yourself. \nOkay thanks :p", AABB2(0,0,256,256), 8, Vector2(0,0), textPos)
+	Berry.DrawTextShrink("fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck", AABB2(0,0,256,256), 20, Vector2(1,0), 1)
+	Berry.DrawTextWrapped("fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck\n fuck", AABB2(0,0,256,256), 13.1484337, Vector2(0,0), 1)
 
 end
 

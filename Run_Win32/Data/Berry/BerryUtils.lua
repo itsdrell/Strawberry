@@ -158,10 +158,19 @@ function Berry.DrawText(string, pos, height, r,g,b,a)
 end
 
 -------------------------------------------------------------------------
-function Berry.DrawTextWrapped(string, box, height, r,g,b,a)
-    DrawTextWrapped(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, r,g,b,a)
+function Berry.DrawTextWrapped(string, box, height, alignmentVec2, percentInString, r,g,b,a)
+    DrawTextWrapped(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r,g,b,a)
 end
 
+-------------------------------------------------------------------------
+function Berry.DrawTextOverflow(string, box, height, alignmentVec2, percentInString, r,g,b,a)
+    DrawTextOverflow(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r,g,b,a)
+end
+
+-------------------------------------------------------------------------
+function Berry.DrawTextShrink(string, box, height, alignmentVec2, percentInString, r,g,b,a)
+    DrawTextShrink(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r,g,b,a)
+end
 
 -------------------------------------------------------------------------
 -- Map

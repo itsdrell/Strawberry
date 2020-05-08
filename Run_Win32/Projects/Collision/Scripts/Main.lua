@@ -8,6 +8,7 @@ acc = Vector2:Create(0, -9.8 * 3)
 groundBox = AABB2:Create(0,64,256,72)
 solidDisc = Disc:Create(64, 180, 6)
 
+textPos = 0
 
 Player = 
 {
@@ -56,6 +57,8 @@ function Update(ds)
 	--Collision()
 	CollisionByTiles()
 	CollisionByChannel()
+
+	textPos += (ds * .1)
 end
 
 ------------------------------------------------------------

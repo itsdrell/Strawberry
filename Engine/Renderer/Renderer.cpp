@@ -757,26 +757,68 @@ void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, 
 
 	SetCurrentTexture(0, font->m_spriteSheet->m_texture);
 
+	// make a new box that has a little bit of paddin
+	// so the text is never ON the box
+	float offset = C_TEXT_PADDING * cellHeight;
+	AABB2 newBox = boxSize;
+	newBox.mins += Vector2(offset, offset);
+	newBox.maxs -= Vector2(offset, offset);
+	//DrawAABB2Outline(newBox, Rgba::GetRandomColor());
+
 	Strings vectorOfWords = SplitString(text, " ");
 
 	Strings lines;
 	font->GetTextWrapped(vectorOfWords, boxSize, cellHeight, &lines, aspectScale);
 
-	DrawTextWithAlignment(lines, boxSize, cellHeight, alignment, aspectScale, textColor, font);
+	DrawTextWithAlignment(lines, newBox, cellHeight, alignment, aspectScale, textColor, font);
 }
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawShrinkToFitTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, const Vector2& alignment /*= Vector2(0, 0)*/, 
 	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, BitmapFont* font /*= nullptr*/)
 {
+	if (font == nullptr)
+	{
+		font = m_defaultFont;
+	}
 
+	SetCurrentTexture(0, font->m_spriteSheet->m_texture);
+
+	// this does new line if the \n is provided, no auto wrapping
+	Strings lines = SplitString(text, "\n");
+
+	for (uint i = 0; i < lines.size(); i++)
+	{
+		String* current = &lines.at(i);
+		RemoveLeadingAndEndingWhitespace(current);
+	}
+
+	float newCellHeight = font->GetFontSizeToFitInBox(lines, boxSize, cellHeight, aspectScale);
+
+	// make a new box that has a little bit of padding based on the cellheight 
+	// so the text is never ON the box
+	float offset = C_TEXT_PADDING * newCellHeight;
+	AABB2 newBox = boxSize;
+	newBox.mins += Vector2(offset, offset);
+	newBox.maxs -= Vector2(offset, offset);
+	// DrawAABB2Outline(newBox, Rgba::GetRandomColor());
+
+	DrawTextWithAlignment(lines, newBox, newCellHeight, alignment, aspectScale, textColor, font);
 }
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawOverflowTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, const Vector2& alignment /*= Vector2(0, 0)*/, 
 	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, BitmapFont* font /*= nullptr*/)
 {
+	if (font == nullptr)
+	{
+		font = m_defaultFont;
+	}
 
+	SetCurrentTexture(0, font->m_spriteSheet->m_texture);
+	
+	Strings theLines = Strings({ text });
+	DrawTextWithAlignment(theLines, boxSize, cellHeight, alignment, aspectScale, textColor, font);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -813,29 +855,21 @@ void Renderer::DrawTextWithAlignment(const Strings& text, const AABB2& boxSize, 
 }
 
 //-----------------------------------------------------------------------------------------------
-void Renderer::DrawTextInBox(const String& text, const AABB2& bounds, float cellHeight, DrawTextMode mode /*= DRAW_TEXT_MODE_OVERFLOW*/, 
+void Renderer::DrawTextInBox(const String& text, const AABB2& bounds, float cellHeight, float normalizedPercentIntoText, DrawTextMode mode /*= DRAW_TEXT_MODE_OVERFLOW*/,
 	const Vector2& alignment, const Rgba& color /*= Rgba::WHITE*/, float aspect /*= 1.77f*/, BitmapFont* font /*= nullptr*/)
 {
-	float padding = 1.5f;
-
-	// make a new box that has a little bit of padding based on the cellheight 
-	// so the text is never ON the box
-	float offset = padding * cellHeight;
-	AABB2 newBox = bounds;
-	newBox.mins += Vector2(offset, offset);
-	newBox.maxs -= Vector2(offset, offset);
-	//DrawAABB2Outline(newBox, Rgba::GetRandomColor());
+	String textToShow = GetPercentIntoString(text, normalizedPercentIntoText);
 	
 	switch (mode)
 	{
 	case DRAW_TEXT_MODE_WRAPPED:
-		DrawWrappedTextInBox2D(text, newBox, cellHeight, alignment, aspect, color, font);
+		DrawWrappedTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, font);
 		break;
 	case DRAW_TEXT_MODE_SHRINKED:
-		DrawShrinkToFitTextInBox2D(text, newBox, cellHeight, alignment, aspect, color, font);
+		DrawShrinkToFitTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, font);
 		break;
 	case DRAW_TEXT_MODE_OVERFLOW:
-		DrawShrinkToFitTextInBox2D(text, newBox, cellHeight, alignment, aspect, color, font);
+		DrawOverflowTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, font);
 		break;
 	default:
 		// error?

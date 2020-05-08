@@ -18,6 +18,9 @@ std::string Stringv(const char* format, va_list args);
 
 // Breaks a string by white space
 Strings BreakSentenceIntoWords(std::string text);
+void MakeWordsIntoLines(const Strings& words, Strings* outLines);
+
+String GetPercentIntoString(const String& theString, float normalizedPercentIn);
 
 // Breaks a string into seperate strings based off the seperator
 Strings SplitString(const std::string text, const char* seperator);

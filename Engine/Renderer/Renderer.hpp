@@ -27,7 +27,7 @@ struct RenderState;
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
-
+constexpr float C_TEXT_PADDING = 1.5f;
 
 //====================================================================================
 // ENUMS
@@ -107,10 +107,9 @@ public:
 	void DrawText2D(const Vector2& drawMins, const String& text, float cellHeight, 
 		const Rgba& tint = Rgba::WHITE, float aspectScale = 1.7f, BitmapFont* font = nullptr);
 	
-	void DrawTextInBox(const String& test, const AABB2& bounds, float cellHeight, DrawTextMode mode = DRAW_TEXT_MODE_OVERFLOW, 
+	void DrawTextInBox(const String& text, const AABB2& bounds, float cellHeight, float normalizedPercentIntoText = 1.f, DrawTextMode mode = DRAW_TEXT_MODE_OVERFLOW, 
 		const Vector2& alignment = Vector2(0, 0), const Rgba& color = Rgba::WHITE, float aspect = 1.77f, BitmapFont* font = nullptr);
 		
-
 private: // Do not call these, use DrawTextInBox instead!!!
 	void DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0,0),
 		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);

@@ -2,6 +2,7 @@
 #include "Engine/Renderer/Images/Texture.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/Core/Utils/StringUtils.hpp"
+#include "Engine/Math/MathUtils.hpp"
 
 //===============================================================================================
 BitmapFont::BitmapFont(const String& path, const SpriteSheet& spriteSheet, float baseAspect)
@@ -34,6 +35,30 @@ float BitmapFont::GetHeightOfStrings(const Strings& text, float cellHeight, floa
 }
 
 //-----------------------------------------------------------------------------------------------
+float BitmapFont::GetFontSizeToFitInBox(const Strings& text, const AABB2& bounds, float cellHeight, float aspectScale)
+{
+	std::string longestString = GetLargestStringInStrings(text);
+	uint longestSize = longestString.size();
+
+	uint amountOfVerticalLines = text.size() + 1;
+	
+	float widthOfBox = bounds.GetWidth();
+	float heightOfBox = bounds.GetHeight();
+
+	// we already fit!
+	if(GetStringWidth(longestString, cellHeight, aspectScale) < widthOfBox 
+		&&  GetHeightOfStrings(text, cellHeight) < heightOfBox)
+	{
+		return cellHeight;
+	}
+	
+	float widthThatWillWork = (widthOfBox / longestSize) / (aspectScale * m_baseAspect);
+	float heightThatWillWork = (heightOfBox / (amountOfVerticalLines -1)) / (aspectScale * m_baseAspect);
+
+	return Min(widthThatWillWork, heightThatWillWork);
+}
+
+//-----------------------------------------------------------------------------------------------
 void BitmapFont::GetTextWrapped(const Strings& words, const AABB2& bounds, float cellHeight, Strings* result, float aspect)
 {
 	float width = bounds.GetWidth();
@@ -41,35 +66,64 @@ void BitmapFont::GetTextWrapped(const Strings& words, const AABB2& bounds, float
 	float fontHeightSpace = cellHeight * 2.f;
 	Vector2 currentPosition = Vector2(bounds.mins.x + fontWidth, bounds.maxs.y - (fontHeightSpace));
 
-	String line = "";
-	for (int i = 0; i < (int)words.size(); i++)
+	Strings requestedLines;
+	MakeWordsIntoLines(words, &requestedLines);
+
+	for(int j = 0; j < requestedLines.size(); j++)
 	{
-		// Get the length of the word
-		String currentWord = words.at(i);
-		float wordSize = ((float)currentWord.size() * fontWidth);
+		Strings wordsInLine = BreakSentenceIntoWords(requestedLines.at(j));
+		String currentLine = "";
 
-		float endPos = currentPosition.x + wordSize;
-		bool didWeGoOverBounds = endPos >= (bounds.mins.x + width);
-
-		if (currentWord == "\n" || didWeGoOverBounds)
+		for (int i = 0; i < (int)wordsInLine.size(); i++)
 		{
-			currentPosition.x = (bounds.mins.x + fontWidth);
-			currentPosition.y -= fontHeightSpace;
+			// Get the length of the word
+			String currentWord = wordsInLine.at(i);
+			float wordSize = ((float)currentWord.size() * fontWidth);
 
-			result->push_back(line);
-			line.clear();
+			float endPos = currentPosition.x + wordSize;
+			bool didWeGoOverBounds = endPos >= (bounds.mins.x + width);
 
-			if(didWeGoOverBounds)
-				i--;
+			if (didWeGoOverBounds)
+			{
+				// the word itself may NEVER fit, lets add it to the line and continue
+				// need to include the padding on the left as our starting point or it wont ever work
+				float widthOfWord = GetStringWidth(currentWord, cellHeight, aspect) + bounds.mins.x + (2 * cellHeight);
+				if (widthOfWord > (bounds.mins.x + width))
+				{
+					result->push_back(currentWord);
+				}
+				else
+				{
+					result->push_back(currentLine);
+
+					// add the current word and leftover words on the original line to 
+					// a NEW line that we will go onto next
+					for (uint k = i; k < wordsInLine.size() - 1; k++)
+					{
+						currentWord += (" " + wordsInLine.at(k + 1));
+					}
+					requestedLines.insert(requestedLines.begin() + j + 1, currentWord);
+				}
+				
+				currentLine.clear();
+
+				currentPosition.x = (bounds.mins.x + fontWidth);
+				currentPosition.y -= fontHeightSpace;
+			}
+			else
+			{
+				currentLine += (" " + currentWord);
+
+				currentPosition.x += (wordSize + fontWidth);
+			}
 		}
-		else
-		{
-			line += (" " + currentWord);
 
-			currentPosition.x += (wordSize + fontWidth);
-		}
+		if(currentLine != " ")
+			result->push_back(currentLine);
+
+		currentPosition.x = (bounds.mins.x + fontWidth);
+		currentPosition.y -= fontHeightSpace;
 	}
-	result->push_back(line);
 
 	for(uint i = 0; i < result->size(); i++)
 	{

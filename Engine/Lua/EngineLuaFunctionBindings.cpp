@@ -33,8 +33,11 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaDrawAABB2Filled, "DrawAABB2Fill");
 	BindFunctionToScript(theState, LuaDrawAABB2WireFrame, "DrawAABB2");
 	BindFunctionToScript(theState, LuaDrawSprite, "DrawSprite");
+
 	BindFunctionToScript(theState, LuaDrawText, "DrawText");
 	BindFunctionToScript(theState, LuaDrawTextWrapped, "DrawTextWrapped");
+	BindFunctionToScript(theState, LuaDrawTextOverFlow, "DrawTextOverflow");
+	BindFunctionToScript(theState, LuaDrawTextShrinkToFit, "DrawTextShrink");
 
 	//BindFunctionToScript(theState, LuaSetCameraPosition, "Camera");
 
@@ -314,8 +317,8 @@ int LuaDrawText(lua_State* theState)
 }
 
 //-----------------------------------------------------------------------------------------------
-// DrawTextWrapped string, minx, miny, maxx, maxy, height, color
-int LuaDrawTextWrapped(lua_State* theState)
+// DrawTextHelper
+static int DrawTextInBoxHelper(lua_State* theState, DrawTextMode drawMode)
 {
 	String text = LuaGetString(theState, 1, "idk man");
 	float minx = LuaGetFloat(theState, 2, 0);
@@ -325,11 +328,35 @@ int LuaDrawTextWrapped(lua_State* theState)
 	float height = LuaGetFloat(theState, 6, 1.f);
 	float alignmentX = LuaGetFloat(theState, 7, 0.f);
 	float alignmentY = LuaGetFloat(theState, 8, 0.f);
-	Rgba color = LuaGetRgba(theState, 9, Rgba::WHITE);
+	float percentIn = LuaGetFloat(theState, 9, 0.f);
+	Rgba color = LuaGetRgba(theState, 10, Rgba::WHITE);
 
 	Renderer* r = Renderer::GetInstance();
-	r->DrawTextInBox(text, AABB2(Vector2(minx, miny), Vector2(maxx, maxy)), height, DRAW_TEXT_MODE_WRAPPED, Vector2(alignmentX, alignmentY), color);
+	r->DrawTextInBox(text, AABB2(Vector2(minx, miny), Vector2(maxx, maxy)), height, percentIn,
+		drawMode, Vector2(alignmentX, alignmentY), color);
+
 	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// DrawTextWrapped string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color
+int LuaDrawTextWrapped(lua_State* theState)
+{
+	return DrawTextInBoxHelper(theState, DRAW_TEXT_MODE_WRAPPED);
+}
+
+//-----------------------------------------------------------------------------------------------
+// DrawTextWrapped string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color
+int LuaDrawTextOverFlow(lua_State* theState)
+{
+	return DrawTextInBoxHelper(theState, DRAW_TEXT_MODE_OVERFLOW);
+}
+
+//-----------------------------------------------------------------------------------------------
+// DrawTextWrapped string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color
+int LuaDrawTextShrinkToFit(lua_State* theState)
+{	
+	return DrawTextInBoxHelper(theState, DRAW_TEXT_MODE_SHRINKED);
 }
 
 //-----------------------------------------------------------------------------------------------

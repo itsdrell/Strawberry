@@ -6,6 +6,7 @@
 #include <vector>
 #include <regex>
 #include <string>
+#include "../../Math/MathUtils.hpp"
 
 #pragma warning( disable : 4310 ) // weird warning about "cast truncates constant value" should be fine tho :o
 
@@ -88,6 +89,67 @@ std::vector<std::string> BreakSentenceIntoWords(std::string text)
 	vectorOfWords.push_back(word);
 
 	return vectorOfWords;
+}
+
+//-----------------------------------------------------------------------------------------------
+void MakeWordsIntoLines(const Strings& words, Strings* outLines)
+{
+	if (words.size() == 0 || (words.size() == 1 && words.at(0).empty())) { return; }
+	
+	Strings temp = words;
+	String currentLine = "";
+	for(uint i = 0; i < words.size(); i++)
+	{
+		String currentWord = words.at(i);
+
+		if(currentWord == "\n")
+		{
+			outLines->push_back(currentLine);
+			currentLine.clear();
+			continue;
+		}
+
+		// if its attached to the end of a word, lets just add it to the next word
+		if (currentWord.size() >= 1 && currentWord.at(currentWord.size() - 1) == '\n')
+		{
+			if(i + 1 < temp.size())
+			{
+				String& nextWord = temp.at(i + 1);
+				temp.at(i + 1) = ("\n" + nextWord);
+				currentWord.erase(currentWord.end() - 1);
+			}
+			
+			currentLine += (currentWord + " ");
+			outLines->push_back(currentLine);
+			currentLine.clear();
+			continue;
+		}
+
+		if (!currentWord.empty() && currentWord.at(0) == '\n')
+		{
+			currentWord.erase(currentWord.begin());
+
+			outLines->push_back(currentLine);
+			currentLine.clear();
+		}
+
+		currentLine += (currentWord + " ");
+	}
+
+	outLines->push_back(currentLine);
+}
+
+//-----------------------------------------------------------------------------------------------
+String GetPercentIntoString(const String& theString, float normalizedPercentIn)
+{
+	// whats nice about clamping this, is we can let the percent just overflow past one and 
+	// the sentence will stay "done"
+	float t = ClampFloat(normalizedPercentIn, 0.f, 1.f);
+
+	uint amountOfCharacters = theString.size();
+	uint howManyCharactersToGo = ceil(RangeMapFloat(t, 0, 1, 0, amountOfCharacters));
+	
+	return String(theString.begin(), theString.begin() + howManyCharactersToGo);
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -154,7 +154,7 @@ void Game::RenderError() const
 	r->DrawAABB2Outline(errorTextBounds, Rgba::WHITE);
 	r->DrawAABB2Outline(inspirationTextBounds, Rgba::WHITE);
 
-	r->DrawTextInBox(m_mainLuaScript->GetErrorMessage(), errorTextBounds, fontHeight, DRAW_TEXT_MODE_WRAPPED, Vector2(0,0), Rgba::WHITE, Window::GetInstance()->GetAspect());
+	r->DrawTextInBox(m_mainLuaScript->GetErrorMessage(), errorTextBounds, fontHeight, 1.f, DRAW_TEXT_MODE_WRAPPED, Vector2(0,0), Rgba::WHITE, Window::GetInstance()->GetAspect());
 }
 
 //-----------------------------------------------------------------------------------------------
