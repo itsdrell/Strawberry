@@ -119,6 +119,13 @@ bool Map::LoadMap()
 }
 
 //-----------------------------------------------------------------------------------------------
+Tile& Map::GetTileByIndex(int index)
+{
+	uint indexClamped = ClampInt(index, 0, m_tiles.size() - 1);
+	return m_tiles.at(indexClamped);
+}
+
+//-----------------------------------------------------------------------------------------------
 void Map::CreateNewMap()
 {
 	for (uint i = 0; i < m_totalAmountOfTiles; i++)

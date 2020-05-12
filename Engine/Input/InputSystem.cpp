@@ -56,6 +56,9 @@ InputSystem::InputSystem()
 	if (g_theInputSystem != nullptr)
 		delete g_theInputSystem;
 
+	// todo maybe make this into a game config?
+	HideMouseCursor(true);
+
 	g_theInputSystem = this;
 }
 
@@ -169,6 +172,12 @@ bool InputSystem::DidMouseWheelScrollUp()
 bool InputSystem::DidMouseWheelScrollDown()
 {
 	return (m_mouseScrollWheel.y < 0);
+}
+
+//-----------------------------------------------------------------------------------------------
+void InputSystem::HideMouseCursor(bool isHidden)
+{
+	SDL_ShowCursor(!isHidden);
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -6,6 +6,10 @@ Timer =
     length = 1,
     elapsedTime = 0
 }
+setmetatable(Timer, 
+{
+    __call = function(theTable, length) return Timer:Create(length) end
+})
 g_allTimers = {}
 
 -------------------------------------------------------------------------

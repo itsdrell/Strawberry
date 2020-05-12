@@ -38,7 +38,13 @@ end
 
 -------------------------------------------------------------------------
 function Vector2:Normalize()
-    return Normalize(self.x, self.y)
+    self.x, self.y = Normalize(self.x, self.y)
+end
+
+-------------------------------------------------------------------------
+function Vector2:GetNormalized()
+    newX,newY = Normalize(self.x, self.y)
+    return Vector2(newX, newY)
 end
 
 -------------------------------------------------------------------------
@@ -69,6 +75,13 @@ end
 -------------------------------------------------------------------------
 function Vector2:GetDistanceSquared(startVec, endVec)
     return GetDistanceSquared(startVec.x, startVec.y, endVec.x, endVec.y)
+end
+
+-------------------------------------------------------------------------
+function Vector2:Lerp(vecA, vecB, t)
+    newX = Lerp(vecA.x, vecB.x, t)
+    newY = Lerp(vecA.y, vecB.y, t)
+    return Vector2(newX, newY)
 end
 
 -------------------------------------------------------------------------

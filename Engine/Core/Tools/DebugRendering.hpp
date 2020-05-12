@@ -38,6 +38,7 @@ public:
 	bool	m_isReadyForDeletion = false;
 };
 
+//-----------------------------------------------------------------------------------------------
 class DebugRenderingLogTask : public DebugRenderingTask
 {
 public:
@@ -50,7 +51,7 @@ public:
 	std::string m_message;
 };
 
-
+//-----------------------------------------------------------------------------------------------
 struct DebugMessage
 {
 public:

@@ -60,6 +60,9 @@ public:
 	float			m_cameraAngle = 0.f;
 	float			m_screenshakeAmount = 0.f; // [0-1]
 
+	float			m_timeScale = 1.f;
+	float			m_sleepTimer = 0.f;
+
 };
 
 //====================================================================================

@@ -100,6 +100,7 @@ public:
 	bool					DidMouseWheelScrollUp();
 	bool					DidMouseWheelScrollDown();
 	Vector2					GetMousePositionInPixels() { return m_mousePosition; }
+	void					HideMouseCursor(bool isHidden);
 
 protected:
 	void					PollEvents();

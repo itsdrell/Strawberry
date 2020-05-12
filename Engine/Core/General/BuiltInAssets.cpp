@@ -12,26 +12,22 @@ function StartUp()
 
 end
 
-
 ------------------------------------------------------------
--- called every frame
+-- Called every frame
 function Update(ds)
 
 
 end
 
 ------------------------------------------------------------
--- called after update, does all drawing
+-- Called after update, does all drawing
 function Draw()
 	Cls()
 
 end
 
 
--- Good luck <3
-
-
-)";
+-- Good luck <3)";
 	
 	return String(mainLuaFile);
 }

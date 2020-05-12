@@ -21,6 +21,8 @@ void BindGameSideLuaFunctions(lua_State* theState)
 	BindFunctionToScript(theState, LuaDoesTileHaveThisCollision, "DoesTileHaveCollision");
 	BindFunctionToScript(theState, LuaScreenShake, "Screenshake");
 	BindFunctionToScript(theState, LuaGetMousePosition, "GetMousePosition");
+	BindFunctionToScript(theState, LuaSleep, "Sleep");
+	BindFunctionToScript(theState, LuaTimeScale, "TimeScale");
 }
 
 //===============================================================================================
@@ -159,4 +161,26 @@ int LuaGetMousePosition(lua_State* theState)
 	lua_pushnumber(theState, pos.y);
 
 	return 2;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Sleep(seconds?)
+int LuaSleep(lua_State* theState)
+{
+	float number = LuaGetFloat(theState, 1, 1.0f);
+
+	g_theGame->m_sleepTimer = number;
+
+	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// TimeScale(scale)
+int LuaTimeScale(lua_State* theState)
+{
+	float scale = LuaGetFloat(theState, 1, 1.0f);
+
+	g_theGame->m_timeScale = scale;
+
+	return 0;
 }

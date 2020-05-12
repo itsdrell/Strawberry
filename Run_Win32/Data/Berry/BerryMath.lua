@@ -59,8 +59,8 @@ Berry.DiscvsTile = function(disc, tilePos)
 end
 
 -------------------------------------------------------------------------
-Berry.AABB2vsTile = function(disc, tilePos)
-    return Berry.DiscvsAABB2(disc, Berry.GetBoundsFromTilePos(tilePos))
+Berry.AABB2vsTile = function(box, tilePos)
+    return Berry.AABB2vsAABB2(box, Berry.GetBoundsFromTilePos(tilePos))
 end
 
 -------------------------------------------------------------------------

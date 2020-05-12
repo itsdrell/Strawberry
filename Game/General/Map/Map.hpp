@@ -49,7 +49,7 @@ private:
 public:
 	void SaveMap();
 	bool LoadMap();
-	Tile& GetTileByIndex(int index) { return m_tiles.at(index); };
+	Tile& GetTileByIndex(int index);
 	Tile& GetTileByTilePos(const IntVector2& pos);
 
 public:
