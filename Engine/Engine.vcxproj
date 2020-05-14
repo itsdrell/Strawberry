@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -238,6 +238,7 @@
     <ClInclude Include="Core\General\Camera.hpp" />
     <ClInclude Include="Core\General\EngineCommon.hpp" />
     <ClInclude Include="Core\General\Rgba.hpp" />
+    <ClInclude Include="Core\General\ScreenCaptures.hpp" />
     <ClInclude Include="Core\Platform\File.hpp" />
     <ClInclude Include="Core\Platform\Time.hpp" />
     <ClInclude Include="Core\Platform\Window.hpp" />
@@ -412,6 +413,7 @@
     <ClCompile Include="Core\General\Camera.cpp" />
     <ClCompile Include="Core\General\EngineCommon.cpp" />
     <ClCompile Include="Core\General\Rgba.cpp" />
+    <ClCompile Include="Core\General\ScreenCaptures.cpp" />
     <ClCompile Include="Core\Platform\File.cpp" />
     <ClCompile Include="Core\Platform\Time.cpp" />
     <ClCompile Include="Core\Platform\Window.cpp" />

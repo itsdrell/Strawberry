@@ -179,6 +179,7 @@
     <ClInclude Include="Core\Tools\DebugRendering.hpp" />
     <ClInclude Include="Lua\NativeLuaFunctions.hpp" />
     <ClInclude Include="Math\Geometry\Disc.hpp" />
+    <ClInclude Include="Core\General\ScreenCaptures.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -425,6 +426,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math\Geometry\Disc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\General\ScreenCaptures.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

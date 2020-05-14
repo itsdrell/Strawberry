@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Core/General/EngineCommon.hpp"
 #include <stdint.h>
 
 //====================================================================================
@@ -14,6 +15,8 @@ uint64_t GetPerformanceCounter();
 
 // converts a performance count the seconds it represents
 double PerformanceCountToSeconds(uint64_t hpc);
+
+String CurrentDateTime();
 
 //====================================================================================
 // Externs

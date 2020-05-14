@@ -1,5 +1,8 @@
 #include "Time.hpp"
 #include "Engine/ThirdParty/SDL2/SDL_timer.h"
+#include <time.h>
+
+#pragma warning(disable:4996) // for localtime
 
 //===============================================================================================
 // local to time.cpp (could also use static variables)
@@ -40,4 +43,20 @@ uint64_t GetPerformanceCounter()
 double PerformanceCountToSeconds(uint64_t hpc)
 {
 	return (double)hpc * g_localTimeData.m_seconds_per_hpc;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+// Source: https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c
+String CurrentDateTime()
+{
+	time_t     now = time(0);
+	struct tm  tstruct;
+	char       buf[80];
+	tstruct = *localtime(&now); // this gives a warning
+
+	// year_month_day_hour-min-sec
+	strftime(buf, sizeof(buf), "%Y_%m_%d_%H-%M-%S", &tstruct);
+
+	return buf;
 }

@@ -1,15 +1,9 @@
-#pragma once
-#include "Engine/Core/General/EngineCommon.hpp"
-#include "Engine/Renderer/Renderer.hpp"
-#include "Engine/Renderer/RenderTypes.hpp"
-#include "Engine/Math/Vectors/IntVector2.hpp"
+#include "Engine/Renderer/Images/Texture.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class Image;
-struct SDL_Surface;
-struct SDL_Texture;
+class IntVector2;
 
 //====================================================================================
 // Type Defs + Defines
@@ -29,30 +23,31 @@ struct SDL_Texture;
 //====================================================================================
 // Classes
 //====================================================================================
-class Texture
+class Screenshot
 {
-	friend class Renderer; 
-
-private:
-	Texture();
-	Texture(const String& filePath, bool flip = true);
-	~Texture();
-
-	void PopulateFromData( unsigned char* imageData, const IntVector2& texelSize, int numComponents) ;
-	bool CreateRenderTarget( int width, int height, eTextureFormat format );
+public:
+	Screenshot(); // just use the framebuffer?
+	Screenshot(const Texture& theTextureToUse);
 	
-	Texture* CreateFromImage(const Image& imageToCreateFrom);
-	SDL_Surface* GetSDLSurfaceFromGLTexture();
-	SDL_Texture* GetSDLTextureFromGLTexture();
+	~Screenshot();
 
 public:
-	IntVector2 GetDimensions() const { return m_dimensions; } 
-	uint GetID() const { return m_textureID; }
+	void* GetData() { return m_data; }
+
+public:
+	void SaveToFullDirectoryPath(const String& path);
+	void SaveToScreenshotProjectFolder(const String& gameName);
 
 private:
-	uint				m_textureID;
+	void CreateScreenshot();
+
+public:
 	IntVector2			m_dimensions;
-	eTextureFormat		m_format;
+	String				m_path;
+
+private:
+	unsigned char*		m_data = nullptr;
+	const Texture*		m_texture;
 };
 
 //====================================================================================
@@ -66,5 +61,5 @@ private:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/31/2019]
+// Written by Zachary Bracken : [5/13/2020]
 //====================================================================================

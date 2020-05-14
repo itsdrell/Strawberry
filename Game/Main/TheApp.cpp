@@ -25,6 +25,7 @@
 #include "Engine/Core/Platform/File.hpp"
 #include "Engine/Renderer/Images/SpriteSheet.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
+#include "Engine/Core/General/ScreenCaptures.hpp"
 
 
 //===============================================================================================
@@ -133,6 +134,8 @@ void App::RunFrame()
 	Renderer::GetInstance()->EndFrame();
 	theAudio->EndFrame();
 
+	m_takeScreenshot = false;
+
 	// so the computer isn't using all the cores
 	SDL_Delay(1);
 }
@@ -161,6 +164,13 @@ void App::HandleInput()
 		if (g_theGame || g_theEditor)
 			Console::GetInstance()->Toggle();
 	}
+
+#ifndef EMSCRIPTEN_PORT
+	if (WasKeyJustPressed(KEYBOARD_F7))
+	{
+		m_takeScreenshot = true;
+	}
+#endif
 
 	if (WasKeyJustPressed(KEYBOARD_F5))
 	{
@@ -212,6 +222,10 @@ void App::Render() const
 		g_theGame->Render();
 	if (m_currentState == APPSTATE_EDITOR)
 		g_theEditor->Render();
+
+	// Doing it before debug and console render not sure if that help or hurts?
+	if (m_takeScreenshot)
+		TakeScreenshot();
 	
 	Playground::RenderTest();
 	DebugUpdateAndRender();
@@ -241,6 +255,20 @@ void App::ReloadAndRunGame()
 	Console::GetInstance()->Close();
 
 	PrintLog("New game created!");
+}
+
+//-----------------------------------------------------------------------------------------------
+void App::TakeScreenshot() const
+{
+	// not sure if we want to allow screenshots if you don't have a project open
+	// maybe cool once we have a start up / attract screen tho 
+	String folder = g_currentProjectName != "" ? g_currentProjectName : "Editor";
+
+	Screenshot* shot = new Screenshot(*Renderer::GetInstance()->m_defaultColorTarget);
+	shot->SaveToScreenshotProjectFolder(folder); // deletes
+
+	// could open the folder as well?? maybe an animation 
+	DebugRenderLog("Screenshot taken" , 3, Rgba::WHITE);
 }
 
 void App::TestTexture()

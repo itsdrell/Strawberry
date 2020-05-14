@@ -49,6 +49,7 @@ public:
 	void ReloadAndRunGame();
 
 	float GetTimeSinceProgramStart() const {return m_timeSinceStart;} 
+	void TakeScreenshot() const;
 
 	void TestTexture();
 
@@ -56,6 +57,7 @@ public:
 	AppState m_currentState = APPSTATE_CONSOLE;
 	bool m_isQuitting;
 	bool m_isReleaseVersion = false;
+	bool m_takeScreenshot = false;
 	float m_timeSinceStart;
 
 };
