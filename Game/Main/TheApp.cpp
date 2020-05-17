@@ -56,6 +56,7 @@ App::App()
 	EngineStartUp();
 	InputSystem::GetInstance()->SetShutdownFunction((ShutdownFunction) Quit);
 
+	m_recorder = new GifRecorder();
 
 	m_isQuitting = false;
 	m_timeSinceStart = 0.f;
@@ -74,6 +75,9 @@ App::~App()
 
 	delete g_theGameBlackboard;
 	g_theGameBlackboard = nullptr;
+
+	delete m_recorder;
+	m_recorder = nullptr;
 
 	EngineShutdown();
 }
@@ -170,6 +174,15 @@ void App::HandleInput()
 	{
 		m_takeScreenshot = true;
 	}
+
+	if (WasKeyJustPressed(KEYBOARD_F8))
+	{
+		if(m_recorder->m_isRecording == false)
+		{
+			m_recorder->Start();
+		}
+	}
+
 #endif
 
 	if (WasKeyJustPressed(KEYBOARD_F5))
@@ -226,6 +239,9 @@ void App::Render() const
 	// Doing it before debug and console render not sure if that help or hurts?
 	if (m_takeScreenshot)
 		TakeScreenshot();
+
+	if (m_recorder->m_isRecording)
+		m_recorder->Record();
 	
 	Playground::RenderTest();
 	DebugUpdateAndRender();

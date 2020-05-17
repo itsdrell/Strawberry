@@ -4,6 +4,7 @@
 // Forward Declare
 //====================================================================================
 class Command;
+class GifRecorder;
 
 //====================================================================================
 // Type Defs + Defines
@@ -59,6 +60,9 @@ public:
 	bool m_isReleaseVersion = false;
 	bool m_takeScreenshot = false;
 	float m_timeSinceStart;
+
+private:
+	GifRecorder*	m_recorder = nullptr;
 
 };
 

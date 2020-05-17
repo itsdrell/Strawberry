@@ -1,19 +1,15 @@
-#include "Engine/Renderer/Images/Texture.hpp"
+#pragma once
+#include "Engine/Core/General/EngineCommon.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class IntVector2;
-class StopWatch;
+class Clock;
 
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
-constexpr int GIF_FRAMES_PER_SECOND = 10;
-constexpr int GIF_LENGTH_IN_SECONDS = 8;
 
-constexpr int MAX_NUMBER_OF_GIF_FRAMES = (GIF_FRAMES_PER_SECOND * GIF_LENGTH_IN_SECONDS); // 30 frames x 8 seconds
-constexpr float GIF_SNAP_DELAY = 1.f / ((float) GIF_FRAMES_PER_SECOND);
 
 //====================================================================================
 // ENUMS
@@ -28,61 +24,53 @@ constexpr float GIF_SNAP_DELAY = 1.f / ((float) GIF_FRAMES_PER_SECOND);
 //====================================================================================
 // Classes
 //====================================================================================
-class Screenshot
+class StopWatch
 {
 public:
-	Screenshot(); // just use the framebuffer?
-	Screenshot(const Texture& theTextureToUse);
-	
-	~Screenshot();
+	// should default to Master if ref_clock is set to nullptr
+	StopWatch(Clock *ref_clock = nullptr);
+	~StopWatch() { m_reference = nullptr; }
+
+	// change our reference clock. 
+	// should maintain elapsed time 
+	void SetClock(Clock* ref_clock);
+
+	// sets the "interval time" for
+	// this stopwtach.
+	// takes seconds to be easy to use
+	// but under the hood it will use hpc
+	bool SetTimer(float seconds);
+
+	// if we really just want to use it as a timer
+	// this returns how long since the last reset
+	float GetElapsedTime() const;
+
+	// elapsed time divided by the interval
+	float GetNormalizedElapsedTime();
+
+	// returns true if the interval has elapsed;
+	bool HasElapsed() const;
+
+	// resets the interval
+	// (get_elapsed_time() should return 0.0f);
+	void Reset();
+
+	// checks the interval, if it has elapsed, will
+	// return true and reset.  If not, will just return false (no reset)
+	bool CheckAndReset();
 
 public:
-	void* GetData() { return m_data; }
-	void GetDataFlipped(void* outFlippedBuffer);
-	void FlipData();
+	// clock to use as reference
+	Clock *m_reference;
 
-public:
-	void SaveToFullDirectoryPath(const String& path);
-	void SaveToScreenshotProjectFolder(const String& gameName);
-
-private:
-	void CreateScreenshot();
-
-public:
-	IntVector2			m_dimensions;
-	String				m_path;
-
-private:
-	unsigned char*		m_data = nullptr;
-	const Texture*		m_texture;
+	// I switched to seconds because it makes more sense
+	// and shouldn't matter since im using the reference clock
+	// to determine seconds and thats based off hpc soooo
+	// its basically the same but less gross
+	float m_startTime;
+	float m_length;
 };
-
-//===============================================================================================
-class GifRecorder
-{
-public:
-	GifRecorder();
-	~GifRecorder();
-
-public:
-	void Record();
-	
-public:
-	void Start();
-	void Stop();
-
-	void AddFrame();
-	void Save();
-
-	void ClearFrames();
-
-public:
-	std::vector<Screenshot*>	m_frames;
-	IntVector2					m_startingDimensions;
-	StopWatch*					m_captureDelayTimer = nullptr;
-	bool						m_isRecording = false;
-	bool						m_isSaving = false;
-};
+typedef StopWatch	Timer;
 
 //====================================================================================
 // Standalone C Functions
@@ -95,5 +83,5 @@ public:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [5/13/2020]
+// Written by Zachary Bracken : [5/16/2020]
 //====================================================================================

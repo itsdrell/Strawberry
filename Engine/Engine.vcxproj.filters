@@ -180,6 +180,8 @@
     <ClInclude Include="Lua\NativeLuaFunctions.hpp" />
     <ClInclude Include="Math\Geometry\Disc.hpp" />
     <ClInclude Include="Core\General\ScreenCaptures.hpp" />
+    <ClInclude Include="ThirdParty\gif_h\gif.h" />
+    <ClInclude Include="Core\Tools\StopWatch.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -429,6 +431,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\General\ScreenCaptures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Tools\StopWatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

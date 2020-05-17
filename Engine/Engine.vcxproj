@@ -248,6 +248,7 @@
     <ClInclude Include="Core\Tools\DebugRendering.hpp" />
     <ClInclude Include="Core\Tools\EngineConsoleCommands.hpp" />
     <ClInclude Include="Core\Tools\ErrorWarningAssert.hpp" />
+    <ClInclude Include="Core\Tools\StopWatch.hpp" />
     <ClInclude Include="Core\Utils\GeneralUtils.hpp" />
     <ClInclude Include="Core\Utils\StringUtils.hpp" />
     <ClInclude Include="Input\InputSystem.hpp" />
@@ -293,6 +294,7 @@
     <ClInclude Include="ThirdParty\fmod\fmod_dsp_effects.h" />
     <ClInclude Include="ThirdParty\fmod\fmod_errors.h" />
     <ClInclude Include="ThirdParty\fmod\fmod_output.h" />
+    <ClInclude Include="ThirdParty\gif_h\gif.h" />
     <ClInclude Include="ThirdParty\Lua\lapi.h" />
     <ClInclude Include="ThirdParty\Lua\lauxlib.h" />
     <ClInclude Include="ThirdParty\Lua\lcode.h" />
@@ -423,6 +425,7 @@
     <ClCompile Include="Core\Tools\DebugRendering.cpp" />
     <ClCompile Include="Core\Tools\EngineConsoleCommands.cpp" />
     <ClCompile Include="Core\Tools\ErrorWarningAssert.cpp" />
+    <ClCompile Include="Core\Tools\StopWatch.cpp" />
     <ClCompile Include="Core\Utils\StringUtils.cpp" />
     <ClCompile Include="Input\InputSystem.cpp" />
     <ClCompile Include="Lua\EngineLuaFunctionBindings.cpp" />
