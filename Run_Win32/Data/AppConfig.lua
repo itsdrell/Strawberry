@@ -7,6 +7,8 @@ resolution3="1200,800"
 
 gifLength=8
 
+showShell=false
+
 --[[
 
 Here is a list of ways you can config strawberry!
@@ -32,5 +34,6 @@ hideMouse=bool
     - Wether we actually show the mouse cursor or not
     - defaults to true
 
-
+showShell=bool
+    - draw the image (Data/GameShell.png) instead of a black border around the game
 --]]

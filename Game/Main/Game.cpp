@@ -46,6 +46,8 @@ Game::Game()
 	new BlackBoard(path + "/Scripts/GameConfig.lua", GAME_BLACKBOARD);
 	
 	m_map = new Map();
+
+	m_showBorder = g_theEngineBlackboard->GetValue("showShell", m_showBorder);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -135,12 +137,35 @@ void Game::RenderGame() const
 
 	r->SetCurrentTexture();
 	LuaRender(*m_mainLuaScript);
+
+	RenderGameShell(padding, size);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Game::RenderGameShell(float padding, float size) const
+{
+	Renderer* r = Renderer::GetInstance();
 	
 	// side bars to be aspect ratio and only show one cell at a time
-	r->DrawAABB2Filled(AABB2(Vector2(-padding + m_cameraPos.x, m_cameraPos.y), 
-		Vector2(m_cameraPos.x, m_cameraPos.y + size)), Rgba(0, 0, 0, 255));
-	r->DrawAABB2Filled(AABB2(Vector2(m_cameraPos.x + size, m_cameraPos.y), 
-		Vector2(m_cameraPos.x + size + padding, m_cameraPos.y + size)), Rgba(0, 0, 0, 255));
+	AABB2 leftBounds = AABB2(Vector2(-padding + m_cameraPos.x, m_cameraPos.y), Vector2(m_cameraPos.x, m_cameraPos.y + size));
+	AABB2 rightBounds = AABB2(Vector2(m_cameraPos.x + size, m_cameraPos.y), Vector2(m_cameraPos.x + size + padding, m_cameraPos.y + size));
+	if (m_showBorder)
+	{
+		SpriteSheet caseSprites = SpriteSheet(r->CreateOrGetTexture("Data/StrawberryCase.png"), 2, 1);
+	
+		AABB2 spriteUVs = caseSprites.GetTexCoordsForSpriteIndex(0);
+		r->DrawTexturedAABB2(leftBounds, *r->CreateOrGetTexture("Data/StrawberryCase.png"),
+			spriteUVs.mins, spriteUVs.maxs, Rgba::WHITE);
+	
+		spriteUVs = caseSprites.GetTexCoordsForSpriteIndex(1);
+		r->DrawTexturedAABB2(rightBounds, *r->CreateOrGetTexture("Data/StrawberryCase.png"),
+			spriteUVs.mins, spriteUVs.maxs, Rgba::WHITE);
+	}
+	else
+	{
+		r->DrawAABB2Filled(leftBounds, Rgba(0, 0, 0, 255));
+		r->DrawAABB2Filled(rightBounds, Rgba(0, 0, 0, 255));
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -179,6 +179,7 @@ void TileEditor::RenderUI() const
 	Renderer* r = Renderer::GetInstance();
 
 	// tile select
+	r->DrawAABB2Filled(m_tileSelectBounds, Rgba(0, 0, 0, 100));
 	r->DrawTexturedAABB2(m_tileSelectBounds, *g_theSpriteSheet->m_texture, Vector2(0, 0), Vector2(1, 1), Rgba(255, 255, 255, 255));
 	r->DrawAABB2Outline(m_tileSelectBounds, Rgba(255, 255, 255, 255));
 	r->DrawAABB2Outline(GetBiggerAABB2FromAABB2(m_tileSelectBounds, 1.f, 1.f), Rgba(0, 0, 0, 255));
@@ -205,6 +206,19 @@ void TileEditor::RenderUI() const
 
 		r->DrawLine2D(mousePos, m_tilePreviewBounds.mins, Rgba(255, 255, 255, 255));
 		r->DrawLine2D(mousePos, Vector2(m_tilePreviewBounds.maxs.x, m_tilePreviewBounds.mins.y), Rgba(255, 255, 255, 255));
+
+		RenderTileSelectHoverOutline();
+	}
+	else
+	{
+		// Draw the box outline on the current hovered tile
+		if (m_mapEditor->m_map->GetBounds().IsPointInBox(mousePos))
+		{
+			IntVector2 tilePos = Vector2(mousePos.x / 16, mousePos.y / 16).GetAsIntVector2();
+
+			AABB2 highlightBounds = AABB2(tilePos.x * TILE_SIZE, tilePos.y * TILE_SIZE, (tilePos.x + 1) * TILE_SIZE, (tilePos.y + 1) * TILE_SIZE);
+			r->DrawAABB2Outline(highlightBounds, Rgba(0, 0, 0, 255));
+		}
 	}
 }
 
@@ -216,4 +230,25 @@ void TileEditor::RenderTilePlacementPreview() const
 		Mesh* tempMesh = m_tileSelectPreviewMB->CreateMesh<Vertex3D_PCU>();
 		Renderer::GetInstance()->DrawMesh(tempMesh, true);
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void TileEditor::RenderTileSelectHoverOutline() const
+{
+	Vector2 mousePos = GetMousePosition(m_mapEditor->m_cameraBounds);
+	Renderer* r = Renderer::GetInstance();
+	
+	// Draw little black box on the tile select bounds
+	IntVector2 spriteCoords;
+	spriteCoords.x = (int)RangeMapFloat(mousePos.x, m_tileSelectBounds.mins.x, m_tileSelectBounds.maxs.x, 0.f, (float)g_theSpriteSheet->m_spriteLayout.x);
+	spriteCoords.y = (int)RangeMapFloat(mousePos.y, m_tileSelectBounds.mins.y, m_tileSelectBounds.maxs.y, (float)g_theSpriteSheet->m_spriteLayout.y, 0.f);
+	spriteCoords.x = ClampInt(spriteCoords.x, 0, (g_theSpriteSheet->m_spriteLayout.x - 1));
+	spriteCoords.y = ClampInt(spriteCoords.y, 0, (g_theSpriteSheet->m_spriteLayout.y - 1));
+
+	float minX = RangeMapFloat((float)spriteCoords.x, 0.f, (float)g_theSpriteSheet->m_spriteLayout.x, m_tileSelectBounds.mins.x, m_tileSelectBounds.maxs.x);
+	float maxX = RangeMapFloat((float)(spriteCoords.x + 1), 0.f, (float)g_theSpriteSheet->m_spriteLayout.x, m_tileSelectBounds.mins.x, m_tileSelectBounds.maxs.x);
+	float minY = RangeMapFloat((float)spriteCoords.y, 0.f, (float)g_theSpriteSheet->m_spriteLayout.y, m_tileSelectBounds.maxs.y, m_tileSelectBounds.mins.y);
+	float maxY = RangeMapFloat((float)(spriteCoords.y + 1.f), 0.f, (float)g_theSpriteSheet->m_spriteLayout.y, m_tileSelectBounds.maxs.y, m_tileSelectBounds.mins.y);
+
+	r->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), Rgba(0, 0, 0, 255));
 }

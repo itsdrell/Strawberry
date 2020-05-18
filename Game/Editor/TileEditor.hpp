@@ -54,6 +54,7 @@ private:
 private:
 	void RenderUI() const;
 	void RenderTilePlacementPreview() const;
+	void RenderTileSelectHoverOutline() const;
 
 public:
 	MapEditor*			m_mapEditor;

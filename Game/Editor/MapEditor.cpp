@@ -110,7 +110,7 @@ void MapEditor::RenderUI() const
 		// Kinda hacky way to get the font to not be really small based on the zoomed in level :l 
 		AABB2 textBox = GetAABB2FromAABB2(Vector2(.31f, .01f), Vector2(.6f, .05f), m_cameraBounds);
 		float textSize = RangeMapFloat(m_currentZoom, MIN_ZOOMED_IN_LEVEL, MAX_ZOOMED_OUT_LEVEL, 2, 8);
-		r->DrawText2D(textBox.mins, positions, textSize);
+		r->DrawText2D(textBox.mins, positions, textSize);	
 	}
 }
 
@@ -177,9 +177,9 @@ void MapEditor::Render() const
 	r->DrawAABB2Filled(m_cameraBounds, Rgba(255, 20, 147, 255));
 
 	m_map->Render(m_showGrid);
+	RenderUI();
 	m_mapEditorModes[m_currentMode]->Render();
 
-	RenderUI();
 	
 	r->SetCamera();
 }

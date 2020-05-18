@@ -40,6 +40,7 @@ public:
 
 public:
 	void		RenderGame() const;
+	void		RenderGameShell(float padding, float size) const;
 	void		RenderError() const;
 
 public:
@@ -62,6 +63,11 @@ public:
 
 	float			m_timeScale = 1.f;
 	float			m_sleepTimer = 0.f;
+	
+private:
+	// I had to make this a bool because the engine config was getting corrupted(?)
+	// and crashing the game if I checked for it constantly :l 
+	bool			m_showBorder = true;
 
 };
 

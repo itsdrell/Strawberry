@@ -88,6 +88,16 @@ void CollisionEditor::Render() const
 		m_channelButtons[i].Render();
 	}
 
+	// Draw the box outline on the current hovered tile
+	Vector2 mousePos = GetMousePosition(m_mapEditor->m_cameraBounds);
+	if (m_mapEditor->m_map->GetBounds().IsPointInBox(mousePos) && m_channelSelectBounds.IsPointInBox(mousePos) == false)
+	{
+		IntVector2 tilePos = Vector2(mousePos.x / 16, mousePos.y / 16).GetAsIntVector2();
+
+		AABB2 highlightBounds = AABB2(tilePos.x * TILE_SIZE, tilePos.y * TILE_SIZE, (tilePos.x + 1) * TILE_SIZE, (tilePos.y + 1) * TILE_SIZE);
+		r->DrawAABB2Outline(highlightBounds);
+	}
+
 	r->DrawAABB2Outline(m_channelSelectBounds, Rgba::WHITE);
 
 	r->DrawMesh(m_mesh, false);
