@@ -10,6 +10,10 @@
 #include "Engine/Core/Tools/StopWatch.hpp"
 #include "Engine/Core/Tools/Clock.hpp"
 #include <thread>
+#include "BlackBoard.hpp"
+
+//===============================================================================================
+GifRecorder* GifRecorder::s_instance = nullptr;
 
 //===============================================================================================
 static void CreateScreenshotPNG(void* screenshot)
@@ -57,7 +61,6 @@ void Screenshot::GetDataFlipped(void* outFlippedBuffer)
 	 
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
-	int size = width * height;
 
 	for(int y = 0; y < height; y++)
 	{
@@ -126,10 +129,12 @@ void Screenshot::CreateScreenshot()
 //===============================================================================================
 GifRecorder::GifRecorder()
 {
-	m_frames.reserve(MAX_NUMBER_OF_GIF_FRAMES);
+	SetLength(g_theEngineBlackboard->GetValue("gifLength", GIF_DEFAULT_LENGTH_IN_SECONDS));
 
 	m_captureDelayTimer = new StopWatch(g_theMasterClock);
-	m_captureDelayTimer->SetTimer(GIF_SNAP_DELAY);
+	m_captureDelayTimer->SetTimer(m_gifSnapDelay);
+
+	s_instance = this;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -139,6 +144,12 @@ GifRecorder::~GifRecorder()
 
 	delete m_captureDelayTimer;
 	m_captureDelayTimer = nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
+STATIC GifRecorder* GifRecorder::Instance()
+{
+	return s_instance;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -152,7 +163,7 @@ void GifRecorder::Start()
 		ClearFrames();
 	}
 	
-	m_frames.reserve(MAX_NUMBER_OF_GIF_FRAMES);
+	m_frames.reserve(m_maxNumberOfGifFrames);
 	m_isRecording = true;
 	m_startingDimensions = Window::GetInstance()->GetDimensions().GetAsIntVector2();
 	
@@ -180,7 +191,7 @@ void GifRecorder::Record()
 	}
 
 	// we have added enough, lets stop and save
-	if(m_frames.size() == MAX_NUMBER_OF_GIF_FRAMES)
+	if(m_frames.size() == m_maxNumberOfGifFrames)
 	{
 		Stop();
 		Save();
@@ -194,6 +205,23 @@ void GifRecorder::AddFrame()
 {
 	Screenshot* newFrame = new Screenshot();
 	m_frames.push_back(newFrame);
+}
+
+//-----------------------------------------------------------------------------------------------
+void GifRecorder::SetLength(float gifLengthInSeconds)
+{
+	m_gifLengthInSeconds	= gifLengthInSeconds;
+	
+	m_maxNumberOfGifFrames	= (int)(GIF_FRAMES_PER_SECOND * m_gifLengthInSeconds);
+	m_gifSnapDelay			= 1.f / ((float)GIF_FRAMES_PER_SECOND);
+
+	if(m_isRecording)
+	{
+		Stop();
+		ClearFrames();
+	}
+
+	m_frames.reserve(m_maxNumberOfGifFrames);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -213,15 +241,14 @@ static void SaveToGif(void* data)
 	CreateADirectory(dir.c_str());
 
 	GifWriter g;
-	int delay = GIF_SNAP_DELAY;
+	int delay = (int)recorder->m_gifSnapDelay;
 	GifBegin(&g, fullPath.c_str(), width, height, delay);
 
 	for (uint i = 0; i < recorder->m_frames.size(); i++)
 	{
 		Screenshot* current = recorder->m_frames.at(i);
-		current->FlipData();
-		const uint8_t* data = (const uint8_t*)current->GetData();
-		GifWriteFrame(&g, data, width, height, delay);
+		const uint8_t* dataCasted = (const uint8_t*)current->GetData();
+		GifWriteFrame(&g, dataCasted, width, height, delay);
 	}
 
 	GifEnd(&g);

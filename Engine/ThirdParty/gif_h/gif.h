@@ -29,6 +29,9 @@
 #ifndef gif_h
 #define gif_h
 
+#define GIF_FLIP_VERT
+#pragma warning(disable : 4334)
+
 #include <stdio.h>   // for FILE*
 #include <string.h>  // for memcpy and bzero
 #include <stdint.h>  // for integer typedefs

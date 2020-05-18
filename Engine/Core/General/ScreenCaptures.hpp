@@ -10,10 +10,8 @@ class StopWatch;
 // Type Defs + Defines
 //====================================================================================
 constexpr int GIF_FRAMES_PER_SECOND = 10;
-constexpr int GIF_LENGTH_IN_SECONDS = 8;
+constexpr float GIF_DEFAULT_LENGTH_IN_SECONDS = 8.f;
 
-constexpr int MAX_NUMBER_OF_GIF_FRAMES = (GIF_FRAMES_PER_SECOND * GIF_LENGTH_IN_SECONDS); // 30 frames x 8 seconds
-constexpr float GIF_SNAP_DELAY = 1.f / ((float) GIF_FRAMES_PER_SECOND);
 
 //====================================================================================
 // ENUMS
@@ -65,8 +63,12 @@ public:
 	~GifRecorder();
 
 public:
+	static GifRecorder* Instance();
+
+public:
 	void Record();
-	
+	void SetLength(float gifLengthInSeconds);
+
 public:
 	void Start();
 	void Stop();
@@ -82,6 +84,14 @@ public:
 	StopWatch*					m_captureDelayTimer = nullptr;
 	bool						m_isRecording = false;
 	bool						m_isSaving = false;
+
+public:
+	float m_gifLengthInSeconds = GIF_DEFAULT_LENGTH_IN_SECONDS;
+	float m_gifSnapDelay;
+	int m_maxNumberOfGifFrames;
+
+private:
+	static GifRecorder* s_instance;
 };
 
 //====================================================================================

@@ -24,6 +24,7 @@ void ExecuteLuaCommand(Command& command);
 void CreateLuaFile(Command& command);
 void OpenVisualStudioCode(Command& command);
 void StartupProject(Command& command);
+void SetGifLength(Command& command);
 
 //-----------------------------------------------------------------------------------------------
 // Private helper functions

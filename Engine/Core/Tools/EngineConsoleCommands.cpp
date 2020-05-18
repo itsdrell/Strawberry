@@ -5,6 +5,7 @@
 #include "Engine/Core/General/BuiltInAssets.hpp"
 #include "Engine/Renderer/Images/Image.hpp"
 #include "Engine/Core/Utils/StringUtils.hpp"
+#include "Engine/Core/General/ScreenCaptures.hpp"
 #include "Engine/Lua/LuaUtils.hpp"
 
 
@@ -27,6 +28,7 @@ void BindAllEngineCommands()
 	CommandRegister("vsc", "vsc <filename>", "", OpenVisualStudioCode, false);
 	CommandRegister("export", "export", "export either <web or PC>", ExportGame, false);
 	CommandRegister("startup", "startup", "set the default project to load", StartupProject);
+	CommandRegister("gifLength", "gifLength", "overload the gif record legnth", SetGifLength);
 	//CommandRegister("web", "", "", BuildForWeb);
 }
 
@@ -228,6 +230,18 @@ void StartupProject(Command& command)
 	}
 
 	SetStartupProject(requestedProjectName);
+}
+
+//-----------------------------------------------------------------------------------------------
+void SetGifLength(Command& command)
+{
+	String input = command.GetNextString();
+	float length = ParseString(input, GIF_DEFAULT_LENGTH_IN_SECONDS);
+
+	GifRecorder* recorder = GifRecorder::Instance();
+	recorder->SetLength(length);
+
+	AddConsoleDialogue("Set gif length to:" + input + " seconds!");
 }
 
 //-----------------------------------------------------------------------------------------------

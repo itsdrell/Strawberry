@@ -1,11 +1,11 @@
-webName="LD45" 
-startupGame='Collision'
+startupGame='heartboom'
 --release=true
 
 resolution1="600,400"
 resolution2="900,600"
 resolution3="1200,800"
 
+gifLength=8
 
 --[[
 
@@ -24,5 +24,8 @@ resolution2="900,600"
 resolution3="width,height"
     - Allows you to change to three different types of resolutions
     - Resolution1 is what the app window will start as (the default)
+
+gifLength=8 
+    - in seconds
 
 --]]
