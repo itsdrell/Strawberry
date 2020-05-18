@@ -6,6 +6,7 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/Platform/Window.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
+#include "../Core/General/BlackBoard.hpp"
 
 //===============================================================================================
 InputSystem*		g_theInputSystem = nullptr;
@@ -56,8 +57,7 @@ InputSystem::InputSystem()
 	if (g_theInputSystem != nullptr)
 		delete g_theInputSystem;
 
-	// todo maybe make this into a game config?
-	HideMouseCursor(true);
+	HideMouseCursor(g_theEngineBlackboard->GetValue("hideMouse", true));
 
 	g_theInputSystem = this;
 }

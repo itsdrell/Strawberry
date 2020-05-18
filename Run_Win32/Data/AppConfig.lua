@@ -25,7 +25,12 @@ resolution3="width,height"
     - Allows you to change to three different types of resolutions
     - Resolution1 is what the app window will start as (the default)
 
-gifLength=8 
+gifLength=float
     - in seconds
+
+hideMouse=bool
+    - Wether we actually show the mouse cursor or not
+    - defaults to true
+
 
 --]]
