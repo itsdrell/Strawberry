@@ -139,6 +139,7 @@ void App::RunFrame()
 	theAudio->EndFrame();
 
 	m_takeScreenshot = false;
+	m_takeGameCoverScreenshot = false;
 
 	// so the computer isn't using all the cores
 	SDL_Delay(1);
@@ -181,6 +182,11 @@ void App::HandleInput()
 		{
 			m_recorder->Start();
 		}
+	}
+
+	if(WasKeyJustPressed(KEYBOARD_F9))
+	{
+		m_takeGameCoverScreenshot = true;
 	}
 
 #endif
@@ -237,11 +243,7 @@ void App::Render() const
 		g_theEditor->Render();
 
 	// Doing it before debug and console render not sure if that help or hurts?
-	if (m_takeScreenshot)
-		TakeScreenshot();
-
-	if (m_recorder->m_isRecording)
-		m_recorder->Record();
+	HandleCaptures();
 	
 	Playground::RenderTest();
 	DebugUpdateAndRender();
@@ -274,6 +276,19 @@ void App::ReloadAndRunGame()
 }
 
 //-----------------------------------------------------------------------------------------------
+void App::HandleCaptures() const
+{
+	if (m_takeScreenshot)
+		TakeScreenshot();
+
+	if (m_takeGameCoverScreenshot)
+		TakeGameCover();
+
+	if (m_recorder->m_isRecording)
+		m_recorder->Record();
+}
+
+//-----------------------------------------------------------------------------------------------
 void App::TakeScreenshot() const
 {
 	// not sure if we want to allow screenshots if you don't have a project open
@@ -285,6 +300,21 @@ void App::TakeScreenshot() const
 
 	// could open the folder as well?? maybe an animation 
 	DebugRenderLog("Screenshot taken" , 3, Rgba::WHITE);
+}
+
+//-----------------------------------------------------------------------------------------------
+void App::TakeGameCover() const
+{
+	if (g_currentProjectName == "")
+		return;
+
+	String path = GetWorkingDirectoryPath() + "\\Projects\\" + g_currentProjectName + "\\Cover.png";
+
+	Screenshot* shot = new Screenshot(*Renderer::GetInstance()->m_defaultColorTarget);
+	shot->SaveToFullDirectoryPath(path); // deletes
+
+	// could open the folder as well?? maybe an animation 
+	DebugRenderLog("Game Cover Captured", 3, Rgba::WHITE);
 }
 
 void App::TestTexture()

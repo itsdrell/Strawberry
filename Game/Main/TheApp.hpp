@@ -50,7 +50,11 @@ public:
 	void ReloadAndRunGame();
 
 	float GetTimeSinceProgramStart() const {return m_timeSinceStart;} 
+
+private:
+	void HandleCaptures() const;
 	void TakeScreenshot() const;
+	void TakeGameCover() const;
 
 	void TestTexture();
 
@@ -59,6 +63,7 @@ public:
 	bool m_isQuitting;
 	bool m_isReleaseVersion = false;
 	bool m_takeScreenshot = false;
+	bool m_takeGameCoverScreenshot = false;
 	float m_timeSinceStart;
 
 private:
