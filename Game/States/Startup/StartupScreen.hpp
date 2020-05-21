@@ -1,6 +1,6 @@
 #pragma once
-#include "Game/Editor/EditorMode.hpp"
 #include "Game/States/AppState.hpp"
+#include "Engine/Core/Tools/StopWatch.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -10,7 +10,7 @@
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
-
+constexpr float c_STARTUP_SCREEN_LENGTH = 2.f;
 
 //====================================================================================
 // ENUMS
@@ -25,26 +25,25 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Editor : IAppState
+class StartupScreen : IAppState
 {
 public:
-	Editor();
-	~Editor();
+	StartupScreen();
+	~StartupScreen() {};
 
 public:
 	virtual void Update() override;
 	virtual void Render() const override;
 
-	virtual void OnEnter() {};
-	virtual void OnExit() {};
+public:
+	virtual void OnEnter();
+	virtual void OnExit();
 
 public:
-	void HandleInput();
-	void KeyboardInput();
+	void DecideWhereToGoAfterLoading();
 
-public:
-	TypesOfEditorModes		m_currentMode = SPRITE_SHEET_VIEW_MODE;
-	EditorMode*				m_editorModes[NUM_OF_EDITOR_MODES];
+private:
+	StopWatch m_loadTimer;
 
 };
 
@@ -56,8 +55,8 @@ public:
 //====================================================================================
 // Externs
 //====================================================================================
-extern Editor* g_theEditor;
+
 
 //====================================================================================
-// Written by Zachary Bracken : [9/7/2019]
+// Written by Zachary Bracken : [5/20/2020]
 //====================================================================================

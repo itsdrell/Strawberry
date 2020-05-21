@@ -4,6 +4,7 @@
 #include "Game/Editor/SpriteSheetViewer.hpp"
 #include "Game/Editor/MapEditor.hpp"
 #include "Engine/Core/Tools/Console.hpp"
+#include "Game/Main/TheApp.hpp"
 
 //===============================================================================================
 Editor* g_theEditor = nullptr;  
@@ -13,6 +14,8 @@ Editor::Editor()
 {
 	m_editorModes[SPRITE_SHEET_VIEW_MODE] = new SpriteSheetView();
 	m_editorModes[MAP_EDITOR_MODE] = new MapEditor();
+
+	g_theApp->m_states[APPSTATE_EDITOR] = this;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -23,6 +26,8 @@ Editor::~Editor()
 		delete m_editorModes[i];
 		m_editorModes[i] = nullptr;
 	}
+
+	g_theApp->m_states[APPSTATE_EDITOR] = nullptr;
 }
 
 //-----------------------------------------------------------------------------------------------

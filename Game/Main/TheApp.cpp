@@ -8,14 +8,6 @@
 #include "Engine/Input/InputSystem.hpp"
 #include "Engine/Core/General/BlackBoard.hpp"
 #include "Game/Editor/Editor.hpp"
-
-#ifdef EMSCRIPTEN_PORT
-	#include "Engine/Internal/EmscriptenCommon.hpp"
-#endif
-
-// it has to be this directory path or you will have a bad time
-#include "Engine/ThirdParty/SDL2/SDL.h"
-#include "Engine/ThirdParty/SDL2/SDL_opengl.h"
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 #include "Playground.hpp"
@@ -26,6 +18,17 @@
 #include "Engine/Renderer/Images/SpriteSheet.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
 #include "Engine/Core/General/ScreenCaptures.hpp"
+#include "Game/States/Startup/StartupScreen.hpp"
+#include "Game/States/Home/Home.hpp"
+
+#ifdef EMSCRIPTEN_PORT
+	#include "Engine/Internal/EmscriptenCommon.hpp"
+#endif
+
+// it has to be this directory path or you will have a bad time
+#include "Engine/ThirdParty/SDL2/SDL.h"
+#include "Engine/ThirdParty/SDL2/SDL_opengl.h"
+
 
 
 //===============================================================================================
@@ -79,6 +82,9 @@ App::~App()
 	delete m_recorder;
 	m_recorder = nullptr;
 
+	for (uint i = 0; i < NUM_OF_APP_STATES; ++i)
+		delete m_states[i];
+
 	EngineShutdown();
 }
 
@@ -87,36 +93,20 @@ void App::StartUp()
 {
 	CommandRegister("run", "run <projectName>", "runs project", RunProject, false);
 
-#ifndef EMSCRIPTEN_PORT
 	Playground::RunTestOnce();
-	Console::GetInstance()->Open();
 
-	String startupGame = g_theEngineBlackboard->GetValue("startupGame", "idk");
-
-	// in our export script we will set the flag to true
-	if(g_theEngineBlackboard->GetValue("release", false))
-	{
-		BlackBoard temp = BlackBoard("Data/NameOfGame.lua", DATA_BLACKBOARD);
-		startupGame = temp.GetValue("gameName", "idk");
-		m_isReleaseVersion = true;
-	}
-
-	if (startupGame != "idk")
-	{
-		g_currentProjectName = startupGame;
-		PrintLog("Project Name is: " + g_currentProjectName);
-		ReloadAndRunGame();
-	}
-
-#else
-	BlackBoard temp = BlackBoard("Data/Web/NameOfGame.lua", DATA_BLACKBOARD);
-	g_currentProjectName = temp.GetValue("gameName", "idk");
-	PrintLog("Project Name is: " + g_currentProjectName);
-	ReloadAndRunGame();
-	m_isReleaseVersion = true;
-#endif
+	CreateStates();
 	
 	printf("Done with startup \n");	
+}
+
+//-----------------------------------------------------------------------------------------------
+void App::CreateStates()
+{
+	m_states[APPSTATE_STARTUP] = (IAppState*) new StartupScreen();
+	m_states[APPSTATE_HOME] = (IAppState*) new Home();
+
+	TransitionToState(APPSTATE_STARTUP);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -149,11 +139,8 @@ void App::RunFrame()
 void App::Update()
 {
 	Console::GetInstance()->Update();
-	
-	if(m_currentState == APPSTATE_GAME)
-		g_theGame->Update();
-	if (m_currentState == APPSTATE_EDITOR)
-		g_theEditor->Update();
+
+	m_states[m_currentState]->Update();
 	
 	Playground::RunTestOnUpdate();
 	 
@@ -196,24 +183,27 @@ void App::HandleInput()
 		// only works if the game is already loaded! 
 		// could also make this so we check if the project exists 
 		if (g_theGame || g_theEditor)
+		{
 			ReloadAndRunGame();
+			TransitionToState(APPSTATE_GAME);
+		}
 	}
 
 	if (WasKeyJustPressed(KEYBOARD_ESC) && m_isReleaseVersion == false)
 	{
-		if (m_currentState == APPSTATE_GAME)
+		if (g_theEditor == nullptr)
 		{
-			// leave the game / cleanup
-			g_theGame->CleanUp();
-
+			g_theEditor = new Editor();
+		}
+		
+		bool wasInGameState = m_currentState == APPSTATE_GAME;
+		TransitionToState(APPSTATE_EDITOR);
+		
+		if (wasInGameState)
+		{
 			delete g_theGame;
 			g_theGame = nullptr;
 		}
-
-		m_currentState = APPSTATE_EDITOR;
-
-		if (g_theEditor == nullptr)
-			g_theEditor = new Editor();
 
 		Console::GetInstance()->Close();
 	}
@@ -237,10 +227,7 @@ void App::HandleInput()
 //-----------------------------------------------------------------------------------------------
 void App::Render() const
 {
-	if(m_currentState == APPSTATE_GAME)
-		g_theGame->Render();
-	if (m_currentState == APPSTATE_EDITOR)
-		g_theEditor->Render();
+	m_states[m_currentState]->Render();
 
 	// Doing it before debug and console render not sure if that help or hurts?
 	HandleCaptures();
@@ -254,8 +241,6 @@ void App::Render() const
 //-----------------------------------------------------------------------------------------------
 void App::ReloadAndRunGame()
 {
-	m_currentState = APPSTATE_GAME;
-	
 	// Later it might save the editor and things like that :o 
 	if (g_theGame != nullptr)
 	{
@@ -265,8 +250,10 @@ void App::ReloadAndRunGame()
 		g_theGame = nullptr;
 	}
 	
-	if(g_theGame == nullptr)
-		g_theGame = new Game(); 
+	if (g_theGame == nullptr)
+	{
+		g_theGame = new Game();
+	}
 	
 	g_theGame->StartUp();
 
@@ -383,6 +370,18 @@ void App::TestTexture()
 
 	stbi_image_free(data);
 
+}
+
+//-----------------------------------------------------------------------------------------------
+void App::TransitionToState(AppState stateToGoTo)
+{
+	if(m_currentState != NUM_OF_APP_STATES)
+		m_states[m_currentState]->OnExit();
+	
+	if(stateToGoTo != NUM_OF_APP_STATES)
+		m_states[stateToGoTo]->OnEnter();
+
+	m_currentState = stateToGoTo;
 }
 
 //===============================================================================================

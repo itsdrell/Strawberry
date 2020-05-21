@@ -18,6 +18,7 @@
 #include "Game/General/Map/Map.hpp"
 #include "Game/General/Lua/GameLuaFunctionBindings.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
+#include "TheApp.hpp"
 
 //===============================================================================================
 Game* g_theGame = nullptr;
@@ -48,6 +49,8 @@ Game::Game()
 	m_map = new Map();
 
 	m_showBorder = g_theEngineBlackboard->GetValue("showShell", m_showBorder);
+
+	g_theApp->m_states[APPSTATE_GAME] = this;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -64,6 +67,9 @@ Game::~Game()
 
 	delete m_map;
 	m_map = nullptr;
+
+	g_theApp->m_states[APPSTATE_GAME] = nullptr;
+
 
 	// don't delete the spritesheet, the game will delete it on startup and the app on shutdown
 }
@@ -115,6 +121,12 @@ void Game::Render() const
 	{
 		RenderGame();
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Game::OnExit()
+{
+	CleanUp();
 }
 
 //-----------------------------------------------------------------------------------------------

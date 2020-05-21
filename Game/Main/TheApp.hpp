@@ -1,4 +1,5 @@
 #pragma once
+#include "Game/States/AppState.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -14,13 +15,7 @@ class GifRecorder;
 //====================================================================================
 // ENUMS
 //====================================================================================
-enum AppState
-{
-	APPSTATE_EDITOR,
-	APPSTATE_GAME,
-	APPSTATE_CONSOLE,
-	NUM_OF_APP_STATES
-};
+
 
 //====================================================================================
 // Structs
@@ -39,6 +34,7 @@ public:
 	
 public:
 	void StartUp(); 
+	void CreateStates();
 	void RunFrame(); // this tells everyone else to do a frame
 	
 public:
@@ -48,7 +44,6 @@ public:
 	
 public:
 	void ReloadAndRunGame();
-
 	float GetTimeSinceProgramStart() const {return m_timeSinceStart;} 
 
 private:
@@ -59,7 +54,13 @@ private:
 	void TestTexture();
 
 public:
-	AppState m_currentState = APPSTATE_CONSOLE;
+	void TransitionToState(AppState stateToGoTo);
+
+public:
+	AppState m_currentState = NUM_OF_APP_STATES;
+	IAppState* m_states[NUM_OF_APP_STATES];
+
+public:
 	bool m_isQuitting;
 	bool m_isReleaseVersion = false;
 	bool m_takeScreenshot = false;

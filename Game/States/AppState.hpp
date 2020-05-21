@@ -1,6 +1,4 @@
 #pragma once
-#include "Game/Editor/EditorMode.hpp"
-#include "Game/States/AppState.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -15,7 +13,15 @@
 //====================================================================================
 // ENUMS
 //====================================================================================
-
+enum AppState
+{
+	APPSTATE_STARTUP,
+	APPSTATE_HOME,
+	APPSTATE_EDITOR,
+	APPSTATE_GAME,
+	APPSTATE_CONSOLE,
+	NUM_OF_APP_STATES
+};
 
 //====================================================================================
 // Structs
@@ -25,27 +31,17 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Editor : IAppState
+class IAppState
 {
-public:
-	Editor();
-	~Editor();
+	friend class App;
 
-public:
-	virtual void Update() override;
-	virtual void Render() const override;
+private:
+	virtual void Update() = 0;
+	virtual void Render() const = 0;
 
-	virtual void OnEnter() {};
-	virtual void OnExit() {};
-
-public:
-	void HandleInput();
-	void KeyboardInput();
-
-public:
-	TypesOfEditorModes		m_currentMode = SPRITE_SHEET_VIEW_MODE;
-	EditorMode*				m_editorModes[NUM_OF_EDITOR_MODES];
-
+private:
+	virtual void OnEnter() = 0;
+	virtual void OnExit() = 0;
 };
 
 //====================================================================================
@@ -56,8 +52,8 @@ public:
 //====================================================================================
 // Externs
 //====================================================================================
-extern Editor* g_theEditor;
+
 
 //====================================================================================
-// Written by Zachary Bracken : [9/7/2019]
+// Written by Zachary Bracken : [5/20/2020]
 //====================================================================================

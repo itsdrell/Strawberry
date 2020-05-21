@@ -46,7 +46,7 @@ public:
 	float GetElapsedTime() const;
 
 	// elapsed time divided by the interval
-	float GetNormalizedElapsedTime();
+	float GetNormalizedElapsedTime() const;
 
 	// returns true if the interval has elapsed;
 	bool HasElapsed() const;

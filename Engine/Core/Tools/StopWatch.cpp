@@ -39,7 +39,7 @@ float StopWatch::GetElapsedTime() const
 }
 
 //-----------------------------------------------------------------------------------------------
-float StopWatch::GetNormalizedElapsedTime()
+float StopWatch::GetNormalizedElapsedTime() const
 {
 	if (HasElapsed())
 		return 1.f;

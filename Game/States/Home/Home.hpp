@@ -1,5 +1,4 @@
 #pragma once
-#include "Game/Editor/EditorMode.hpp"
 #include "Game/States/AppState.hpp"
 
 //====================================================================================
@@ -25,26 +24,19 @@
 //====================================================================================
 // Classes
 //====================================================================================
-class Editor : IAppState
+class Home : IAppState
 {
 public:
-	Editor();
-	~Editor();
+	Home() {};
+	~Home() {};
 
 public:
 	virtual void Update() override;
 	virtual void Render() const override;
 
-	virtual void OnEnter() {};
-	virtual void OnExit() {};
-
 public:
-	void HandleInput();
-	void KeyboardInput();
-
-public:
-	TypesOfEditorModes		m_currentMode = SPRITE_SHEET_VIEW_MODE;
-	EditorMode*				m_editorModes[NUM_OF_EDITOR_MODES];
+	virtual void OnEnter();
+	virtual void OnExit();
 
 };
 
@@ -56,8 +48,8 @@ public:
 //====================================================================================
 // Externs
 //====================================================================================
-extern Editor* g_theEditor;
+
 
 //====================================================================================
-// Written by Zachary Bracken : [9/7/2019]
+// Written by Zachary Bracken : [5/20/2020]
 //====================================================================================

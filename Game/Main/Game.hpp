@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Core/General/EngineCommon.hpp"
 #include "Engine/Math/Vectors/Vector2.hpp"
+#include "Game/States/AppState.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -26,7 +27,7 @@ constexpr int CAMERA_SCREEN_SIZE = 256; // how big is the cameras view
 //====================================================================================
 // Classes
 //====================================================================================
-class Game
+class Game : IAppState
 {
 public:
 	Game();
@@ -35,8 +36,13 @@ public:
 public:
 	void		StartUp();
 	void		CleanUp();
-	void		Update();
-	void		Render() const;
+
+public:
+	virtual void Update() override;
+	virtual void Render() const override;
+
+	virtual void OnEnter() {};
+	virtual void OnExit();
 
 public:
 	void		RenderGame() const;
