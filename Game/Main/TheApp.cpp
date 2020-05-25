@@ -151,10 +151,8 @@ void App::Update()
 void App::HandleInput()
 {
 	if (WasKeyJustPressed(KEYBOARD_TILDE) && m_isReleaseVersion == false)
-	{
-		// can only toggle if there is a game!
-		if (g_theGame || g_theEditor)
-			Console::GetInstance()->Toggle();
+	{		
+		Console::GetInstance()->Toggle();
 	}
 
 #ifndef EMSCRIPTEN_PORT
@@ -236,6 +234,15 @@ void App::Render() const
 	DebugUpdateAndRender();
 
 	Console::GetInstance()->Render();
+}
+
+//-----------------------------------------------------------------------------------------------
+void App::LoadAndRunGame(const String& projectName)
+{
+	g_currentProjectName = projectName;
+	ReloadAndRunGame();
+
+	TransitionToState(APPSTATE_GAME);
 }
 
 //-----------------------------------------------------------------------------------------------

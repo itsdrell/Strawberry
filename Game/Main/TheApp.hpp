@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/States/AppState.hpp"
+#include "Engine/Core/General/EngineCommon.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -43,6 +44,7 @@ public:
 	void Render() const;
 	
 public:
+	void LoadAndRunGame(const String& projectName);
 	void ReloadAndRunGame();
 	float GetTimeSinceProgramStart() const {return m_timeSinceStart;} 
 
