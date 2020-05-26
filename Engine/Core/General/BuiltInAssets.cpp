@@ -24,10 +24,9 @@ end
 function Draw()
 	Cls()
 
-end
-
-
--- Good luck <3)";
+	Berry.DrawAABB2(AABB2(0, 0, 256, 256), "white")
+	Berry.DrawTextShrink("Good Luck <3", AABB2(0, 0, 256, 256), 8, Vector2(.5,.5), 1)
+end)";
 	
 	return String(mainLuaFile);
 }

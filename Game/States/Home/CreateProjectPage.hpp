@@ -1,13 +1,11 @@
 #pragma once
 #include "Engine/Core/General/EngineCommon.hpp"
-#include "Game/States/AppState.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
-#include "Engine/Core/General/Rgba.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class CreateProjectPage;
+class Home;
 
 //====================================================================================
 // Type Defs + Defines
@@ -22,64 +20,39 @@ class CreateProjectPage;
 //====================================================================================
 // Structs
 //====================================================================================
-struct ProjectData
-{
-public:
-	ProjectData(const String name, bool hasCover) 
-	: m_name(name)
-	, m_hasCover(hasCover) {}
 
-public:
-	String	m_name = "idk man";
-	bool	m_hasCover = false;
-};
 
 //====================================================================================
 // Classes
 //====================================================================================
-class Home : IAppState
+class CreateProjectPage
 {
 public:
-	Home();
-	~Home();
+	CreateProjectPage(Home* ownerPage);
+
 
 public:
-	virtual void Update() override;
-	virtual void Render() const override;
-	
-private:
-	void RenderUI() const;
-
-public:
-	virtual void OnEnter();
-	virtual void OnExit();
+	void Update();
+	void Render() const;
 
 private:
 	void GenerateBounds();
-	void GenerateAllProjectData();
-
-private:
 	void HandleInput();
-	void HandleMouseClicks();
-
-public:
-	void ClosePopup();
+	void HandleTextInput();
+	void HandleMouseInput();
 
 private:
-	uint m_currentIndex = 0;
-	std::vector<ProjectData> m_allProjectsData;
+	Home*	m_ownerPage = nullptr;
 
 private:
-	CreateProjectPage*		m_createPagePopup = nullptr;
+	String	m_enteredName = "";
 
-private:
-	AABB2	m_coverImageBounds;
-	AABB2	m_gameTitleBounds;
-	AABB2	m_loadGameBounds;
-	AABB2	m_leftArrowBounds;
-	AABB2	m_rightArrowBounds;
+	AABB2	m_bounds;
+	AABB2	m_createButtonBounds;
+	AABB2	m_exitButtonBounds;
+	AABB2	m_textBoxBounds;
+	AABB2	m_helperTextNameBounds;
 
-	Rgba	m_randomBackgroundColor;
 };
 
 //====================================================================================
@@ -93,5 +66,5 @@ private:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [5/20/2020]
+// Written by Zachary Bracken : [5/25/2020]
 //====================================================================================

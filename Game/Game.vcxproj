@@ -304,6 +304,7 @@
     <ClCompile Include="Main\Game.cpp" />
     <ClCompile Include="Main\Main_Win32.cpp" />
     <ClCompile Include="Main\Playground.cpp" />
+    <ClCompile Include="States\Home\CreateProjectPage.cpp" />
     <ClCompile Include="States\Home\Home.cpp" />
     <ClCompile Include="States\Startup\StartupScreen.cpp" />
     <ClCompile Include="Main\TheApp.cpp" />
@@ -321,6 +322,7 @@
     <ClInclude Include="States\AppState.hpp" />
     <ClInclude Include="Main\Game.hpp" />
     <ClInclude Include="Main\Playground.hpp" />
+    <ClInclude Include="States\Home\CreateProjectPage.hpp" />
     <ClInclude Include="States\Home\Home.hpp" />
     <ClInclude Include="States\Startup\StartupScreen.hpp" />
     <ClInclude Include="Main\TheApp.hpp" />

@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Math/Vectors/Vector2.hpp"
+#include "Engine/Core/General/EngineCommon.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -102,6 +103,11 @@ public:
 	Vector2					GetMousePositionInPixels() { return m_mousePosition; }
 	void					HideMouseCursor(bool isHidden);
 
+public:
+	String					GetTextInputedThisFrame();
+private:
+	void					AddTextInputThisFrame(KeyCode keyCode);
+
 protected:
 	void					PollEvents();
 	void					FilterKeysAndPassToDevConsole(int code);
@@ -131,6 +137,8 @@ protected:
 	Vector2					m_mousePosition;
 
 	ShutdownFunction		m_shutdownFunction = nullptr;
+
+	String					m_textInputed = "";
 };
 
 //====================================================================================

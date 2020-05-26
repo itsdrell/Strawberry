@@ -92,6 +92,7 @@ void InputSystem::Update()
 void InputSystem::EndFrame()
 {
 	// nothing yet
+	m_textInputed.clear();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -181,6 +182,25 @@ void InputSystem::HideMouseCursor(bool isHidden)
 }
 
 //-----------------------------------------------------------------------------------------------
+String InputSystem::GetTextInputedThisFrame()
+{
+	return m_textInputed;
+}
+
+//-----------------------------------------------------------------------------------------------
+void InputSystem::AddTextInputThisFrame(KeyCode keyCode)
+{
+	if (keyCode == KEYBOARD_SPACE)
+	{
+		m_textInputed += " ";
+	}
+	else
+	{
+		m_textInputed += keyCode;
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
 void InputSystem::PollEvents()
 {
 	SDL_Event theEvent;
@@ -209,6 +229,7 @@ void InputSystem::PollEvents()
 		if (theEvent.type == SDL_TEXTINPUT)
 		{
 			// just lettered keys
+			AddTextInputThisFrame((KeyCode)theEvent.key.state);
 			Console::GetInstance()->GetInput((KeyCode)theEvent.key.state);
 			theEvent.text.text;
 

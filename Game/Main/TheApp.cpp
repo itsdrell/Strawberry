@@ -216,7 +216,7 @@ void App::HandleInput()
 		Window::GetInstance()->GoDownResolution();
 	}
 
-	if (IsKeyPressed(KEYBOARD_ALT) && WasKeyJustPressed(KEYBOARD_ENTER))
+	if (WasKeyJustReleased(KEYBOARD_F11))
 	{
 		Window::GetInstance()->ToggleFullscreenMode();
 	}

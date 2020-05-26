@@ -10,6 +10,7 @@
 #include "Engine/Core/Utils/StrawberryFileUtils.hpp"
 #include "Engine/Input/InputSystem.hpp"
 #include "Engine/Core/Tools/Console.hpp"
+#include "CreateProjectPage.hpp"
 
 
 //===============================================================================================
@@ -22,11 +23,26 @@ Home::Home()
 }
 
 //-----------------------------------------------------------------------------------------------
+Home::~Home()
+{
+	if (m_createPagePopup != nullptr)
+		delete m_createPagePopup;
+
+	m_createPagePopup = nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
 void Home::Update()
 {
-	DebugRenderLog(std::to_string(m_currentIndex), 0);
-
-	HandleInput();
+	// if the pop up is up, update that only
+	if(m_createPagePopup != nullptr)
+	{
+		m_createPagePopup->Update();
+	}
+	else
+	{
+		HandleInput();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -36,7 +52,29 @@ void Home::Render() const
 	r->m_clearScreen = true;
 	r->SetCamera(r->m_defaultUICamera);
 
+	RenderUI();
+
+	// Draw the popup over it
+	if(m_createPagePopup != nullptr)
+	{
+		r->DrawAABB2Filled(r->m_defaultUICamera->GetOrthoBounds(), Rgba(0, 0, 0, 220));
+		m_createPagePopup->Render();
+	}
+
+	// mouse
+	Vector2 mousePos = GetMousePosition(r->m_defaultUICamera->GetOrthoBounds());
+	r->DrawCircleOutline2D(mousePos, .01f, Rgba(0, 255, 0, 255));
+
+	r->SetCamera();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Home::RenderUI() const
+{
+	Renderer* r = Renderer::GetInstance();
+	
 	AABB2 bounds = r->m_defaultUICamera->GetOrthoBounds();
+	Vector2 mousePos = GetMousePosition(Renderer::GetInstance()->m_defaultUICamera->GetOrthoBounds());
 
 	ProjectData currentProjectInfo = m_allProjectsData.at(m_currentIndex);
 
@@ -44,16 +82,17 @@ void Home::Render() const
 	r->DrawAABB2Filled(bounds, Rgba::STRAWBERRY_RED);
 
 	// cover
-	if(currentProjectInfo.m_hasCover)
+	if (currentProjectInfo.m_hasCover)
 	{
 		r->DrawAABB2Outline(m_coverImageBounds, Rgba::WHITE);
-		
+
 		String coverImagePath = "Projects/" + currentProjectInfo.m_name + "/Cover.png";
 		r->DrawTexturedAABB2(m_coverImageBounds, *r->CreateOrGetTexture(coverImagePath), Vector2(0, 0), Vector2(1, 1), Rgba::WHITE);
 	}
-	else if(m_currentIndex == 0) // new project
+	else if (m_currentIndex == 0) // new project
 	{
-		r->DrawAABB2Outline(m_coverImageBounds, Rgba::WHITE);
+		Rgba color = m_coverImageBounds.IsPointInBox(mousePos) ? Rgba::GREEN : Rgba::WHITE;
+		r->DrawAABB2Outline(m_coverImageBounds, color);
 		r->DrawTextInBox("+", m_coverImageBounds, 100.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
 	}
 	else
@@ -67,31 +106,33 @@ void Home::Render() const
 
 	// title
 	String title = currentProjectInfo.m_name;
-	r->DrawAABB2Outline(m_gameTitleBounds, Rgba::WHITE);
+	//r->DrawAABB2Outline(m_gameTitleBounds, Rgba::WHITE);
 	r->DrawTextInBox(title, m_gameTitleBounds, 8, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
 
 	// load
-	r->DrawAABB2Outline(m_loadGameBounds, Rgba::WHITE);
-	r->DrawTextInBox("Load", m_loadGameBounds, 8, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
+	if(m_currentIndex != 0)
+	{
+		Rgba color = m_loadGameBounds.IsPointInBox(mousePos) ? Rgba::GREEN : Rgba::WHITE;
+		r->DrawAABB2Outline(m_loadGameBounds, color);
+		r->DrawTextInBox("Load", m_loadGameBounds, 8, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
+	}
 
 	// arrows
-	if(m_currentIndex != (m_allProjectsData.size() - 1))
+	if (m_currentIndex != (m_allProjectsData.size() - 1))
 	{
-		r->DrawAABB2Outline(m_rightArrowBounds, Rgba::WHITE);
+		Rgba color = m_rightArrowBounds.IsPointInBox(mousePos) ? Rgba::GREEN : Rgba::WHITE;
+		
+		r->DrawAABB2Outline(m_rightArrowBounds, color);
 		r->DrawTextInBox(">", m_rightArrowBounds, 8, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
 	}
 
-	if(m_currentIndex != 0)
+	if (m_currentIndex != 0)
 	{
-		r->DrawAABB2Outline(m_leftArrowBounds, Rgba::WHITE);
+		Rgba color = m_leftArrowBounds.IsPointInBox(mousePos) ? Rgba::GREEN : Rgba::WHITE;
+		
+		r->DrawAABB2Outline(m_leftArrowBounds, color);
 		r->DrawTextInBox("<", m_leftArrowBounds, 8, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
 	}
-
-	// mouse
-	Vector2 mousePos = GetMousePosition(r->m_defaultUICamera->GetOrthoBounds());
-	r->DrawCircleOutline2D(mousePos, .01f, Rgba(0, 255, 0, 255));
-
-	r->SetCamera();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -176,7 +217,7 @@ void Home::HandleInput()
 		}
 		else
 		{
-			// Create new project
+			m_createPagePopup = new CreateProjectPage(this);
 		}
 	}
 
@@ -209,8 +250,14 @@ void Home::HandleMouseClicks()
 
 		if(m_currentIndex == 0 && m_coverImageBounds.IsPointInBox(mousePos))
 		{
-			DebugRenderLog("Chose to create new proj", 3);
-			// create new project?
+			m_createPagePopup = new CreateProjectPage(this);
 		}
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Home::ClosePopup()
+{
+	delete m_createPagePopup;
+	m_createPagePopup = nullptr;
 }

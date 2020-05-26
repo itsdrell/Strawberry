@@ -328,7 +328,7 @@ static int DrawTextInBoxHelper(lua_State* theState, DrawTextMode drawMode)
 	float height = LuaGetFloat(theState, 6, 1.f);
 	float alignmentX = LuaGetFloat(theState, 7, 0.f);
 	float alignmentY = LuaGetFloat(theState, 8, 0.f);
-	float percentIn = LuaGetFloat(theState, 9, 0.f);
+	float percentIn = LuaGetFloat(theState, 9, 1.f);
 	Rgba color = LuaGetRgba(theState, 10, Rgba::WHITE);
 
 	Renderer* r = Renderer::GetInstance();
