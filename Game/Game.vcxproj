@@ -299,6 +299,7 @@
     <ClCompile Include="Editor\MapEditor.cpp" />
     <ClCompile Include="Editor\SpriteSheetViewer.cpp" />
     <ClCompile Include="Editor\TileEditor.cpp" />
+    <ClCompile Include="General\GameConsoleCommands.cpp" />
     <ClCompile Include="General\Lua\GameLuaFunctionBindings.cpp" />
     <ClCompile Include="General\Map\Map.cpp" />
     <ClCompile Include="Main\Game.cpp" />
@@ -316,6 +317,7 @@
     <ClInclude Include="Editor\MapEditor.hpp" />
     <ClInclude Include="Editor\SpriteSheetViewer.hpp" />
     <ClInclude Include="Editor\TileEditor.hpp" />
+    <ClInclude Include="General\GameConsoleCommands.hpp" />
     <ClInclude Include="General\Lua\GameLuaFunctionBindings.hpp" />
     <ClInclude Include="General\Map\Map.hpp" />
     <ClInclude Include="General\Map\Tile.hpp" />

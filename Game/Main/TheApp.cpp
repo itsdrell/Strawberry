@@ -20,6 +20,7 @@
 #include "Engine/Core/General/ScreenCaptures.hpp"
 #include "Game/States/Startup/StartupScreen.hpp"
 #include "Game/States/Home/Home.hpp"
+#include "Game/General/GameConsoleCommands.hpp"
 
 #ifdef EMSCRIPTEN_PORT
 	#include "Engine/Internal/EmscriptenCommon.hpp"
@@ -57,6 +58,8 @@ App::App()
 	new Window("Strawberry Engine <3 ");
 	
 	EngineStartUp();
+	BindAllGameSideCommands();
+
 	InputSystem::GetInstance()->SetShutdownFunction((ShutdownFunction) Quit);
 
 	m_recorder = new GifRecorder();
@@ -187,7 +190,8 @@ void App::HandleInput()
 		}
 	}
 
-	if (WasKeyJustPressed(KEYBOARD_ESC) && m_isReleaseVersion == false)
+	// You can only go to editor if you have a game loaded and are in that mode.
+	if (WasKeyJustPressed(KEYBOARD_ESC) && m_isReleaseVersion == false && m_currentState == APPSTATE_GAME)
 	{
 		if (g_theEditor == nullptr)
 		{
