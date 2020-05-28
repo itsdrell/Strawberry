@@ -300,7 +300,7 @@ int LuaDrawSprite(lua_State* theState)
 }
 
 //-----------------------------------------------------------------------------------------------
-// DrawText string, x, y, height, color
+// DrawText string, x, y, height, color, drawOutline, outlineColor
 // may get rid of height cause pico fixes it
 int LuaDrawText(lua_State* theState)
 {
@@ -308,10 +308,14 @@ int LuaDrawText(lua_State* theState)
 	float x =		LuaGetFloat(theState, 2, 0);
 	float y =		LuaGetFloat(theState, 3, 0);
 	float height =	LuaGetFloat(theState, 4, 1.f);
-	Rgba color =	LuaGetRgba(theState, 5, Rgba::WHITE);
+
+	int index = 5;
+	Rgba color = LuaGetRgba(theState, index, Rgba::WHITE, &index);
+	bool drawOutline = LuaGetBool(theState, index, false);
+	Rgba outlineColor = LuaGetRgba(theState, index + 1, Rgba::BLACK);
 
 	Renderer* r = Renderer::GetInstance();
-	r->DrawText2D(Vector2(x, y), text, height, color);
+	r->DrawText2D(Vector2(x, y), text, height, color, drawOutline, outlineColor);
 
 	return 0;
 }
@@ -329,31 +333,35 @@ static int DrawTextInBoxHelper(lua_State* theState, DrawTextMode drawMode)
 	float alignmentX = LuaGetFloat(theState, 7, 0.f);
 	float alignmentY = LuaGetFloat(theState, 8, 0.f);
 	float percentIn = LuaGetFloat(theState, 9, 1.f);
-	Rgba color = LuaGetRgba(theState, 10, Rgba::WHITE);
+
+	int index = 10;
+	Rgba color = LuaGetRgba(theState, 10, Rgba::WHITE, &index);
+	bool drawOutline = LuaGetBool(theState, index, false);
+	Rgba outlineColor = LuaGetRgba(theState, index + 1, Rgba::BLACK);
 
 	Renderer* r = Renderer::GetInstance();
 	r->DrawTextInBox(text, AABB2(Vector2(minx, miny), Vector2(maxx, maxy)), height, percentIn,
-		drawMode, Vector2(alignmentX, alignmentY), color);
+		drawMode, Vector2(alignmentX, alignmentY), color, drawOutline, outlineColor);
 
 	return 0;
 }
 
 //-----------------------------------------------------------------------------------------------
-// DrawTextWrapped string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color
+// DrawTextWrapped string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color, outline, outlineColor
 int LuaDrawTextWrapped(lua_State* theState)
 {
 	return DrawTextInBoxHelper(theState, DRAW_TEXT_MODE_WRAPPED);
 }
 
 //-----------------------------------------------------------------------------------------------
-// DrawTextWrapped string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color
+// DrawTextWrapped string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color, outline, outlineColor
 int LuaDrawTextOverFlow(lua_State* theState)
 {
 	return DrawTextInBoxHelper(theState, DRAW_TEXT_MODE_OVERFLOW);
 }
 
 //-----------------------------------------------------------------------------------------------
-// DrawTextWrapped string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color
+// DrawTextWrapped string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color, outline, outlineColor
 int LuaDrawTextShrinkToFit(lua_State* theState)
 {	
 	return DrawTextInBoxHelper(theState, DRAW_TEXT_MODE_SHRINKED);

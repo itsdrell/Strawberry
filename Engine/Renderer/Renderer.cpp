@@ -697,7 +697,23 @@ void Renderer::DrawSprite(const Vector3& position, const Sprite& theSprite, bool
 }
 
 //-----------------------------------------------------------------------------------------------
-void Renderer::DrawText2D(const Vector2& startPos, const String& text, float cellHeight, const Rgba& tint /*= Rgba::WHITE*/, float aspectScale /*= 1.7f*/, BitmapFont* font /*= nullptr*/)
+void Renderer::DrawText2D(const Vector2& startPos, const String& text, float cellHeight, const Rgba& tint /*= Rgba::WHITE*/, bool drawOutline /*= false*/,
+	const Rgba& outlineColor /*= Rgba::BLACK*/, float aspectScale /*= 1.7f*/, BitmapFont* font /*= nullptr*/)
+{
+	if (drawOutline)
+	{
+		float sizeDifference = cellHeight * .1f;
+		DrawText2DImmediately(Vector2(startPos.x + sizeDifference, startPos.y), text, cellHeight, outlineColor, aspectScale, font);
+		DrawText2DImmediately(Vector2(startPos.x - sizeDifference, startPos.y), text, cellHeight, outlineColor, aspectScale, font);
+		DrawText2DImmediately(Vector2(startPos.x, startPos.y + sizeDifference), text, cellHeight, outlineColor, aspectScale, font);
+		DrawText2DImmediately(Vector2(startPos.x, startPos.y - sizeDifference), text, cellHeight, outlineColor, aspectScale, font);
+	}
+
+	DrawText2DImmediately(Vector2(startPos.x, startPos.y), text, cellHeight, tint, aspectScale, font);
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::DrawText2DImmediately(const Vector2& startPos, const String& text, float cellHeight, const Rgba& tint /*= Rgba::WHITE*/, float aspectScale /*= 1.7f*/, BitmapFont* font /*= nullptr*/)
 {
 	if (font == nullptr)
 	{
@@ -747,8 +763,8 @@ void Renderer::DrawText2D(const Vector2& startPos, const String& text, float cel
 }
 
 //-----------------------------------------------------------------------------------------------
-void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight , const Vector2& alignment, float aspectScale,
-	const Rgba& textColor, BitmapFont* font)
+void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight, const Vector2& alignment, float aspectScale,
+	const Rgba& textColor, bool drawOutline, const Rgba& outlineColor, BitmapFont* font)
 {
 	if (font == nullptr)
 	{
@@ -770,12 +786,12 @@ void Renderer::DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, 
 	Strings lines;
 	font->GetTextWrapped(vectorOfWords, boxSize, cellHeight, &lines, aspectScale);
 
-	DrawTextWithAlignment(lines, newBox, cellHeight, alignment, aspectScale, textColor, font);
+	DrawTextWithAlignment(lines, newBox, cellHeight, alignment, aspectScale, textColor, drawOutline, outlineColor, font);
 }
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawShrinkToFitTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, const Vector2& alignment /*= Vector2(0, 0)*/, 
-	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, BitmapFont* font /*= nullptr*/)
+	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, bool drawOutline, const Rgba& outlineColor, BitmapFont* font /*= nullptr*/)
 {
 	if (font == nullptr)
 	{
@@ -803,12 +819,12 @@ void Renderer::DrawShrinkToFitTextInBox2D(const String& text, const AABB2& boxSi
 	newBox.maxs -= Vector2(offset, offset);
 	// DrawAABB2Outline(newBox, Rgba::GetRandomColor());
 
-	DrawTextWithAlignment(lines, newBox, newCellHeight, alignment, aspectScale, textColor, font);
+	DrawTextWithAlignment(lines, newBox, newCellHeight, alignment, aspectScale, textColor, drawOutline, outlineColor, font);
 }
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawOverflowTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, const Vector2& alignment /*= Vector2(0, 0)*/, 
-	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, BitmapFont* font /*= nullptr*/)
+	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, bool drawOutline, const Rgba& outlineColor, BitmapFont* font /*= nullptr*/)
 {
 	if (font == nullptr)
 	{
@@ -818,12 +834,12 @@ void Renderer::DrawOverflowTextInBox2D(const String& text, const AABB2& boxSize,
 	SetCurrentTexture(0, font->m_spriteSheet->m_texture);
 	
 	Strings theLines = Strings({ text });
-	DrawTextWithAlignment(theLines, boxSize, cellHeight, alignment, aspectScale, textColor, font);
+	DrawTextWithAlignment(theLines, boxSize, cellHeight, alignment, aspectScale, textColor, drawOutline, outlineColor, font);
 }
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawTextWithAlignment(const Strings& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, const Vector2& alignment /*= Vector2(0, 0)*/, 
-	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, BitmapFont* font /*= nullptr*/)
+	float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, bool drawOutline, const Rgba& outlineColor, BitmapFont* font /*= nullptr*/)
 {
 	if (font == nullptr)
 	{
@@ -848,7 +864,7 @@ void Renderer::DrawTextWithAlignment(const Strings& text, const AABB2& boxSize, 
 		float offsetFromLeft = (boxSize.GetWidth() - width) * alignment.x;
 		float xPos = boxSize.mins.x + offsetFromLeft;
 
-		DrawText2D(Vector2(xPos, currentY), currentString, cellHeight, textColor, aspectScale, font);
+		DrawText2D(Vector2(xPos, currentY), currentString, cellHeight, textColor, drawOutline, outlineColor, aspectScale, font);
 
 		currentY -= (lineSpacing + cellHeight);
 	}
@@ -856,20 +872,20 @@ void Renderer::DrawTextWithAlignment(const Strings& text, const AABB2& boxSize, 
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawTextInBox(const String& text, const AABB2& bounds, float cellHeight, float normalizedPercentIntoText, DrawTextMode mode /*= DRAW_TEXT_MODE_OVERFLOW*/,
-	const Vector2& alignment, const Rgba& color /*= Rgba::WHITE*/, float aspect /*= 1.77f*/, BitmapFont* font /*= nullptr*/)
+	const Vector2& alignment, const Rgba& color /*= Rgba::WHITE*/, bool drawOutline, const Rgba& outlineColor, float aspect /*= 1.77f*/, BitmapFont* font /*= nullptr*/)
 {
 	String textToShow = GetPercentIntoString(text, normalizedPercentIntoText);
 	
 	switch (mode)
 	{
 	case DRAW_TEXT_MODE_WRAPPED:
-		DrawWrappedTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, font);
+		DrawWrappedTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, drawOutline, outlineColor, font);
 		break;
 	case DRAW_TEXT_MODE_SHRINKED:
-		DrawShrinkToFitTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, font);
+		DrawShrinkToFitTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, drawOutline, outlineColor, font);
 		break;
 	case DRAW_TEXT_MODE_OVERFLOW:
-		DrawOverflowTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, font);
+		DrawOverflowTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, drawOutline, outlineColor, font);
 		break;
 	default:
 		// error?

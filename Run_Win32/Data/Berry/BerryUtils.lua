@@ -153,23 +153,23 @@ function Berry.DrawSprite(index, pos, rotation, width, height, flipX, flipY, pix
 end
 
 -------------------------------------------------------------------------
-function Berry.DrawText(string, pos, height, r,g,b,a)
-    DrawText(string, pos.x, pos.y, height, r,g,b,a)
+function Berry.DrawText(string, pos, height, r,g,b,a, useOutline, r2,g2,b2,a2)
+    DrawText(string, pos.x, pos.y, height, r,g,b,a, useOutline, r2,g2,b2,a2)
 end
 
 -------------------------------------------------------------------------
-function Berry.DrawTextWrapped(string, box, height, alignmentVec2, percentInString, r,g,b,a)
-    DrawTextWrapped(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r,g,b,a)
+function Berry.DrawTextWrapped(string, box, height, alignmentVec2, percentInString, r1,g1,b1,a1, useOutline, r2,g2,b2,a2)
+    DrawTextWrapped(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r1,g1,b1,a1, useOutline, r2,g2,b2,a2)
 end
 
 -------------------------------------------------------------------------
-function Berry.DrawTextOverflow(string, box, height, alignmentVec2, percentInString, r,g,b,a)
-    DrawTextOverflow(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r,g,b,a)
+function Berry.DrawTextOverflow(string, box, height, alignmentVec2, percentInString, r1,g1,b1,a1, useOutline, r2,g2,b2,a2)
+    DrawTextOverflow(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r1,g1,b1,a1, useOutline, r2,g2,b2,a2)
 end
 
 -------------------------------------------------------------------------
-function Berry.DrawTextShrink(string, box, height, alignmentVec2, percentInString, r,g,b,a)
-    DrawTextShrink(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r,g,b,a)
+function Berry.DrawTextShrink(string, box, height, alignmentVec2, percentInString, r1,g1,b1,a1, useOutline, r2,g2,b2,a2)
+    DrawTextShrink(string, box.mins.x, box.mins.y, box.maxs.x, box.maxs.y, height, alignmentVec2.x, alignmentVec2.y, percentInString, r1,g1,b1,a1, useOutline, r2,g2,b2,a2)
 end
 
 -------------------------------------------------------------------------

@@ -33,7 +33,7 @@ int					LuaGetInt(lua_State* theState, int stackIndex, int defaultValue);
 unsigned char		LuaGetUnsignedChar(lua_State* theState, int stackIndex, unsigned char defaultValue);
 bool				LuaGetBool(lua_State* theState, int stackIndex, bool defaultValue);
 String				LuaGetString(lua_State* theState, int stackIndex, const String& defaultValue);
-Rgba				LuaGetRgba(lua_State* theState, int startingStackIndex, const Rgba& defaultValue);
+Rgba				LuaGetRgba(lua_State* theState, int startingStackIndex, const Rgba& defaultValue, int* outIndex = nullptr);
 
 KeyCode				LuaGetKeyCode(lua_State* theState, int stackIndex, KeyCode defaultValue);
 

@@ -104,24 +104,29 @@ public:
 		const Vector3& right = Vector3::RIGHT, const Vector3& up = Vector3::UP);
 
 public:
-	void DrawText2D(const Vector2& drawMins, const String& text, float cellHeight, 
-		const Rgba& tint = Rgba::WHITE, float aspectScale = 1.7f, BitmapFont* font = nullptr);
+	void DrawText2D(const Vector2& startPos, const String& text, float cellHeight, const Rgba& tint = Rgba::WHITE,
+		bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK, float aspectScale = 1.7f, BitmapFont* font = nullptr);
 	
 	void DrawTextInBox(const String& text, const AABB2& bounds, float cellHeight, float normalizedPercentIntoText = 1.f, DrawTextMode mode = DRAW_TEXT_MODE_OVERFLOW, 
-		const Vector2& alignment = Vector2(0, 0), const Rgba& color = Rgba::WHITE, float aspect = 1.77f, BitmapFont* font = nullptr);
+		const Vector2& alignment = Vector2(0, 0), const Rgba& color = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK, 
+		float aspect = 1.77f, BitmapFont* font = nullptr);
+
+private:
+	void DrawText2DImmediately(const Vector2& drawMins, const String& text, float cellHeight,
+		const Rgba& tint = Rgba::WHITE, float aspectScale = 1.7f, BitmapFont* font = nullptr);
 		
 private: // Do not call these, use DrawTextInBox instead!!!
 	void DrawWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0,0),
-		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK, BitmapFont* font = nullptr);
 
 	void DrawShrinkToFitTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
-		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK, BitmapFont* font = nullptr);
 
 	void DrawOverflowTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
-		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK, BitmapFont* font = nullptr);
 
 	void DrawTextWithAlignment(const Strings& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
-		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, BitmapFont* font = nullptr);
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK, BitmapFont* font = nullptr);
 
 public:
 	void DrawMeshImmediate( PrimitiveType primitiveType, Vertex3D_PCU* vertices, int numOfVertices );

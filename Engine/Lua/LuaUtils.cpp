@@ -57,7 +57,7 @@ bool LuaGetBool(lua_State * theState, int stackIndex, bool defaultValue)
 }
 
 //----------------------------------------------------------------------------------------------- 
-Rgba LuaGetRgba(lua_State* theState, int startingStackIndex, const Rgba& defaultValue)
+Rgba LuaGetRgba(lua_State* theState, int startingStackIndex, const Rgba& defaultValue, int* outIndex)
 {
 	Rgba color;
 	
@@ -72,6 +72,9 @@ Rgba LuaGetRgba(lua_State* theState, int startingStackIndex, const Rgba& default
 			color = Rgba::GetRandomColor();
 		else
 			color = Rgba::GetColorByName(nameOfColor);
+
+		if (outIndex != nullptr) 
+			*outIndex = startingStackIndex + 1;
 	}
 	else
 	{
@@ -81,6 +84,9 @@ Rgba LuaGetRgba(lua_State* theState, int startingStackIndex, const Rgba& default
 		unsigned char a = LuaGetUnsignedChar(theState, startingStackIndex + 3, defaultValue.a);
 
 		color = Rgba(r, g, b, a);
+
+		if (outIndex != nullptr)
+			*outIndex = startingStackIndex + 4;
 	}
 	
 	return color;
