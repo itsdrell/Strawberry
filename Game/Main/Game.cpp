@@ -19,6 +19,7 @@
 #include "Game/General/Lua/GameLuaFunctionBindings.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
 #include "TheApp.hpp"
+#include "Engine/Core/Utils/StrawberryFileUtils.hpp"
 
 //===============================================================================================
 Game* g_theGame = nullptr;
@@ -47,6 +48,9 @@ Game::Game()
 	new BlackBoard(path + "/Scripts/GameConfig.lua", GAME_BLACKBOARD);
 	
 	m_map = new Map();
+
+	m_takeDefaultCoverScreenshotTimer = StopWatch(g_theMasterClock);
+	m_takeDefaultCoverScreenshotTimer.SetTimer(m_lengthBeforeTakingScreenshot);
 
 	m_showBorder = g_theEngineBlackboard->GetValue("showShell", m_showBorder);
 
@@ -107,6 +111,13 @@ void Game::Update()
 		LuaUpdateTimers(*m_mainLuaScript, ds);
 		LuaUpdate(*m_mainLuaScript, ds);
 		ShakeCamera();
+
+
+		if (m_takeDefaultCoverScreenshotTimer.HasElapsed())
+		{
+			if (!DoesProjectHaveCoverImage(g_currentProjectName))
+				g_theApp->m_takeGameCoverScreenshot = true;
+		}
 	}
 }
 

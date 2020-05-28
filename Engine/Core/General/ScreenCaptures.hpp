@@ -76,6 +76,7 @@ public:
 	void AddFrame();
 	void Save();
 
+	void StopAndSave();
 	void ClearFrames();
 
 public:

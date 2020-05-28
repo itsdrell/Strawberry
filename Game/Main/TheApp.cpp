@@ -170,6 +170,10 @@ void App::HandleInput()
 		{
 			m_recorder->Start();
 		}
+		else
+		{
+			m_recorder->StopAndSave();
+		}
 	}
 
 	if(WasKeyJustPressed(KEYBOARD_F9))

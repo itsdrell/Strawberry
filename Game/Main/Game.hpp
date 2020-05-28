@@ -2,6 +2,7 @@
 #include "Engine/Core/General/EngineCommon.hpp"
 #include "Engine/Math/Vectors/Vector2.hpp"
 #include "Game/States/AppState.hpp"
+#include "Engine/Core/Tools/StopWatch.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -69,6 +70,9 @@ public:
 
 	float			m_timeScale = 1.f;
 	float			m_sleepTimer = 0.f;
+
+	float			m_lengthBeforeTakingScreenshot = 10.f; // 10 seconds
+	StopWatch		m_takeDefaultCoverScreenshotTimer;
 	
 private:
 	// I had to make this a bool because the engine config was getting corrupted(?)

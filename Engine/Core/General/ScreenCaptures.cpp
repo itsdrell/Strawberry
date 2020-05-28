@@ -193,8 +193,7 @@ void GifRecorder::Record()
 	// we have added enough, lets stop and save
 	if(m_frames.size() == m_maxNumberOfGifFrames)
 	{
-		Stop();
-		Save();
+		StopAndSave();
 	}
 
 	DebugRenderLog("RECORDING", 0, Rgba::WHITE);
@@ -262,6 +261,13 @@ void GifRecorder::Save()
 	m_isSaving = true;
 	std::thread newThread = std::thread(SaveToGif, (void*)this);
 	newThread.detach();
+}
+
+//-----------------------------------------------------------------------------------------------
+void GifRecorder::StopAndSave()
+{
+	Stop();
+	Save();
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -17,7 +17,6 @@
 Home::Home()
 {
 	GenerateBounds();
-	GenerateAllProjectData();
 
 	m_randomBackgroundColor = Rgba::RAINBOW_VIOLET;
 }
@@ -138,7 +137,9 @@ void Home::RenderUI() const
 //-----------------------------------------------------------------------------------------------
 void Home::OnEnter()
 {
-
+	m_allProjectsData.clear();
+	
+	GenerateAllProjectData();
 }
 
 //-----------------------------------------------------------------------------------------------
