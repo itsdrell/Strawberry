@@ -702,7 +702,7 @@ void Renderer::DrawText2D(const Vector2& startPos, const String& text, float cel
 {
 	if (drawOutline)
 	{
-		float sizeDifference = cellHeight * .1f;
+		float sizeDifference = cellHeight * .06f; // maybe make this a param
 		DrawText2DImmediately(Vector2(startPos.x + sizeDifference, startPos.y), text, cellHeight, outlineColor, aspectScale, font);
 		DrawText2DImmediately(Vector2(startPos.x - sizeDifference, startPos.y), text, cellHeight, outlineColor, aspectScale, font);
 		DrawText2DImmediately(Vector2(startPos.x, startPos.y + sizeDifference), text, cellHeight, outlineColor, aspectScale, font);
@@ -897,7 +897,7 @@ void Renderer::DrawTextInBox(const String& text, const AABB2& bounds, float cell
 void Renderer::DrawCircleFilled2D(const Vector2 & center, float radius, const Rgba & color, int numberOfEdges)
 {
 	// HACK: idk what that number means but we need it
-	float distanceInDegrees = 360.f / ((float) numberOfEdges * .3333333335);
+	float distanceInDegrees = 360.f / ((float) numberOfEdges * .3333333335f);
 	float degrees = 0.f;
 
 	SetCurrentTexture(0, m_defaultTexture);

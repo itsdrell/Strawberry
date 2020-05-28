@@ -146,8 +146,8 @@ String GetPercentIntoString(const String& theString, float normalizedPercentIn)
 	// the sentence will stay "done"
 	float t = ClampFloat(normalizedPercentIn, 0.f, 1.f);
 
-	uint amountOfCharacters = theString.size();
-	uint howManyCharactersToGo = ceil(RangeMapFloat(t, 0, 1, 0, amountOfCharacters));
+	uint amountOfCharacters = (uint) theString.size();
+	uint howManyCharactersToGo = (uint) ceil(RangeMapFloat(t, 0.f, 1.f, 0.f, (float) amountOfCharacters));
 	
 	return String(theString.begin(), theString.begin() + howManyCharactersToGo);
 }

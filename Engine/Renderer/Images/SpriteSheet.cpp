@@ -35,7 +35,7 @@ AABB2 SpriteSheet::GetTexCoordsForSpriteCoords(const IntVector2 & spriteCoords) 
 	float maxy = fractionY;
 
 	// doing a precision fix
-	float reallySmallNumber = .001f;
+	float reallySmallNumber = .005f;
 	//minx += reallySmallNumber;
 	miny += reallySmallNumber;
 	//maxx -= reallySmallNumber;

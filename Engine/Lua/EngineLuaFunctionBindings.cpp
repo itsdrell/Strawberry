@@ -368,19 +368,6 @@ int LuaDrawTextShrinkToFit(lua_State* theState)
 }
 
 //-----------------------------------------------------------------------------------------------
-// Camera ( x, y )
-int LuaSetCameraPosition(lua_State* theState)
-{
-	float x = LuaGetFloat(theState, 1, 0.f);
-	float y = LuaGetFloat(theState, 2, 0.f);
-
-	// do - because the view matrix is the inverse
-	g_theGameCamera->m_viewMatrix.SetPosition2D(Vector2(-x, -y));
-
-	return 0;
-}
-
-//-----------------------------------------------------------------------------------------------
 // IsKeyPressed( stringCode )
 int LuaIsKeyPressed(lua_State * theState)
 {

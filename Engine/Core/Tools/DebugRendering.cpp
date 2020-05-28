@@ -107,7 +107,7 @@ void DebugRenderingSystem::RenderMessages()
 //===============================================================================================
 void DebugUpdateAndRender()
 {
-	if(DebugRenderingSystem::IsInitialized)
+	if(DebugRenderingSystem::IsInitialized())
 		DebugRenderingSystem::GetInstance()->UpdateAndRender();
 }
 

@@ -27,7 +27,7 @@ float BitmapFont::GetStringWidth(const std::string & asciiText, float cellHeight
 //-----------------------------------------------------------------------------------------------
 float BitmapFont::GetHeightOfStrings(const Strings& text, float cellHeight, float padding /*= .5f*/)
 {
-	uint amountOfLines = text.size();
+	uint amountOfLines = (uint) text.size();
 	float lineHeight = amountOfLines * cellHeight;
 	float amountOfPadding = (cellHeight * padding) * (amountOfLines - 1);
 	
@@ -38,9 +38,9 @@ float BitmapFont::GetHeightOfStrings(const Strings& text, float cellHeight, floa
 float BitmapFont::GetFontSizeToFitInBox(const Strings& text, const AABB2& bounds, float cellHeight, float aspectScale)
 {
 	std::string longestString = GetLargestStringInStrings(text);
-	uint longestSize = longestString.size();
+	uint longestSize = (uint) longestString.size();
 
-	uint amountOfVerticalLines = text.size() + 1;
+	uint amountOfVerticalLines = ((uint) text.size()) + 1;
 	
 	float widthOfBox = bounds.GetWidth();
 	float heightOfBox = bounds.GetHeight();

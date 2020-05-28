@@ -121,7 +121,7 @@ bool Map::LoadMap()
 //-----------------------------------------------------------------------------------------------
 Tile& Map::GetTileByIndex(int index)
 {
-	uint indexClamped = ClampInt(index, 0, m_tiles.size() - 1);
+	uint indexClamped = ClampInt(index, 0, ((int) m_tiles.size()) - 1);
 	return m_tiles.at(indexClamped);
 }
 
@@ -325,7 +325,7 @@ void Map::ChangeTileAtMousePos(const Vector2& mousePos, TileSpriteInfo& spriteIn
 	// Hack : spriteInfo was missing collision so we make sure we have it in the info
 	// so it doesn't get overriden when we change sprites
 	int channelFlags = theTile.m_spriteInfo.GetCollisionChannelValue();
-	spriteInfo.SetChannelBits(channelFlags);
+	spriteInfo.SetChannelBits((Byte)channelFlags);
 
 	theTile.m_spriteInfo = spriteInfo;
 	UpdateTileMesh(index * 4, theTile);

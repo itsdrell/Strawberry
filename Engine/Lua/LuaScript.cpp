@@ -157,7 +157,6 @@ void LuaScript::ChangeOperator(String* stringToModify, const String& operatorToL
 		if (operatorToLookFor[0] == operatorToLookFor[1]) // ++ --
 		{
 			// since lua comments use -- we have to do some checks :l  
-			bool result = theString[foundPosition - 1] == ' ';
 			if ((foundPosition < 3) || (theString[foundPosition - 1] == ' ') || (theString[foundPosition - 1] == '\n') 
 				|| (theString[foundPosition -1]) == ']' || (theString[foundPosition - 1]) == '\t')
 			{
@@ -238,7 +237,6 @@ int LuaScript::GetBerryContent(String* outContent)
 //-----------------------------------------------------------------------------------------------
 void LuaScript::RemoveIncludesFromScriptData(LuaScriptData* scriptData)
 {
-	LuaScriptData& data = *scriptData;
 	String& theString = scriptData->m_data;
 	String includeString = "#include ";
 

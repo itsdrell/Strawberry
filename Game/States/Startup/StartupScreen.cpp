@@ -29,11 +29,11 @@ void StartupScreen::Render() const
 	Renderer* r = Renderer::GetInstance();
 
 	float t = m_loadTimer.GetNormalizedElapsedTime();
-	float size = Interpolate(-1, 1, t);
+	float size = Interpolate(-1.f, 1.f, t);
 
-	r->DrawAABB2Filled(AABB2(-1, -1, 1, 1), Rgba::STRAWBERRY_RED);
+	r->DrawAABB2Filled(AABB2(-1.f, -1.f, 1.f, 1.f), Rgba::STRAWBERRY_RED);
 	
-	AABB2 bounds = AABB2(-1, -.2, size, .2);
+	AABB2 bounds = AABB2(-1.f, -.2f, size, .2f);
 	r->DrawAABB2Filled(bounds, Rgba(0,255,0,255));
 	r->DrawAABB2Outline(bounds, Rgba::WHITE);
 

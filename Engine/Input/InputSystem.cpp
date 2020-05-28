@@ -196,7 +196,7 @@ void InputSystem::AddTextInputThisFrame(KeyCode keyCode)
 	}
 	else
 	{
-		m_textInputed += keyCode;
+		m_textInputed += ((unsigned char) keyCode);
 	}
 }
 
