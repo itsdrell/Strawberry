@@ -1,15 +1,19 @@
 #pragma once
-#include <string>
+#include "EditorMode.hpp"
+#include "Engine/Math/Vectors/Vector2.hpp"
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class IntVector2;
+class Camera;
 
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
+constexpr int MAX_AMOUNT_OF_CURVES = 10;
 
+constexpr float MAX_ZOOMED_OUT_LEVEL_CURVE_EDITOR = 4.f;
+constexpr float MIN_ZOOMED_IN_LEVEL_CURVE_EDITOR = 2.f;
 
 //====================================================================================
 // ENUMS
@@ -19,56 +23,69 @@ class IntVector2;
 //====================================================================================
 // Structs
 //====================================================================================
+struct CurveData
+{
+	CurveData(const Vector2& controlPointA, const Vector2& controlPointB)
+		: m_controlPointA(controlPointA)
+		, m_controlPointB(controlPointB) {}
 
+	CurveData() {}
+
+	Vector2 m_controlPointA = Vector2(.25f, .75f);
+	Vector2 m_controlPointB = Vector2(.75f, .25f);
+};
+
+//-----------------------------------------------------------------------------------------------
+struct ControlPointUINode
+{
+	ControlPointUINode(const Vector2& position)
+		: m_position(position) {}
+
+	ControlPointUINode() {}
+
+	Vector2		m_position = Vector2(.5f, .5f);
+	float		m_radius = .025f;
+	bool		m_isSelected = false;
+};
 
 //====================================================================================
 // Classes
 //====================================================================================
-class Vector2
+class CurveEditor : public EditorMode
 {
 public:
-	Vector2();
-	Vector2( float theX, float theY );
-	Vector2(const std::string& theString);
+	CurveEditor();
 
 public:
-	Vector2 operator-() const { return Vector2(-x, -y); }
-	const Vector2 operator+(const Vector2& vecToAdd) const;
-	const Vector2 operator-(const Vector2& vecToSubtract) const;	// vec2 - vec2
-	const Vector2 operator*(float uniformScale) const;			// vec2 * float
-	const Vector2 operator/(float inverseScale) const;			// vec2 / float
-	void operator+=(const Vector2& vecToAdd);						// vec2 += vec2
-	void operator-=(const Vector2& vecToSubtract);				// vec2 -= vec2
-	void operator*=(const float uniformScale);					// vec2 *= float
-	void operator/=(const float uniformDivisor);					// vec2 /= float
-	void operator=(const Vector2& copyFrom);						// vec2 = vec2
-	bool operator==(const Vector2& compare) const;				// vec2 == vec2
-	bool operator!=(const Vector2& compare) const;				// vec2 != vec2
-
-	friend const Vector2 operator*(float uniformScale, const Vector2& vecToScale);	// float * vec2
+	virtual void Update() override;
+	virtual void Render() const override;
+	virtual void HandleInput() override;
 
 public:
-	std::string ToString() const;
-	IntVector2 GetAsIntVector2() const;
-	Vector2 GetNormalized() const;
-	float GetLength() const;
-	float GetLengthSquared() const;
+	virtual void Enter() override {}
+	virtual void Exit() override {}
 
 public:
-	static Vector2 Interpolate(const Vector2& a, const Vector2& b, float percentIn) { return Interpolate(a, b, percentIn); }
+	void GenerateCurveData();
+	void GenerateBounds();
 
-public:
-	float x,y;
+private:
+	int					m_selectedCurve = 0;
+	CurveData			m_curves[MAX_AMOUNT_OF_CURVES];
 
-public:
-	const static Vector2 ZERO;
-	const static Vector2 ONE;
+private:
+	ControlPointUINode	m_controlPointANode;
+	ControlPointUINode	m_controlPointBNode;
+
+	Camera*				m_camera = nullptr;
+
+	float				m_zoomedInAmount = MIN_ZOOMED_IN_LEVEL_CURVE_EDITOR;
 };
 
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-Vector2 Interpolate(const Vector2& a, const Vector2& b, float percentIn);
+
 
 //====================================================================================
 // Externs
@@ -76,5 +93,5 @@ Vector2 Interpolate(const Vector2& a, const Vector2& b, float percentIn);
 
 
 //====================================================================================
-// Written by Zachary Bracken : [1/29/2019]
+// Written by Zachary Bracken : [6/1/2020]
 //====================================================================================

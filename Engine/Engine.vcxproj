@@ -263,6 +263,7 @@
     <ClInclude Include="Math\Geometry\Disc.hpp" />
     <ClInclude Include="Math\MathUtils.hpp" />
     <ClInclude Include="Math\Matrices\Matrix44.hpp" />
+    <ClInclude Include="Math\Splines\CubicSpline.hpp" />
     <ClInclude Include="Math\Vectors\IntVector2.hpp" />
     <ClInclude Include="Math\Vectors\Vector2.hpp" />
     <ClInclude Include="Math\Vectors\Vector3.hpp" />
@@ -437,6 +438,7 @@
     <ClCompile Include="Math\Geometry\Disc.cpp" />
     <ClCompile Include="Math\MathUtils.cpp" />
     <ClCompile Include="Math\Matrices\Matrix44.cpp" />
+    <ClCompile Include="Math\Splines\CubicSpline.cpp" />
     <ClCompile Include="Math\Vectors\IntVector2.cpp" />
     <ClCompile Include="Math\Vectors\Vector2.cpp" />
     <ClCompile Include="Math\Vectors\Vector3.cpp" />

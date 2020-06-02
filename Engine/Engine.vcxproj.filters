@@ -183,6 +183,7 @@
     <ClInclude Include="ThirdParty\gif_h\gif.h" />
     <ClInclude Include="Core\Tools\StopWatch.hpp" />
     <ClInclude Include="Core\Utils\StrawberryFileUtils.hpp" />
+    <ClInclude Include="Math\Splines\CubicSpline.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -438,6 +439,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Utils\StrawberryFileUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Splines\CubicSpline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

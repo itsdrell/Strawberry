@@ -75,6 +75,11 @@ void Camera::GoToPosition2D(const Vector2& translation)
 	m_cameraMatrix = Matrix44::MakeTranslation2D(translation);
 
 	m_viewMatrix = Matrix44::Invert(m_cameraMatrix);
+
+	float halfWidth = m_orthoDimensions.x * .5f;
+	float halfHeight = m_orthoDimensions.y * .5f;
+	m_orthoBounds = AABB2(-halfWidth + translation.x, -halfHeight + translation.y, 
+		translation.x + halfWidth, translation.y + halfHeight);
 }
 
 //-----------------------------------------------------------------------------------------------

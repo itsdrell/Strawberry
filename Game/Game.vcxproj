@@ -295,6 +295,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Editor\CollisionEditor.cpp" />
+    <ClCompile Include="Editor\CurveEditor.cpp" />
     <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="Editor\MapEditor.cpp" />
     <ClCompile Include="Editor\SpriteSheetViewer.cpp" />
@@ -312,6 +313,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\CollisionEditor.hpp" />
+    <ClInclude Include="Editor\CurveEditor.hpp" />
     <ClInclude Include="Editor\Editor.hpp" />
     <ClInclude Include="Editor\EditorMode.hpp" />
     <ClInclude Include="Editor\MapEditor.hpp" />

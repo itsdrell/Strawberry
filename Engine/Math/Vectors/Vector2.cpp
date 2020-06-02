@@ -1,7 +1,12 @@
 #include "Engine/Math/Vectors/Vector2.hpp"
 #include "Engine/Core/Utils/StringUtils.hpp"
+#include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/Vectors/IntVector2.hpp"
 #include <cmath>
+
+//===============================================================================================
+const Vector2 Vector2::ZERO = Vector2(0.f, 0.f);
+const Vector2 Vector2::ONE = Vector2(1.f, 1.f);
 
 //===============================================================================================
 Vector2::Vector2()
@@ -182,4 +187,12 @@ bool Vector2::operator!=(const Vector2& compare) const
 	}
 
 	return true;
+}
+
+//===============================================================================================
+Vector2 Interpolate(const Vector2& a, const Vector2& b, float percentIn)
+{
+	float x = Interpolate(a.x, b.x, percentIn);
+	float y = Interpolate(a.y, b.y, percentIn);
+	return Vector2(x, y);
 }

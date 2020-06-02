@@ -5,6 +5,7 @@
 #include "Game/Editor/MapEditor.hpp"
 #include "Engine/Core/Tools/Console.hpp"
 #include "Game/Main/TheApp.hpp"
+#include "Game/Editor/CurveEditor.hpp"
 
 //===============================================================================================
 Editor* g_theEditor = nullptr;  
@@ -14,6 +15,7 @@ Editor::Editor()
 {
 	m_editorModes[SPRITE_SHEET_VIEW_MODE] = new SpriteSheetView();
 	m_editorModes[MAP_EDITOR_MODE] = new MapEditor();
+	m_editorModes[CURVE_EDITOR_MODE] = new CurveEditor();
 
 	g_theApp->m_states[APPSTATE_EDITOR] = this;
 }
@@ -85,5 +87,10 @@ void Editor::KeyboardInput()
 		m_currentMode = (TypesOfEditorModes)(1);
 		MapEditor* mapEditor = (MapEditor*)m_editorModes[MAP_EDITOR_MODE];
 		mapEditor->SetMode(COLLISION_EDITOR_MODE);
+	}
+
+	if (WasKeyJustPressed('4'))
+	{
+		m_currentMode = (TypesOfEditorModes)(2);
 	}
 }
