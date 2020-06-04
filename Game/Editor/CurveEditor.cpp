@@ -6,12 +6,12 @@
 #include "Engine/Math/Splines/CubicSpline.hpp"
 #include "Engine/Core/Platform/Window.hpp"
 #include "Engine/Core/Tools/Clock.hpp"
+#include "Engine/Renderer/Systems/MeshBuilder.hpp"
 
 //===============================================================================================
 CurveEditor::CurveEditor()
 {
 	GenerateCurveData();
-	GenerateBounds();
 
 	m_controlPointANode.m_position = m_curves[m_selectedCurve].m_controlPointA;
 	m_controlPointBNode.m_position = m_curves[m_selectedCurve].m_controlPointB;
@@ -20,12 +20,24 @@ CurveEditor::CurveEditor()
 	m_camera = new Camera();
 	m_camera->SetColorTarget(r->m_defaultColorTarget);
 	r->SetCamera(nullptr);
+
+	m_colorOfCircleOnLine = Rgba::GetRandomColor();
 }
 
 //-----------------------------------------------------------------------------------------------
 void CurveEditor::Update()
 {
 	HandleInput();
+
+	m_camera->SetProjectionOrthoByAspect(m_zoomedInAmount);
+	m_camera->GoToPosition2D(Vector2(.5f, .5f));
+	m_cameraBounds = m_camera->GetOrthoBounds();
+	GenerateBounds();
+
+	if(GetFractionOf(g_theMasterClock->totalTime) < .025f)
+	{
+		m_colorOfCircleOnLine = Rgba::GetRandomColor();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -33,45 +45,26 @@ void CurveEditor::Render() const
 {
 	Renderer* r = Renderer::GetInstance();
 	r->SetCamera(m_camera);
-	m_camera->SetProjectionOrthoByAspect(m_zoomedInAmount);
-	m_camera->GoToPosition2D(Vector2(.5f, .5f));
-
-	Vector2 mousePos = GetMousePosition(m_camera->GetOrthoBounds());
 
 	r->DrawAABB2Filled(AABB2(-10.f, -10.f, 10.f, 10.f), Rgba::STRAWBERRY_RED);
-	r->DrawAABB2Outline(AABB2(0, 0, 1, 1), Rgba::WHITE);
 
-	float tenth = -5.f;
-	for (int i = -50; i < 50; i++)
-	{
-		r->DrawLine2D(Vector2(-100, tenth), Vector2(100, tenth), Rgba(200,200,200,150));
-		r->DrawLine2D(Vector2(tenth, -100), Vector2(tenth, 100), Rgba(200, 200, 200, 150));
-
-		tenth += .1;
-	}
-
-	for (int i = 0; i < 100; i++)
-	{
-		float t = (float)i / (float)100;
-		Vector2 pos = EvaluateCubicBezier(Vector2(0, 0), m_controlPointANode.m_position, m_controlPointBNode.m_position, Vector2(1, 1), t);
-
-		r->DrawCircleFilled2D(pos, .005f, Rgba::BLACK);
-
-		r->DrawCircleOutline2D(m_controlPointANode.m_position, m_controlPointANode.m_radius * m_zoomedInAmount, Rgba::YELLOW);
-		r->DrawLine2D(Vector2(0, 0), m_controlPointANode.m_position, Rgba::YELLOW);
-
-		r->DrawCircleOutline2D(m_controlPointBNode.m_position, m_controlPointBNode.m_radius * m_zoomedInAmount, Rgba::GREEN);
-		r->DrawLine2D(Vector2(1, 1), m_controlPointBNode.m_position, Rgba::GREEN);
-	}
+	RenderGrid();
+	RenderUIKnobs();
+	RenderLine();
 
 	// on curve progress ball
 	float onCurveT = GetFractionOf(g_theMasterClock->totalTime);
 	Vector2 pos = EvaluateCubicBezier(Vector2(0, 0), m_controlPointANode.m_position, m_controlPointBNode.m_position, Vector2(1, 1), onCurveT);
-	r->DrawCircleFilled2D(pos, .025f, Rgba::GetRandomColor());
+	r->DrawCircleFilled2D(pos, .025f, m_colorOfCircleOnLine);
+	r->DrawCircleOutline2D(pos, .025f, Rgba::WHITE);
 
 	r->DrawAABB2Outline(AABB2(0.f, 0.f, 1.f, 1.f), Rgba::WHITE);
 
+	RenderLinePreview();
+	RenderCurveSelector();
+
 	// mouse
+	Vector2 mousePos = GetMousePosition(m_cameraBounds);
 	r->DrawCircleOutline2D(mousePos, .02f, Rgba(0, 255, 0, 255));
 }
 
@@ -84,6 +77,14 @@ void CurveEditor::HandleInput()
 	{
 		m_controlPointANode.m_isSelected = false;
 		m_controlPointBNode.m_isSelected = false;
+
+		for(uint i = 0; i < MAX_AMOUNT_OF_CURVES; i++)
+		{
+			if(m_splineButtonsBounds[i].IsPointInBox(mousePos))
+			{
+				SwitchToCurve(i);
+			}
+		}
 	}
 
 	if (WasMouseButtonJustPressed(LEFT_MOUSE_BUTTON))
@@ -122,6 +123,106 @@ void CurveEditor::HandleInput()
 }
 
 //-----------------------------------------------------------------------------------------------
+void CurveEditor::RenderLinePreview() const
+{
+	Renderer* r = Renderer::GetInstance();
+	
+	float onCurveT = GetFractionOf(g_theMasterClock->totalTime);
+	Vector2 pos = EvaluateCubicBezier(Vector2(0, 0), m_controlPointANode.m_position, m_controlPointBNode.m_position, Vector2(1, 1), onCurveT);
+
+	Vector2 topPoint = m_linePreviewBounds.GetPositionWithinBox(Vector2(.5f, .9f));
+	Vector2 bottomPoint = m_linePreviewBounds.GetPositionWithinBox(Vector2(.5f, .1f));
+	Vector2 circlePos = Interpolate(bottomPoint, topPoint, pos.y);
+	
+	r->DrawAABB2Filled(m_linePreviewBounds, Rgba::STRAWBERRY_RED);
+	r->DrawAABB2Outline(m_linePreviewBounds, Rgba::WHITE);
+	r->DrawLine2D(bottomPoint, topPoint, Rgba::WHITE);
+	
+	r->DrawCircleFilled2D(circlePos, .025f * m_zoomedInAmount, m_colorOfCircleOnLine);
+	r->DrawCircleOutline2D(circlePos, .025f * m_zoomedInAmount, Rgba::WHITE);
+}
+
+//-----------------------------------------------------------------------------------------------
+void CurveEditor::RenderCurveSelector() const
+{
+	Renderer* r = Renderer::GetInstance();
+
+	r->DrawAABB2Filled(m_splineButtonOverallBounds, Rgba::STRAWBERRY_RED);
+	r->DrawAABB2Outline(m_splineButtonOverallBounds, Rgba::WHITE);
+
+	for(uint i = 0; i < MAX_AMOUNT_OF_CURVES; i++)
+	{
+		AABB2 currentBounds = m_splineButtonsBounds[i];
+
+		r->DrawAABB2Outline(currentBounds, Rgba::WHITE);
+		r->DrawTextInBox(std::to_string(i), currentBounds, 8, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
+	}
+
+	r->DrawAABB2Outline(m_splineButtonsBounds[m_selectedCurve], Rgba::GREEN);
+}
+
+//-----------------------------------------------------------------------------------------------
+void CurveEditor::RenderLine() const
+{
+	std::vector<Vector3> positions;
+	positions.reserve(100);
+	for (int i = 0; i < 100; i++)
+	{
+		float t = (float)i / (float)100;
+		Vector2 pos = EvaluateCubicBezier(Vector2(0, 0), m_controlPointANode.m_position, m_controlPointBNode.m_position, Vector2(1, 1), t);
+
+		positions.push_back(Vector3(pos.x, pos.y, 0));
+	}
+
+	MeshBuilder mb;
+	mb.AddLines(positions, Rgba::BLACK);
+	Renderer::GetInstance()->DrawMesh(mb.CreateMesh<Vertex3D_PCU>(), true);
+}
+
+//-----------------------------------------------------------------------------------------------
+void CurveEditor::RenderGrid() const
+{
+	Renderer* r = Renderer::GetInstance();
+	
+	std::vector<Vector3> horizontalLines;
+	std::vector<Vector3> verticalLines;
+	float tenth = -5.f;
+	for (int i = -50; i < 50; i++)
+	{
+		horizontalLines.push_back(Vector3(-100.f, tenth, 0.f));
+		horizontalLines.push_back(Vector3(100, tenth, 0.f));
+
+		verticalLines.push_back(Vector3(tenth, -100.f, 0.f));
+		verticalLines.push_back(Vector3(tenth, 100, 0.f));
+
+		tenth += .2;
+	}
+
+	Rgba lineColor = Rgba(200, 200, 200, 50);
+	MeshBuilder mb;
+
+	mb.AddLines(horizontalLines, lineColor);
+	r->DrawMesh(mb.CreateMesh<Vertex3D_PCU>(), true);
+	
+	mb.AddLines(verticalLines, lineColor);
+	r->DrawMesh(mb.CreateMesh<Vertex3D_PCU>(), true);
+}
+
+//-----------------------------------------------------------------------------------------------
+void CurveEditor::RenderUIKnobs() const
+{
+	Renderer* r = Renderer::GetInstance();
+
+	r->DrawCircleFilled2D(m_controlPointBNode.m_position, m_controlPointBNode.m_radius * m_zoomedInAmount, Rgba::RAINBOW_BLUE);
+	r->DrawCircleOutline2D(m_controlPointBNode.m_position, m_controlPointBNode.m_radius * m_zoomedInAmount, Rgba::BLUE);
+	r->DrawLine2D(Vector2(1, 1), m_controlPointBNode.m_position, Rgba::BLUE);
+
+	r->DrawCircleFilled2D(m_controlPointANode.m_position, m_controlPointANode.m_radius * m_zoomedInAmount, Rgba::RAINBOW_RED);
+	r->DrawCircleOutline2D(m_controlPointANode.m_position, m_controlPointANode.m_radius * m_zoomedInAmount, Rgba::RED);
+	r->DrawLine2D(Vector2(0, 0), m_controlPointANode.m_position, Rgba::RED);
+}
+
+//-----------------------------------------------------------------------------------------------
 void CurveEditor::GenerateCurveData()
 {
 
@@ -130,5 +231,28 @@ void CurveEditor::GenerateCurveData()
 //-----------------------------------------------------------------------------------------------
 void CurveEditor::GenerateBounds()
 {
+	m_linePreviewBounds = GetAABB2FromAABB2(Vector2(.95f, .2f), Vector2(1.f, .8f), m_cameraBounds);
 
+	m_splineButtonOverallBounds = GetAABB2FromAABB2(Vector2(.0f, .2f), Vector2(.05f, .8f), m_cameraBounds);
+
+	float amount = 1.f;
+	for(uint i = 0; i < MAX_AMOUNT_OF_CURVES; i++)
+	{
+		m_splineButtonsBounds[i] = GetAABB2FromAABB2(Vector2(.0f, amount - .1f), Vector2(1.f, amount), m_splineButtonOverallBounds);
+		amount -= .1f;
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void CurveEditor::SwitchToCurve(int index)
+{
+	// save old positions
+	m_curves[m_selectedCurve].m_controlPointA = m_controlPointANode.m_position;
+	m_curves[m_selectedCurve].m_controlPointB = m_controlPointBNode.m_position;
+	
+	m_selectedCurve = index;
+	
+	// put the nodes on the new curves pos
+	m_controlPointANode.m_position = m_curves[m_selectedCurve].m_controlPointA;
+	m_controlPointBNode.m_position = m_curves[m_selectedCurve].m_controlPointB;
 }

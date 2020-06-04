@@ -139,6 +139,23 @@ void MeshBuilder::AddQuad(uint a, uint b, uint c, uint d)
 	m_indices.emplace_back(d);
 }
 
+//-----------------------------------------------------------------------------------------------
+void MeshBuilder::AppendPoint(const Vector3& pos, const Rgba& color /*= Rgba::WHITE*/)
+{
+	SetColor(color);
+	PushVertex(pos);
+}
+
+//-----------------------------------------------------------------------------------------------
+void MeshBuilder::AppendLine(const Vector3& startPos, const Vector3& endPos, const Rgba& color /*= Rgba::WHITE*/)
+{
+	SetColor(color);
+	PushVertex(startPos);
+
+	SetColor(color);
+	PushVertex(endPos);
+}
+
 //===============================================================================================
 void MeshBuilder::AddPoint(const Vector3& pos, const Rgba& color /*= Rgba::WHITE*/)
 {
@@ -146,6 +163,44 @@ void MeshBuilder::AddPoint(const Vector3& pos, const Rgba& color /*= Rgba::WHITE
 
 	SetColor(color);
 	PushVertex(pos);
+
+	End();
+}
+
+//-----------------------------------------------------------------------------------------------
+void MeshBuilder::AddPoints(const std::vector<Vector3>& positions, const Rgba& color /*= Rgba::WHITE*/)
+{
+	Begin(PRIMITIVE_POINTS, false);
+
+	for(uint i = 0; i < positions.size(); i++)
+	{
+		AppendPoint(positions.at(i), color);
+	}
+
+	End();
+}
+
+void MeshBuilder::AddDottedLines(const std::vector<Vector3>& positions, const Rgba& color /*= Rgba::WHITE*/)
+{
+	Begin(PRIMITIVE_LINES, false);
+
+	for (uint i = 0; i < positions.size(); i++)
+	{
+		AppendPoint(positions.at(i), color);
+	}
+
+	End();
+}
+
+//-----------------------------------------------------------------------------------------------
+void MeshBuilder::AddLines(const std::vector<Vector3>& positions, const Rgba& color /*= Rgba::WHITE*/)
+{
+	Begin(PRIMITIVE_LINES, false);
+
+	for (uint i = 0; i < positions.size() - 1; i++)
+	{
+		AppendLine(positions.at(i),positions.at(i + 1), color);
+	}
 
 	End();
 }

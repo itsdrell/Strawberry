@@ -62,7 +62,16 @@ public:
 	Mesh* CreateMesh(bool flush = true);
 
 public:
+	void AppendPoint(const Vector3& pos, const Rgba& color = Rgba::WHITE);
+	void AppendLine(const Vector3& startPos, const Vector3& endPos, const Rgba& color = Rgba::WHITE);
+
+public:
 	void AddPoint(const Vector3& pos, const Rgba& color = Rgba::WHITE);
+	void AddPoints(const std::vector<Vector3>& positions, const Rgba& color = Rgba::WHITE);
+
+	void AddDottedLines(const std::vector<Vector3>& positions, const Rgba& color = Rgba::WHITE);
+	void AddLines(const std::vector<Vector3>& positions, const Rgba& color = Rgba::WHITE);
+
 	void AddPlane(const Vector3& center, const Vector3& dimensions, const AABB2& theUvs = AABB2(0.f,0.f, 1.f, 1.f), Rgba color = Rgba::WHITE);
 	void AddPlane(const Vector3& center, const Vector3& dimensions, Vector3 right, Vector3 up, Rgba color = Rgba::WHITE);
 

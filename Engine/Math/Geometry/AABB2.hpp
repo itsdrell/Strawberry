@@ -35,7 +35,7 @@ public:
 	float		GetWidth() const;
 	float		GetHeight() const;
 	Vector2		GetDimensions() const;
-	Vector2		GetPositionWithinBox(const Vector2& percentWithin);
+	Vector2		GetPositionWithinBox(const Vector2& percentWithin) const;
 
 public:
 	bool		IsPointInBox(const Vector2& thePoint) const;

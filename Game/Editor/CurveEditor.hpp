@@ -1,6 +1,8 @@
 #pragma once
 #include "EditorMode.hpp"
 #include "Engine/Math/Vectors/Vector2.hpp"
+#include "Engine/Math/Geometry/AABB2.hpp"
+#include "Engine/Core/General/Rgba.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -61,13 +63,21 @@ public:
 	virtual void Render() const override;
 	virtual void HandleInput() override;
 
+private:
+	void RenderLinePreview() const;
+	void RenderCurveSelector() const;
+	void RenderLine() const;
+	void RenderGrid() const;
+	void RenderUIKnobs() const;
+
 public:
 	virtual void Enter() override {}
 	virtual void Exit() override {}
 
-public:
+private:
 	void GenerateCurveData();
 	void GenerateBounds();
+	void SwitchToCurve(int index);
 
 private:
 	int					m_selectedCurve = 0;
@@ -80,6 +90,15 @@ private:
 	Camera*				m_camera = nullptr;
 
 	float				m_zoomedInAmount = MIN_ZOOMED_IN_LEVEL_CURVE_EDITOR;
+
+private:
+	Rgba				m_colorOfCircleOnLine;
+
+	AABB2				m_cameraBounds;
+	AABB2				m_linePreviewBounds;
+
+	AABB2				m_splineButtonOverallBounds;
+	AABB2				m_splineButtonsBounds[MAX_AMOUNT_OF_CURVES];
 };
 
 //====================================================================================

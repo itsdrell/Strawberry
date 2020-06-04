@@ -19,7 +19,7 @@ const Rgba Rgba::INDIGO = Rgba(75, 0, 130, 255);
 const Rgba Rgba::VIOLET = Rgba(138, 43, 226, 255);
 
 // rainbow ;D
-const Rgba Rgba::RAINBOW_RED = Rgba(250, 165, 178, 179);
+const Rgba Rgba::RAINBOW_RED = Rgba(250, 165, 178, 255);
 const Rgba Rgba::RAINBOW_ORANGE = Rgba(255, 206, 161, 255);
 const Rgba Rgba::RAINBOW_YELLOW = Rgba(252, 252, 188, 255);
 const Rgba Rgba::RAINBOW_GREEN = Rgba(185, 250, 207, 255);

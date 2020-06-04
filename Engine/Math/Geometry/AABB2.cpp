@@ -37,7 +37,7 @@ Vector2 AABB2::GetDimensions() const
 }
 
 //-----------------------------------------------------------------------------------------------
-Vector2 AABB2::GetPositionWithinBox(const Vector2 & percentWithin)
+Vector2 AABB2::GetPositionWithinBox(const Vector2 & percentWithin) const 
 {
 	Vector2 result;
 
