@@ -20,6 +20,7 @@
 #include "Engine/Core/Tools/DebugRendering.hpp"
 #include "TheApp.hpp"
 #include "Engine/Core/Utils/StrawberryFileUtils.hpp"
+#include "Engine/Core/Platform/File.hpp"
 
 //===============================================================================================
 Game* g_theGame = nullptr;
@@ -48,6 +49,9 @@ Game::Game()
 	new BlackBoard(path + "/Scripts/GameConfig.lua", GAME_BLACKBOARD);
 	
 	m_map = new Map();
+
+	if(DoesDirectoryExist(GetCurveDataFilePath().c_str()))
+		LoadCurveDataFromFile(m_curveData);
 
 	m_takeDefaultCoverScreenshotTimer = StopWatch(g_theMasterClock);
 	m_takeDefaultCoverScreenshotTimer.SetTimer(m_lengthBeforeTakingScreenshot);

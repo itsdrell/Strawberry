@@ -30,6 +30,8 @@ static int LuaGetMousePosition(lua_State* theState);
 static int LuaSleep(lua_State* theState);
 static int LuaTimeScale(lua_State* theState);
 
+static int LuaEvaluateCurve(lua_State* theState);
+
 
 //====================================================================================
 // Written by Zachary Bracken : [10/3/2019]

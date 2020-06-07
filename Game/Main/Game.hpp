@@ -3,6 +3,7 @@
 #include "Engine/Math/Vectors/Vector2.hpp"
 #include "Game/States/AppState.hpp"
 #include "Engine/Core/Tools/StopWatch.hpp"
+#include "Game/Editor/CurveEditor.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -63,6 +64,8 @@ public:
 
 	Map*			m_map;
 	bool			m_drawMap;
+
+	CurveData		m_curveData[MAX_AMOUNT_OF_CURVES];
 
 	Vector2			m_cameraPos;
 	float			m_cameraAngle = 0.f;

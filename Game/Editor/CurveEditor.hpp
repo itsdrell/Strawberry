@@ -33,6 +33,8 @@ struct CurveData
 
 	CurveData() {}
 
+	float Evaluate(float t);
+
 	Vector2 m_controlPointA = Vector2(.25f, .75f);
 	Vector2 m_controlPointB = Vector2(.75f, .25f);
 };
@@ -80,6 +82,10 @@ private:
 	void SwitchToCurve(int index);
 
 private:
+	void Save();
+	void SaveCurveDataToFile();
+
+private:
 	int					m_selectedCurve = 0;
 	CurveData			m_curves[MAX_AMOUNT_OF_CURVES];
 
@@ -104,7 +110,7 @@ private:
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-
+void LoadCurveDataFromFile(CurveData* outArray);
 
 //====================================================================================
 // Externs

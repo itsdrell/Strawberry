@@ -7,6 +7,17 @@
 #include "Engine/Core/Platform/Window.hpp"
 #include "Engine/Core/Tools/Clock.hpp"
 #include "Engine/Renderer/Systems/MeshBuilder.hpp"
+#include "Engine/Core/Platform/File.hpp"
+#include "Engine/Core/Utils/StrawberryFileUtils.hpp"
+#include "Engine/Core/Tools/DebugRendering.hpp"
+
+
+//===============================================================================================
+float CurveData::Evaluate(float t)
+{
+	Vector2 pos = EvaluateCubicBezier(Vector2(0, 0), m_controlPointA, m_controlPointB, Vector2(1, 1), t);
+	return pos.y;
+}
 
 //===============================================================================================
 CurveEditor::CurveEditor()
@@ -77,14 +88,6 @@ void CurveEditor::HandleInput()
 	{
 		m_controlPointANode.m_isSelected = false;
 		m_controlPointBNode.m_isSelected = false;
-
-		for(uint i = 0; i < MAX_AMOUNT_OF_CURVES; i++)
-		{
-			if(m_splineButtonsBounds[i].IsPointInBox(mousePos))
-			{
-				SwitchToCurve(i);
-			}
-		}
 	}
 
 	if (WasMouseButtonJustPressed(LEFT_MOUSE_BUTTON))
@@ -97,6 +100,14 @@ void CurveEditor::HandleInput()
 		if (Disc2(m_controlPointBNode.m_position, m_controlPointBNode.m_radius * m_zoomedInAmount).IsPointInside(mousePos))
 		{
 			m_controlPointBNode.m_isSelected = true;
+		}
+
+		for (uint i = 0; i < MAX_AMOUNT_OF_CURVES; i++)
+		{
+			if (m_splineButtonsBounds[i].IsPointInBox(mousePos))
+			{
+				SwitchToCurve(i);
+			}
 		}
 	}
 
@@ -119,6 +130,23 @@ void CurveEditor::HandleInput()
 		m_controlPointANode.m_isSelected == false) // A gets priority if they are stacked
 	{
 		m_controlPointBNode.m_position = mousePos;
+	}
+
+	if(WasKeyJustPressed(KEYBOARD_UP_ARROW))
+	{
+		int newIndex = (m_selectedCurve - 1 + MAX_AMOUNT_OF_CURVES) % MAX_AMOUNT_OF_CURVES;
+		SwitchToCurve(newIndex);
+	}
+
+	if(WasKeyJustPressed(KEYBOARD_DOWN_ARROW))
+	{
+		int newIndex = (m_selectedCurve + 1) % MAX_AMOUNT_OF_CURVES;
+		SwitchToCurve(newIndex);
+	}
+
+	if(IsKeyPressed(KEYBOARD_CTRL) && WasKeyJustPressed('s'))
+	{
+		Save();
 	}
 }
 
@@ -225,7 +253,12 @@ void CurveEditor::RenderUIKnobs() const
 //-----------------------------------------------------------------------------------------------
 void CurveEditor::GenerateCurveData()
 {
+	std::string filePath = GetCurveDataFilePath();
 
+	if (DoesDirectoryExist(filePath.c_str()))
+	{
+		LoadCurveDataFromFile(m_curves);
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -255,4 +288,56 @@ void CurveEditor::SwitchToCurve(int index)
 	// put the nodes on the new curves pos
 	m_controlPointANode.m_position = m_curves[m_selectedCurve].m_controlPointA;
 	m_controlPointBNode.m_position = m_curves[m_selectedCurve].m_controlPointB;
+}
+
+//-----------------------------------------------------------------------------------------------
+void CurveEditor::Save()
+{
+	m_curves[m_selectedCurve].m_controlPointA = m_controlPointANode.m_position;
+	m_curves[m_selectedCurve].m_controlPointB = m_controlPointBNode.m_position;
+
+	SaveCurveDataToFile();
+	DebugRenderLog("Saved! :)", 3.f);
+}
+
+//-----------------------------------------------------------------------------------------------
+void CurveEditor::SaveCurveDataToFile()
+{
+	// controlPointA.x,controlPointA.y,controlPointB.x,controlPointB.y
+	std::string content;
+	for (uint i = 0; i < MAX_AMOUNT_OF_CURVES; i++)
+	{
+		content += std::to_string(m_curves[i].m_controlPointA.x) + ",";
+		content += std::to_string(m_curves[i].m_controlPointA.y) + ",";
+		
+		content += std::to_string(m_curves[i].m_controlPointB.x) + ",";
+		content += std::to_string(m_curves[i].m_controlPointB.y) + " \n";
+	}
+
+	std::string filePath = GetCurveDataFilePath();
+	if (DoesDirectoryExist(filePath.c_str()))
+	{
+		CreateADirectory(filePath.c_str());
+	}
+
+	LogStringToFile(filePath.c_str(), content.c_str(), true);
+}
+
+//===============================================================================================
+void LoadCurveDataFromFile(CurveData* outArray)
+{
+	String filePath = GetCurveDataFilePath();
+	Strings data = GetAllLinesFromFile(filePath.c_str());
+
+	for (uint i = 0; i < data.size(); i++)
+	{
+		String currentLine = data.at(i);
+		Strings brokenUpLine = SplitString(currentLine, ",");
+		
+		outArray[i].m_controlPointA.x = ParseString(brokenUpLine.at(0), 0.f);
+		outArray[i].m_controlPointA.y = ParseString(brokenUpLine.at(1), 0.f);
+
+		outArray[i].m_controlPointB.x = ParseString(brokenUpLine.at(2), 1.f);
+		outArray[i].m_controlPointB.y = ParseString(brokenUpLine.at(3), 1.f);
+	}
 }

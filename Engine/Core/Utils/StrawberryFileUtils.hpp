@@ -26,6 +26,7 @@
 //====================================================================================
 void GetAllProjectNames(Strings* out);
 bool DoesProjectHaveCoverImage(const String& projectName);
+String GetCurveDataFilePath();
 
 //====================================================================================
 // Written by Zachary Bracken : [5/24/2020]

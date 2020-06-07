@@ -23,6 +23,7 @@ void BindGameSideLuaFunctions(lua_State* theState)
 	BindFunctionToScript(theState, LuaGetMousePosition, "GetMousePosition");
 	BindFunctionToScript(theState, LuaSleep, "Sleep");
 	BindFunctionToScript(theState, LuaTimeScale, "TimeScale");
+	BindFunctionToScript(theState, LuaEvaluateCurve, "EvaluateCurve");
 }
 
 //===============================================================================================
@@ -183,4 +184,19 @@ int LuaTimeScale(lua_State* theState)
 	g_theGame->m_timeScale = scale;
 
 	return 0;
+}
+
+//-----------------------------------------------------------------------------------------------
+// EvaluateCurve(curveIndex, t)
+int LuaEvaluateCurve(lua_State* theState)
+{
+	int curveNumber = LuaGetFloat(theState, 1, 1.0f);
+	float t = LuaGetFloat(theState, 2, .5f);
+
+	CurveData theCurve = g_theGame->m_curveData[curveNumber];
+	float result = theCurve.Evaluate(t);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
 }

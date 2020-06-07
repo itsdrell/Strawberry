@@ -21,3 +21,10 @@ bool DoesProjectHaveCoverImage(const String& projectName)
 	String path = "Projects/" + projectName + "/Cover.png";
 	return DoesDirectoryExist(path.c_str());
 }
+
+//-----------------------------------------------------------------------------------------------
+String GetCurveDataFilePath()
+{
+	String path = "Projects/" + g_currentProjectName + "/" + g_currentProjectName + ".curvedata";
+	return path;
+}
