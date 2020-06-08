@@ -159,7 +159,7 @@ void MapEditor::KeyboardMovement()
 //-----------------------------------------------------------------------------------------------
 void MapEditor::GenerateAllBounds()
 {
-	m_cameraBounds = m_camera->GetBounds();
+	m_cameraBounds = m_camera->GetOrthoBounds();
 	m_optionsBounds = GetAABB2FromAABB2(Vector2(0.f, 0.f), Vector2(.3f, .1f), m_cameraBounds);
 }
 

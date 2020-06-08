@@ -182,6 +182,32 @@ void InputSystem::HideMouseCursor(bool isHidden)
 }
 
 //-----------------------------------------------------------------------------------------------
+void InputSystem::ClearKeyState(KeyCode keyCode)
+{
+	m_keyStates[keyCode].m_wasJustReleased = false;
+	m_keyStates[keyCode].m_wasJustPressed = false;
+	m_keyStates[keyCode].m_isDown = false;
+}
+
+//-----------------------------------------------------------------------------------------------
+void InputSystem::ClearKeyboardState()
+{
+	for(uint i = 0; i < NUM_KEYS; i++)
+	{
+		m_keyStates[i].m_wasJustReleased = false;
+		m_keyStates[i].m_wasJustPressed = false;
+		m_keyStates[i].m_isDown = false;
+	}
+
+	for(uint i = 0; i < NUM_OF_MOUSE_BUTTONS; i++)
+	{
+		m_mouseButtonStates[i].m_wasJustReleased = false;
+		m_mouseButtonStates[i].m_wasJustPressed = false;
+		m_mouseButtonStates[i].m_isDown = false;
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
 String InputSystem::GetTextInputedThisFrame()
 {
 	return m_textInputed;

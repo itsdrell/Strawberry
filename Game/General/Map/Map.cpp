@@ -61,7 +61,7 @@ void Map::WriteFileHeader()
 void Map::SaveMap()
 {
 #ifndef EMSCRIPTEN_PORT
-	String path = "Projects/" + g_currentProjectName + "/" + g_currentProjectName + ".mapdata";
+	String path = "Projects/" + g_currentProjectName + "/Data/" + g_currentProjectName + ".mapdata";
 
 	FILE* theFile;
 	fopen_s(&theFile, path.c_str(), "w");
@@ -94,7 +94,7 @@ void Map::SaveMap()
 //-----------------------------------------------------------------------------------------------
 bool Map::LoadMap()
 {
-	String path = "Projects/" + g_currentProjectName + "/" + g_currentProjectName + ".mapdata";
+	String path = "Projects/" + g_currentProjectName + "/Data/" + g_currentProjectName + ".mapdata";
 	
 	std::ifstream infile(path.c_str());
 

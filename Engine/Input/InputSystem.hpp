@@ -104,6 +104,10 @@ public:
 	void					HideMouseCursor(bool isHidden);
 
 public:
+	void	ClearKeyState(KeyCode keycode);
+	void	ClearKeyboardState();
+
+public:
 	String					GetTextInputedThisFrame();
 private:
 	void					AddTextInputThisFrame(KeyCode keyCode);

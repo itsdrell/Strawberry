@@ -150,6 +150,7 @@ void Console::Close()
 {
 	m_isOpen = false;
 	m_currentEntry.clear();
+	g_theInputSystem->ClearKeyboardState();
 
 	Renderer::GetInstance()->m_clearScreen = true;
 	Renderer::GetInstance()->SetCurrentTexture();
@@ -223,6 +224,8 @@ void Console::ConsumeInput()
 
 	m_barIndex = 0;
 	m_currentEntry.clear();
+
+	g_theInputSystem->ClearKeyboardState();
 }
 
 //-----------------------------------------------------------------------------------------------

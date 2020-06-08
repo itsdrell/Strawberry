@@ -25,6 +25,6 @@ bool DoesProjectHaveCoverImage(const String& projectName)
 //-----------------------------------------------------------------------------------------------
 String GetCurveDataFilePath()
 {
-	String path = "Projects/" + g_currentProjectName + "/" + g_currentProjectName + ".curvedata";
+	String path = "Projects/" + g_currentProjectName + "/Data/" + g_currentProjectName + ".curvedata";
 	return path;
 }

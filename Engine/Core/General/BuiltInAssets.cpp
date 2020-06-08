@@ -316,7 +316,7 @@ $IMAGE_FILE_COMMAND = "--preload-file Projects/$NameOfGame/Images "
 $SCRIPT_FILE_COMMAND = "--preload-file  Projects/$NameOfGame/Scripts "
 $AUDIO_FILE_COMMAND = "--preload-file  Projects/$NameOfGame/Audio "
 $ENGINE_RESOURCES_COMMAND = "--preload-file  Data "
-$MAP_DATA_COMMAND = ("--preload-file  Projects/{0}/{0}.mapdata " -f $NameOfGame)
+$MAP_DATA_COMMAND = ("--preload-file  Projects/{0}/Data/{0}.mapdata " -f $NameOfGame)
 $Env:ALL_RESOURCE_COMMANDS = $IMAGE_FILE_COMMAND + $SCRIPT_FILE_COMMAND + $AUDIO_FILE_COMMAND + $ENGINE_RESOURCES_COMMAND + $MAP_DATA_COMMAND
 
 Write-Host "Emscripten Resource command: " $Env:ALL_RESOURCE_COMMANDS
