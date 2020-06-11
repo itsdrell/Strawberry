@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/States/AppState.hpp"
 #include "Engine/Core/Tools/StopWatch.hpp"
+#include "Engine/Renderer/Images/Sprite.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -43,8 +44,8 @@ public:
 	void DecideWhereToGoAfterLoading();
 
 private:
-	StopWatch m_loadTimer;
-
+	StopWatch	m_loadTimer;
+	Sprite		m_strawberrySprite;
 };
 
 //====================================================================================

@@ -3,6 +3,7 @@
 #include "Game/States/AppState.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/Core/General/Rgba.hpp"
+#include "Engine/Core/Tools/StopWatch.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -73,13 +74,16 @@ private:
 	CreateProjectPage*		m_createPagePopup = nullptr;
 
 private:
-	AABB2	m_coverImageBounds;
-	AABB2	m_gameTitleBounds;
-	AABB2	m_loadGameBounds;
-	AABB2	m_leftArrowBounds;
-	AABB2	m_rightArrowBounds;
+	AABB2		m_coverImageBounds;
+	AABB2		m_gameTitleBounds;
+	AABB2		m_loadGameBounds;
+	AABB2		m_leftArrowBounds;
+	AABB2		m_rightArrowBounds;
 
-	Rgba	m_randomBackgroundColor;
+	Rgba		m_randomBackgroundColor;
+
+	StopWatch	m_fadeAwayTimer;
+	float		m_fadeAwayLength = .5f;
 };
 
 //====================================================================================

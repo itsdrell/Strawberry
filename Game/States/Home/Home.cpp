@@ -11,12 +11,17 @@
 #include "Engine/Input/InputSystem.hpp"
 #include "Engine/Core/Tools/Console.hpp"
 #include "CreateProjectPage.hpp"
+#include "Engine/Core/Tools/Clock.hpp"
+#include "Engine/Math/MathUtils.hpp"
 
 
 //===============================================================================================
 Home::Home()
 {
 	GenerateBounds();
+	
+	m_fadeAwayTimer = StopWatch(g_theMasterClock);
+	m_fadeAwayTimer.SetTimer(m_fadeAwayLength);
 
 	m_randomBackgroundColor = Rgba::RAINBOW_VIOLET;
 }
@@ -63,6 +68,11 @@ void Home::Render() const
 	// mouse
 	Vector2 mousePos = GetMousePosition(r->m_defaultUICamera->GetOrthoBounds());
 	r->DrawCircleOutline2D(mousePos, .01f, Rgba(0, 255, 0, 255));
+
+	// transition
+	float t = m_fadeAwayTimer.GetNormalizedElapsedTime();
+	float radius = Interpolate(1.5f, 0.0f, t);
+	r->DrawCircleFilled2D(Vector2(0.75f, 0.5f), radius, Rgba::STRAWBERRY_RED);
 
 	r->SetCamera();
 }
@@ -140,6 +150,8 @@ void Home::OnEnter()
 	m_allProjectsData.clear();
 	
 	GenerateAllProjectData();
+
+	m_fadeAwayTimer.Reset();
 }
 
 //-----------------------------------------------------------------------------------------------
