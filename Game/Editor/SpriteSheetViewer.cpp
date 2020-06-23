@@ -9,6 +9,8 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 #include "Game/Main/Game.hpp"
+#include "Engine/Core/Tools/DebugRendering.hpp"
+#include "Engine/Core/General/Rgba.hpp"
 
 //===============================================================================================
 SpriteSheetView::SpriteSheetView()
@@ -16,6 +18,12 @@ SpriteSheetView::SpriteSheetView()
 	m_cameraBounds = Renderer::GetInstance()->m_defaultUICamera->GetOrthoBounds();
 	m_textureBounds = GetAABB2FromAABB2(Vector2(.1f, .1f), Vector2(.9f, .9f), m_cameraBounds);
 	m_textureBounds.ShrinkToSquare();
+
+	m_switchBoxBounds = GetAABB2FromAABB2(Vector2(.825f, .4f), Vector2(.95f, .6f), m_cameraBounds);
+	m_spriteButtonBounds = GetAABB2FromAABB2(Vector2(0.f, .5f), Vector2(1.f, 1.f), m_switchBoxBounds);
+	m_colorButtonBounds = GetAABB2FromAABB2(Vector2(0.f, 0.f), Vector2(1.f, .5f), m_switchBoxBounds);
+
+	CreateDisplayColors();
 } 
 
 //-----------------------------------------------------------------------------------------------
@@ -35,6 +43,51 @@ void SpriteSheetView::HandleInput()
 	if (WasKeyJustPressed('r'))
 	{
 		Game::GetInstance()->LoadOrReloadSpriteSheet();
+		CreateDisplayColors();
+	}
+
+	if (WasKeyJustPressed('c'))
+	{
+		m_currentMode = COLOR_VIEW_MODE;
+	}
+
+	if(WasKeyJustPressed('s'))
+	{
+		m_currentMode = SPRITE_VIEW_MODE;
+	}
+
+	if (m_currentMode == COLOR_VIEW_MODE)
+	{
+		int size = (int)m_displayColors.size() - 1;
+		if (DidMouseWheelScrollUp())
+		{
+
+			if (m_colorIndex != 0)
+			{
+				m_colorIndex--;
+			}
+		}
+
+		if (DidMouseWheelScrollDown())
+		{
+			if (m_colorIndex <= size - m_maxAmountOfColors)
+			{
+				m_colorIndex++;
+			}
+		}
+	}
+
+	if (WasMouseButtonJustReleased(LEFT_MOUSE_BUTTON))
+	{
+		if(m_currentMode == COLOR_VIEW_MODE && m_spriteButtonBounds.IsPointInBox(GetMousePosition(m_cameraBounds)))
+		{
+			m_currentMode = SPRITE_VIEW_MODE;
+		}
+
+		if (m_currentMode == SPRITE_VIEW_MODE && m_colorButtonBounds.IsPointInBox(GetMousePosition(m_cameraBounds)))
+		{
+			m_currentMode = COLOR_VIEW_MODE;
+		}
 	}
 }
 
@@ -54,6 +107,18 @@ void SpriteSheetView::CalculateSpritePositions()
 }
 
 //-----------------------------------------------------------------------------------------------
+void SpriteSheetView::CreateDisplayColors()
+{
+	for (auto it = Rgba::s_defaultColors.begin(); it != Rgba::s_defaultColors.end(); it++)
+	{
+		DisplayColor newColor = DisplayColor(it->first, it->second);
+		m_displayColors.push_back(newColor);
+	}
+
+	m_displayColors.push_back({ "random", Rgba::GetRandomColor() });
+}
+
+//-----------------------------------------------------------------------------------------------
 void SpriteSheetView::Render() const
 {
 	Renderer* r = Renderer::GetInstance();
@@ -68,11 +133,25 @@ void SpriteSheetView::Render() const
 
 	r->DrawAABB2Filled(m_cameraBounds, Rgba(255, 20, 147, 255));
 
-	RenderGrid();
-	RenderTexture();
-	RenderIndex();
-	RenderCursor();
+	if(m_currentMode == SPRITE_VIEW_MODE)
+	{
+		RenderGrid();
+		RenderTexture();
+		RenderIndex();
+	}
+	else
+	{
+		RenderColors();
+	}
 
+	RenderSwitchButtons();
+	RenderCursor();
+}
+
+//-----------------------------------------------------------------------------------------------
+void SpriteSheetView::Enter()
+{
+	CreateDisplayColors();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -89,12 +168,15 @@ void SpriteSheetView::RenderCursor() const
 {
 	Renderer* r = Renderer::GetInstance();
 
-	float minX = RangeMapFloat((float) m_spriteCoords.x,		 0.f, (float) g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
-	float maxX = RangeMapFloat((float) (m_spriteCoords.x + 1),	 0.f, (float) g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
-	float minY = RangeMapFloat((float) m_spriteCoords.y,		 0.f, (float) g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
-	float maxY = RangeMapFloat((float) (m_spriteCoords.y + 1.f), 0.f, (float) g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
-	
-	r->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), Rgba(0, 0, 0, 255));
+	if(m_currentMode == SPRITE_VIEW_MODE)
+	{
+		float minX = RangeMapFloat((float)m_spriteCoords.x, 0.f, (float)g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
+		float maxX = RangeMapFloat((float)(m_spriteCoords.x + 1), 0.f, (float)g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
+		float minY = RangeMapFloat((float)m_spriteCoords.y, 0.f, (float)g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
+		float maxY = RangeMapFloat((float)(m_spriteCoords.y + 1.f), 0.f, (float)g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
+
+		r->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), Rgba(0, 0, 0, 255));
+	}
 
 	// mouse cursor
 	r->DrawCircleFilled2D(GetMousePosition(m_cameraBounds), .01f, Rgba(0, 255, 0, 255));
@@ -132,5 +214,51 @@ void SpriteSheetView::RenderIndex() const
 	AABB2 textBox = GetAABB2FromAABB2(Vector2(.01f, .02f), Vector2(.2f, .1f), m_cameraBounds);
 	
 	r->DrawAABB2Outline(textBox, Rgba(255, 255, 255, 255));
-	r->DrawText2D(textBox.mins, std::to_string(m_spriteIndex), .05f, Rgba(255, 255, 255, 255));
+	r->DrawTextInBox(std::to_string(m_spriteIndex), textBox, 8.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
+}
+
+//-----------------------------------------------------------------------------------------------
+void SpriteSheetView::RenderSwitchButtons() const
+{
+	Renderer* r = Renderer::GetInstance();
+
+	r->DrawAABB2Outline(m_switchBoxBounds);
+	r->DrawAABB2Outline(m_colorButtonBounds);
+	r->DrawAABB2Outline(m_spriteButtonBounds);
+
+	if (m_currentMode == SPRITE_VIEW_MODE)
+		r->DrawAABB2Filled(m_spriteButtonBounds, Rgba(100,100,100,155));
+	else
+		r->DrawAABB2Filled(m_colorButtonBounds, Rgba(100, 100, 100,155));
+
+	r->DrawTextInBox("Sprite", m_spriteButtonBounds, 8.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
+	r->DrawTextInBox("Colors", m_colorButtonBounds, 8.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
+}
+
+//-----------------------------------------------------------------------------------------------
+void SpriteSheetView::RenderColors() const
+{
+	DebugRenderLog("colors", 0.f);
+
+	Renderer* r = Renderer::GetInstance();
+
+	r->DrawAABB2Outline(m_textureBounds);
+
+	float percent = 1.f;
+	float step = 1.f / (float)m_maxAmountOfColors;
+	for(int i = m_colorIndex; i < m_colorIndex + m_maxAmountOfColors; i++)
+	{
+		AABB2 currentBounds = GetAABB2FromAABB2(Vector2(0.f, percent - step), Vector2(1.f, percent), m_textureBounds);
+		DisplayColor currentColor = m_displayColors.at(i);
+
+		Rgba color = (currentColor.m_name == "random") ? Rgba::GetRandomColor() : currentColor.m_color;
+
+		r->DrawAABB2Filled(currentBounds, color);
+		r->DrawTextInBox(currentColor.m_name, currentBounds, 8.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f), Rgba::WHITE, true);
+
+		percent -= step;
+	}
+
+	AABB2 hintTextBox = GetAABB2FromAABB2(Vector2(0.15f, 0.f), Vector2(.85f, .1f), m_cameraBounds);
+	r->DrawTextInBox("Can be edited in gameconfig.lua :)", hintTextBox, 8.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
 }
