@@ -78,6 +78,8 @@ PFNGLTEXSTORAGE2DPROC glTexStorage2D = nullptr;
 //PFNGLTEXSUBIMAGE2DPROC glTexSubImage2D = nullptr;
 PFNGLGENERATEMIPMAPPROC glGenerateMipmap = nullptr;
 PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf = nullptr;
+PFNGLUNIFORM1IPROC glUniform1i = nullptr;
+PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray = nullptr;
 
 #endif
 
@@ -160,7 +162,10 @@ void BindGLFunctions()
 	//glTexSubImage2D = (PFNGLTEXSUBIMAGE2DPROC ) SDL_GL_GetProcAddress("glTexSubImage2D");
 	glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC ) SDL_GL_GetProcAddress("glGenerateMipmap");
 	glSamplerParameterf= (PFNGLSAMPLERPARAMETERFPROC ) SDL_GL_GetProcAddress("glSamplerParameterf");
-	
+	glUniform1i = (PFNGLUNIFORM1IPROC) SDL_GL_GetProcAddress("glUniform1i");
+	glDisableVertexAttribArray = (PFNGLDISABLEVERTEXATTRIBARRAYPROC)SDL_GL_GetProcAddress("glDisableVertexAttribArray");
+
+
 #else
 	//glActiveTexturePls = glActiveTexture;
 

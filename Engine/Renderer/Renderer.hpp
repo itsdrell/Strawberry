@@ -84,6 +84,8 @@ public:
 	void SetUniform( const String& name, const Rgba& uniform ); 
 	void SetUniform(const String& name, const Matrix44& uniform);
 
+	void SetSamplerUniform(const String& name, int uniform);
+
 public:
 	void DrawLine2D(const Vector2& start, const Vector2& end, const Rgba& color = Rgba(0, 0, 0, 255));
 	void DrawLines2D(Vector2* arrayPointer, int numberOfSides, const Rgba& theColor);
@@ -140,7 +142,6 @@ public:
 private:
 	Texture* CreateRenderTarget(int width, int height, eTextureFormat format = TEXTURE_FORMAT_RGBA8);
 
-
 public:
 	Texture* CreateOrGetTexture(const String& path, bool flip = true);
 	bool DeleteTexture(const String& path);
@@ -169,6 +170,7 @@ public:
 									  
 	Shader*				m_currentShader = nullptr;
 	Shader*				m_defaultShader = nullptr;
+	uint				m_maxAmountOfAttributesBinded = 0U;
 
 	Sampler*			m_defaultSampler = nullptr;
 	Sampler*			m_currentSampler = nullptr;

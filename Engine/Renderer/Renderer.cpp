@@ -371,6 +371,14 @@ void Renderer::SetShader(Shader* shader /*= nullptr */)
 		shader = m_defaultShader;
 	}
 
+	// when switch shaders make sure we unbind them
+	// we had issues when switch from one shader to another when they had
+	// different attribute counts. (would crash renderdoc too)
+	for(uint i = 0; i < m_maxAmountOfAttributesBinded; i++)
+	{
+		glDisableVertexAttribArray(i);
+	}
+
 	m_currentShader = shader;
 
 	glUseProgram(m_currentShader->m_program->m_programHandle);					GL_CHECK_ERROR();
@@ -395,7 +403,7 @@ void Renderer::SetCurrentTexture(int bindIndex /*= 0*/, const Texture* texture /
 	glActiveTexturePls( GL_TEXTURE0 + bindIndex );						GL_CHECK_ERROR();
 #endif
 
-	glBindTexture( GL_TEXTURE_2D, m_currentTexture->GetID() );		GL_CHECK_ERROR();
+	glBindTexture( GL_TEXTURE_2D, texture->GetID() );		GL_CHECK_ERROR();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -502,6 +510,24 @@ void Renderer::SetUniform(const String& name, const Rgba& uniform)
 	if (bind_idx >= 0) {
 		glUniform4fv( bind_idx, 1, value );
 	}
+
+	GL_CHECK_ERROR();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Renderer::SetSamplerUniform(const String& name, int uniform)
+{
+	GL_CHECK_ERROR();
+
+	// but very redundant O WELL
+	glUseProgram(m_currentShader->m_program->m_programHandle);											GL_CHECK_ERROR();
+
+	int bind_idx = glGetUniformLocation(m_currentShader->m_program->m_programHandle, name.c_str());	GL_CHECK_ERROR();
+	if (bind_idx >= 0) 
+	{
+		glUniform1i(bind_idx, uniform);															GL_CHECK_ERROR();
+	}
+
 
 	GL_CHECK_ERROR();
 }
@@ -896,61 +922,64 @@ void Renderer::DrawTextInBox(const String& text, const AABB2& bounds, float cell
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawCircleFilled2D(const Vector2 & center, float radius, const Rgba & color, int numberOfEdges)
 {
-	// HACK: idk what that number means but we need it
-	float distanceInDegrees = 360.f / ((float) numberOfEdges * .3333333335f);
+	float distanceInDegrees = 360.f / ((float)numberOfEdges);
 	float degrees = 0.f;
 
 	SetCurrentTexture(0, m_defaultTexture);
 
 	std::vector<Vertex3D_PCU> vertices;
-	for (int i = 0; i < numberOfEdges; i += 3)
-	{
-		// Starting point
-		float startX = center.x + (radius * (CosDegrees(degrees)));
-		float startY = center.y + (radius * (SinDegrees(degrees)));
 
+	float previousPointX = center.x + (radius * (CosDegrees(0)));
+	float previousPointY = center.y + (radius * (SinDegrees(0)));
+	for (int i = 1; i < numberOfEdges + 1; i++)
+	{
 		// Increase degrees so that we can find the next point
 		degrees += distanceInDegrees;
 
 		// End point
-		float endX = center.x + (radius * (CosDegrees(degrees)));
-		float endY = center.y + (radius * (SinDegrees(degrees)));
+		float nextPointX = center.x + (radius * (CosDegrees(degrees)));
+		float nextPointY = center.y + (radius * (SinDegrees(degrees)));
 
 		vertices.push_back(Vertex3D_PCU(center, color, Vector2(0.f, 0.f)));
-		vertices.push_back(Vertex3D_PCU(Vector2(startX, startY), color, Vector2(0.f, 0.f)));
-		vertices.push_back(Vertex3D_PCU(Vector2(endX, endY), color, Vector2(0.f, 0.f)));
+		vertices.push_back(Vertex3D_PCU(Vector2(previousPointX, previousPointY), color, Vector2(0.f, 0.f)));
+		vertices.push_back(Vertex3D_PCU(Vector2(nextPointX, nextPointY), color, Vector2(0.f, 0.f)));
+
+		previousPointX = nextPointX;
+		previousPointY = nextPointY;
 	}
 
-	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices.data(), numberOfEdges);
+	DrawMeshImmediate(PRIMITIVE_TRIANGLES, vertices.data(), numberOfEdges * 3);
 }
 
 //-----------------------------------------------------------------------------------------------
 void Renderer::DrawCircleOutline2D(const Vector2 & center, float radius, const Rgba & color, int numberOfEdges)
 {
-	float distanceInDegrees = 360.f / ((float)numberOfEdges * .5f);
+	float distanceInDegrees = 360.f / ((float)numberOfEdges);
 	float degrees = 0.f;
 
 	SetCurrentTexture(0, m_defaultTexture);
 
 	std::vector<Vertex3D_PCU> vertices;
-	for (int i = 0; i < numberOfEdges; i += 2)
-	{
-		// Starting point
-		float startX = center.x + (radius * (CosDegrees(degrees)));
-		float startY = center.y + (radius * (SinDegrees(degrees)));
 
+	float previousPointX = center.x + (radius * (CosDegrees(0)));
+	float previousPointY = center.y + (radius * (SinDegrees(0)));
+	for (int i = 1; i < numberOfEdges + 1; i++)
+	{
 		// Increase degrees so that we can find the next point
 		degrees += distanceInDegrees;
 
 		// End point
-		float endX = center.x + (radius * (CosDegrees(degrees)));
-		float endY = center.y + (radius * (SinDegrees(degrees)));
+		float nextPointX = center.x + (radius * (CosDegrees(degrees)));
+		float nextPointY = center.y + (radius * (SinDegrees(degrees)));
 
-		vertices.push_back(Vertex3D_PCU(Vector2(startX, startY), color, Vector2(0.f, 0.f)));
-		vertices.push_back(Vertex3D_PCU(Vector2(endX, endY), color, Vector2(0.f, 0.f)));
+		vertices.push_back(Vertex3D_PCU(Vector2(previousPointX, previousPointY), color, Vector2(0.f, 0.f)));
+		vertices.push_back(Vertex3D_PCU(Vector2(nextPointX, nextPointY), color, Vector2(0.f, 0.f)));
+
+		previousPointX = nextPointX;
+		previousPointY = nextPointY;
 	}
 
-	DrawMeshImmediate(PRIMITIVE_LINES, vertices.data(), numberOfEdges);
+	DrawMeshImmediate(PRIMITIVE_LINES, vertices.data(), numberOfEdges * 2);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -1035,6 +1064,7 @@ void Renderer::DrawMeshImmediate(PrimitiveType primitiveType, Vertex3D_PCU* vert
 	}
 	GL_CHECK_ERROR();
 
+	m_maxAmountOfAttributesBinded = 3; // amount of attributes in vertex#D_PCU
 
 	GLenum glPrimitiveType = g_openGlPrimitiveTypes[ primitiveType ];
 	glDrawArrays(glPrimitiveType, 0, numOfVertices );							GL_CHECK_ERROR();
@@ -1123,6 +1153,7 @@ void Renderer::DrawMeshImmediateWithoutFramebuffer(PrimitiveType primitiveType, 
 	}
 	GL_CHECK_ERROR();
 
+	m_maxAmountOfAttributesBinded = 3; // amount of attributes in vertex#D_PCU
 
 	GLenum glPrimitiveType = g_openGlPrimitiveTypes[ primitiveType ];
 	glDrawArrays(glPrimitiveType, 0, numOfVertices );							GL_CHECK_ERROR();
@@ -1156,7 +1187,9 @@ void Renderer::DrawMesh(Mesh* mesh, bool deleteTempMesh /*= false*/)
 		GL_CHECK_ERROR();
 	}
 	else
+	{
 		glDrawArrays(glPrimitiveType, 0, mesh->m_drawInstruction.elemCount);			GL_CHECK_ERROR();
+	}
 
 	// just so I dont forget
 	if (deleteTempMesh)
@@ -1182,22 +1215,25 @@ void Renderer::BindMeshToProgram(ShaderProgram* program, Mesh* mesh)
 	// (vertex_attribute_t)
 	GLuint ph = program->m_programHandle;
 	uint attrib_count = mesh->m_layout->GetAttributeCount();
+	m_maxAmountOfAttributesBinded = attrib_count;
 
-	for (uint attrib_idx = 0; attrib_idx < attrib_count; ++attrib_idx) {
+	for (uint attrib_idx = 0; attrib_idx < attrib_count; ++attrib_idx) 
+	{
 		const VertexAttributeT &attrib = mesh->m_layout->GetAttribute(attrib_idx);
 
 		// a program needs a name;
 		uint bind = glGetAttribLocation(ph, attrib.name.c_str());		GL_CHECK_ERROR();
 
 		// this attribute exists in this shader, cool, bind it
-		if (bind >= 0) {
+		if (bind >= 0) 
+		{
 			glEnableVertexAttribArray(bind);							GL_CHECK_ERROR();
 
 			// be sure mesh and program are bound at this point
 			// as this links them together
 			glVertexAttribPointer(bind,
 				attrib.elem_count,				// how many? 
-				ToGLType((eRenderDataType) attrib.type),			// what are they 
+				ToGLType((eRenderDataType)attrib.type),			// what are they 
 				attrib.normalized,				// are theynormalized 
 				vertex_stride,					// vertex size?
 				(GLvoid*)attrib.member_offset // data offset from start

@@ -19,7 +19,12 @@ class Vector3;
 //====================================================================================
 // ENUMS
 //====================================================================================
-
+enum BoundTextureIDs
+{
+	BOUND_TEXTURE_DEFAULT = 0,
+	BOUND_TEXTURE_FONT,
+	BOUND_TEXTURE_SPRITE_SHEET_0
+};
 
 //====================================================================================
 // Structs
@@ -64,6 +69,10 @@ public:
 	void AppendAABB2Outline(const AABB2& bounds, Rgba color = Rgba::WHITE, float lineWidth = 1.f);
 	void AppendAABB2Filled(const AABB2& bounds, Rgba color = Rgba::WHITE);
 
+	void AppendSprite(const Vector3& position, const Sprite& theSprite,
+		float rotation = 0.f, bool flipX = false, bool flipY = false);
+
+	void AppendTextInBox();
 
 public:
 	StrawberryVertex 					m_stamp; // this is a value. We overwrite it

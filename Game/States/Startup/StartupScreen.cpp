@@ -13,7 +13,7 @@
 //===============================================================================================
 StartupScreen::StartupScreen()
 {
-	m_strawberrySprite = Sprite("Data/LoadingStrawberry.png", Vector2(.4f, .4f));
+	m_strawberrySprite = new Sprite("Data/LoadingStrawberry.png", Vector2(.4f, .4f));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ void StartupScreen::Render() const
 	{
 		pos = Vector2(0.f, 0.f);
 	}
-	r->DrawSprite(Vector3(pos.x, pos.y, 0.f), m_strawberrySprite);
+	r->DrawSprite(Vector3(pos.x, pos.y, 0.f), *m_strawberrySprite);
 
 	// loading text
 	AABB2 textBox = GetAABB2FromAABB2(Vector2(0.01f, .8f), Vector2(.4f, .95f), AABB2(-1.f, -1.f, 1.f, 1.f));
@@ -93,10 +93,7 @@ void StartupScreen::DecideWhereToGoAfterLoading()
 		BlackBoard temp = BlackBoard("Data/NameOfGame.lua", DATA_BLACKBOARD);
 		startupGame = temp.GetValue("gameName", "idk");
 		g_theApp->m_isReleaseVersion = true;
-	}
 
-	if (startupGame != "idk")
-	{
 		g_currentProjectName = startupGame;
 		PrintLog("Project Name is: " + g_currentProjectName);
 		g_theApp->ReloadAndRunGame();
@@ -107,7 +104,6 @@ void StartupScreen::DecideWhereToGoAfterLoading()
 	{
 		g_theApp->TransitionToState(APPSTATE_HOME);
 	}
-
 #else
 	BlackBoard temp = BlackBoard("Data/Web/NameOfGame.lua", DATA_BLACKBOARD);
 	g_currentProjectName = temp.GetValue("gameName", "idk");

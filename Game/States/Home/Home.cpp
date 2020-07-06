@@ -150,6 +150,7 @@ void Home::OnEnter()
 	m_allProjectsData.clear();
 	
 	GenerateAllProjectData();
+	PutTheStartUpFunctionAtFront();
 
 	m_fadeAwayTimer.Reset();
 }
@@ -198,11 +199,29 @@ void Home::GenerateAllProjectData()
 }
 
 //-----------------------------------------------------------------------------------------------
+void Home::PutTheStartUpFunctionAtFront()
+{
+	String startupName = g_theEngineBlackboard->GetValue("startupGame", "idk");
+
+	for (uint i = 0; i < m_allProjectsData.size(); i++)
+	{
+		ProjectData& current = m_allProjectsData.at(i);
+		if (current.m_name == startupName)
+		{
+			ProjectData temp = m_allProjectsData.at(1);
+			m_allProjectsData.at(1) = current;
+			m_allProjectsData.at(i) = temp;
+			return;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
 void Home::HandleInput()
 {
 	if (Console::GetInstance()->IsOpen()) { return; }
 	
-	if (WasKeyJustPressed('d') || WasKeyJustPressed(KEYBOARD_RIGHT_ARROW) || DidMouseWheelScrollUp())
+	if (WasKeyJustPressed('d') || WasKeyJustPressed(KEYBOARD_RIGHT_ARROW) || DidMouseWheelScrollDown())
 	{
 		if (m_currentIndex != (m_allProjectsData.size() - 1))
 		{
@@ -212,7 +231,7 @@ void Home::HandleInput()
 		m_randomBackgroundColor = GetNextColorInRainbow(m_randomBackgroundColor);
 	}
 
-	if (WasKeyJustPressed('a') || WasKeyJustPressed(KEYBOARD_LEFT_ARROW) || DidMouseWheelScrollDown())
+	if (WasKeyJustPressed('a') || WasKeyJustPressed(KEYBOARD_LEFT_ARROW) || DidMouseWheelScrollUp())
 	{
 		if (m_currentIndex != 0)
 		{

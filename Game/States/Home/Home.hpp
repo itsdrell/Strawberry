@@ -58,6 +58,7 @@ public:
 private:
 	void GenerateBounds();
 	void GenerateAllProjectData();
+	void PutTheStartUpFunctionAtFront();
 
 private:
 	void HandleInput();

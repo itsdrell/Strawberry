@@ -10,6 +10,7 @@
 //====================================================================================
 class LuaScript;
 class Map;
+class Shader;
 
 //====================================================================================
 // Type Defs + Defines
@@ -81,6 +82,8 @@ private:
 	// I had to make this a bool because the engine config was getting corrupted(?)
 	// and crashing the game if I checked for it constantly :l 
 	bool			m_showBorder = true;
+
+	Shader*			m_gameShader = nullptr;
 
 };
 

@@ -135,6 +135,7 @@ enum eRenderDataType
 {
 	RENDER_DATA_TYPE_FLOAT,           // GL_FLOAT
 	RENDER_DATA_TYPE_UNSIGNED_BYTE,   // GL_UNSIGNED_BYTE
+	RENDER_DATA_TYPE_INT,			
 									  // ... add more as you need them
 };
 GLenum ToGLType( eRenderDataType type);
@@ -172,6 +173,23 @@ public:
 	static const VertexAttributeT ATTRIBUTES[]; 
 	static VertexLayout  LAYOUT; 
 
+};
+
+//-----------------------------------------------------------------------------------------------
+struct StrawberryVertex
+{
+public:
+	StrawberryVertex(const Vector3& thePosition, const Rgba& theColor, const Vector2& UVcoords, int textureIndex);
+	StrawberryVertex() {} // for array
+
+public:
+	Vector3		m_position;
+	Rgba		m_color;
+	Vector2		m_uvTexCoords;
+	float		m_textureID;
+
+	static const VertexAttributeT ATTRIBUTES[];
+	static VertexLayout  LAYOUT;
 };
 
 //-----------------------------------------------------------------------------------------------

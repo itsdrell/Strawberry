@@ -288,6 +288,7 @@
     <ClInclude Include="Renderer\Renderer.hpp" />
     <ClInclude Include="Renderer\RenderTypes.hpp" />
     <ClInclude Include="Renderer\Systems\MeshBuilder.hpp" />
+    <ClInclude Include="Renderer\Systems\MeshBuilderStrawberry.hpp" />
     <ClInclude Include="ThirdParty\fmod\fmod.h" />
     <ClInclude Include="ThirdParty\fmod\fmod.hpp" />
     <ClInclude Include="ThirdParty\fmod\fmod_codec.h" />
@@ -460,6 +461,7 @@
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RenderTypes.cpp" />
     <ClCompile Include="Renderer\Systems\MeshBuilder.cpp" />
+    <ClCompile Include="Renderer\Systems\MeshBuilderStrawberry.cpp" />
     <ClCompile Include="ThirdParty\Lua\lapi.c" />
     <ClCompile Include="ThirdParty\Lua\lauxlib.c" />
     <ClCompile Include="ThirdParty\Lua\lbaselib.c" />

@@ -156,6 +156,27 @@ void MeshBuilder::AppendLine(const Vector3& startPos, const Vector3& endPos, con
 	PushVertex(endPos);
 }
 
+//-----------------------------------------------------------------------------------------------
+void MeshBuilder::Append2DPlane(const AABB2& bounds, Rgba color /*= Rgba::WHITE*/)
+{
+	SetColor(color);
+
+	SetUV(0, 0);
+	uint idx = PushVertex(Vector3(bounds.mins.x, bounds.mins.y, .01f));
+
+	SetUV(1, 0);
+	PushVertex(Vector3(bounds.maxs.x, bounds.mins.y, .01f));
+
+	SetUV(0, 1);
+	PushVertex(Vector3(bounds.mins.x, bounds.maxs.y, .01f));
+
+	SetUV(1, 1);
+	PushVertex(Vector3(bounds.maxs.x, bounds.maxs.y, .01f));
+
+	AddFace(idx + 0, idx + 1, idx + 2);
+	AddFace(idx + 2, idx + 1, idx + 3);
+}
+
 //===============================================================================================
 void MeshBuilder::AddPoint(const Vector3& pos, const Rgba& color /*= Rgba::WHITE*/)
 {

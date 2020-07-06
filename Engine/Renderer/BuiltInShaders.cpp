@@ -2,13 +2,14 @@
 #include "Engine/Renderer/Components/Shader.hpp"
 #include "Engine/Renderer/Components/ShaderProgram.hpp"
 
-
+//===============================================================================================
 void BuiltInShaders::CreateAllBuiltInShaders()
 {
 	//Shader::AddShader("default", CreateDefaultShader());
 	//Shader::AddShader("invalid", CreateDefaultShader());
 }
 
+//-----------------------------------------------------------------------------------------------
 Shader* BuiltInShaders::CreateDefaultShader()
 {
 
@@ -102,6 +103,7 @@ void main( void )
 	return newShader;
 }
 
+//-----------------------------------------------------------------------------------------------
 Shader* BuiltInShaders::CreateInvalidShader()
 {
 	Shader* newShader = new Shader();
@@ -115,6 +117,94 @@ Shader* BuiltInShaders::CreateInvalidShader()
 	//////////////////////////////////////////////////////////////////////////
 	// Add all properties
 	//newShader->m_textures.push_back(Renderer::GetInstance()->CreateOrGetTexture("Data/Images/defaultTexture.png"));
+
+	return newShader;
+}
+
+//-----------------------------------------------------------------------------------------------
+Shader* BuiltInShaders::CreateStrawberryShader()
+{
+#pragma region FragmentAndVertexCode
+
+	//////////////////////////////////////////////////////////////////////////
+	// FS
+	const char* fs = R"(#version 100
+
+precision mediump float; //important
+
+//-----------------------------------------------------------------------------------------------
+uniform sampler2D gDefaultTexDiffuse;
+uniform sampler2D gSpriteSheet1TexDiffuse;
+
+//-----------------------------------------------------------------------------------------------
+// We match the name and type of the previous stages out
+varying vec4 passColor;
+varying vec2 passUV; 
+varying float passTextureID;
+
+//-----------------------------------------------------------------------------------------------
+void main( void )
+{
+	vec4 textureSamples[2];
+	textureSamples[0] = texture2D( gDefaultTexDiffuse, passUV );
+	textureSamples[1] = texture2D( gSpriteSheet1TexDiffuse, passUV );
+	
+	int textureIDToUse = int(passTextureID);
+
+	vec4 diffuse = textureSamples[textureIDToUse];
+	vec4 finalColor = diffuse * passColor;
+
+	gl_FragColor = finalColor;
+
+})";
+
+	//////////////////////////////////////////////////////////////////////////
+	// VS
+	const char* vs = R"(// define the shader version (this is required)
+#version 100
+
+//-----------------------------------------------------------------------------------------------
+uniform mat4 VIEW;
+uniform mat4 PROJECTION;
+uniform mat4 VIEW_PROJECTION;
+uniform mat4 MODEL;
+
+//-----------------------------------------------------------------------------------------------
+attribute vec3 POSITION;
+attribute vec4 COLOR;      
+attribute vec2 UV;          
+attribute float TEXTURE_ID;
+
+//-----------------------------------------------------------------------------------------------
+//pass variables or "varying" variables
+// These are variables output from this stage for use by the next stage
+// These are called "varying" because for a triangle, we'll only output 3, and 
+// the Raster stage may output hundreds of pixels, each a blended value
+// of the initial 3, hence - they "vary"
+varying vec2 passUV; 
+varying vec4 passColor; 
+varying float passTextureID;
+
+//-----------------------------------------------------------------------------------------------
+void main( void )
+{
+    vec4 local_pos = vec4( POSITION, 1 ); 
+    vec4 clip_pos =  PROJECTION * (VIEW * local_pos); 
+   
+    passColor = COLOR; // pass it on. 
+    passUV = UV; // we have to set our outs.
+	passTextureID = TEXTURE_ID;	
+
+    gl_Position = clip_pos;  
+})";
+
+#pragma endregion
+
+	Shader* newShader = new Shader();
+	newShader->m_name = "Strawberry";
+	Strings theDefines;
+
+	newShader->SetProgram(new ShaderProgram("Strawberry", fs, vs, theDefines));
 
 	return newShader;
 }

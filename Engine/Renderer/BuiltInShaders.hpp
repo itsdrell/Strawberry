@@ -33,6 +33,8 @@ public:
 	static Shader* CreateInvalidShader();
 	//static Shader* CreatePassThroughShader();
 
+	static Shader* CreateStrawberryShader();
+
 
 	// This is for the shader program to use if it has problems create a shader it can use the
 	// invalid fs and vs source to create a new program

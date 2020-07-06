@@ -4,6 +4,7 @@
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Renderer/Images/Texture.hpp"
 #include "Engine/Math/MathUtils.hpp"
+#include "../Images/Sprite.hpp"
 
 //===============================================================================================
 StrawberryMeshBuilder g_theMeshBuilder;
@@ -114,7 +115,7 @@ Mesh* StrawberryMeshBuilder::CreateMesh(bool flush /*= true*/)
 		temp[i] = m_vertices.at(i);
 	}
 
-	mesh->SetVertices(vcount, temp);
+	mesh->SetVertices<StrawberryVertex>(vcount, temp);
 
 	// update indices as normal;
 	if (m_draw.usingIndices)
@@ -151,7 +152,7 @@ void StrawberryMeshBuilder::AppendLine(const Vector2& start, const Vector2& end,
 	Vector2 tl = end - step;
 
 	SetColor(color);
-	SetTextureID(Renderer::GetInstance()->m_defaultTexture->GetID());
+	SetTextureID(BOUND_TEXTURE_DEFAULT);
 
 	// this ordering may be wrong
 	SetUV(0, 0);
@@ -178,7 +179,7 @@ void StrawberryMeshBuilder::AppendCircleOutline2D(const Vector2& center, float r
 	float halfWidth = lineWidth * .5f;
 
 	SetColor(color);
-	SetTextureID(Renderer::GetInstance()->m_defaultTexture->GetID());
+	SetTextureID(BOUND_TEXTURE_DEFAULT);
 
 	float previousPointX = center.x + (radius * (CosDegrees(degrees)));
 	float previousPointY = center.y + (radius * (SinDegrees(degrees)));
@@ -237,7 +238,7 @@ void StrawberryMeshBuilder::AppendCircleFilled2D(const Vector2& center, float ra
 	float degrees = 0.f;
 
 	SetColor(color);
-	SetTextureID(Renderer::GetInstance()->m_defaultTexture->GetID());
+	SetTextureID(BOUND_TEXTURE_DEFAULT);
 
 	float previousPointX = center.x + (radius * (CosDegrees(degrees)));
 	float previousPointY = center.y + (radius * (SinDegrees(degrees)));
@@ -270,7 +271,7 @@ void StrawberryMeshBuilder::AppendCircleFilled2D(const Vector2& center, float ra
 void StrawberryMeshBuilder::AppendAABB2Outline(const AABB2& bounds, Rgba color /*= Rgba::WHITE*/, float lineWidth)
 {
 	SetColor(color);
-	SetTextureID(Renderer::GetInstance()->m_defaultTexture->GetID());
+	SetTextureID(BOUND_TEXTURE_DEFAULT);
 	
 	float stepSize = (lineWidth * .5f) * sqrt(2);
 	
@@ -366,7 +367,7 @@ void StrawberryMeshBuilder::AppendAABB2Outline(const AABB2& bounds, Rgba color /
 void StrawberryMeshBuilder::AppendAABB2Filled(const AABB2& bounds, Rgba color /*= Rgba::WHITE*/)
 {
 	SetColor(color);
-	SetTextureID(Renderer::GetInstance()->m_defaultTexture->GetID());
+	SetTextureID(BOUND_TEXTURE_DEFAULT);
 
 	SetUV(0, 0);
 	uint idx = PushVertex(Vector3(bounds.mins.x, bounds.mins.y, .01f));
@@ -382,5 +383,64 @@ void StrawberryMeshBuilder::AppendAABB2Filled(const AABB2& bounds, Rgba color /*
 
 	AddFace(idx + 0, idx + 1, idx + 2);
 	AddFace(idx + 2, idx + 1, idx + 3);
+}
+
+//-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::AppendSprite(const Vector3& position, const Sprite& theSprite, float rotation /*= 0.f*/, bool flipX /*= false*/, bool flipY /*= false*/)
+{
+	Matrix44 theRotationMatrix = Matrix44::MakeRotationDegrees2D(rotation);
+	Vector3 right = theRotationMatrix.GetRight();
+	Vector3 up = theRotationMatrix.GetUp();
+
+	// this needs to be passed in
+	SetTextureID(1);
+	SetColor(Rgba::WHITE);
+
+	// calculating offsets from the pivot point
+	float leftOffset = -1.0f * ((theSprite.m_pivot.x) * theSprite.m_dimensions.x);
+	float rightOffset = leftOffset + theSprite.m_dimensions.x;
+	float bottomOffset = -1.0f * ((theSprite.m_pivot.y) * theSprite.m_dimensions.y);
+	float topOffset = bottomOffset + theSprite.m_dimensions.y;
+
+	// calculating the vertex points 
+	Vector3 p0 = position + (right * leftOffset) + (up * bottomOffset); // bottom left
+	Vector3 p1 = position + (right * rightOffset) + (up * bottomOffset); // bottom right
+	Vector3 p2 = position + (right * rightOffset) + (up * topOffset); // top right
+	Vector3 p3 = position + (right * leftOffset) + (up * topOffset); // top left
+
+	// Get the UVs
+	AABB2 uvs = theSprite.m_uvs;
+
+	if (flipY)
+	{
+		uvs.mins.y = theSprite.m_uvs.maxs.y;
+		uvs.maxs.y = theSprite.m_uvs.mins.y;
+	}
+
+	if (flipX)
+	{
+		uvs.mins.x = theSprite.m_uvs.maxs.x;
+		uvs.maxs.x = theSprite.m_uvs.mins.x;
+	}
+
+	Vector2 bl = uvs.mins;
+	Vector2 br = Vector2(uvs.maxs.x, uvs.mins.y);
+	Vector2 tl = Vector2(uvs.mins.x, uvs.maxs.y);
+	Vector2 tr = uvs.maxs;
+
+	SetUV(bl);
+	uint idx = PushVertex(Vector3(p0.x, p0.y, .01f));
+
+	SetUV(br);
+	PushVertex(Vector3(p1.x, p1.y, .01f));
+
+	SetUV(tr);
+	PushVertex(Vector3(p2.x, p2.y, .01f));
+
+	SetUV(tl);
+	PushVertex(Vector3(p3.x, p3.y, .01f));
+
+	AddFace(idx + 0, idx + 1, idx + 2);
+	AddFace(idx + 0, idx + 2, idx + 3); // 023 ?
 }
 

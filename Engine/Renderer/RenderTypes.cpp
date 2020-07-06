@@ -212,6 +212,9 @@ GLenum ToGLType(eRenderDataType type)
 	case RENDER_DATA_TYPE_UNSIGNED_BYTE:
 		return GL_UNSIGNED_BYTE;
 		break;
+	case RENDER_DATA_TYPE_INT:
+		return GL_INT;
+		break;
 	default:
 		return GL_FLOAT;
 		break;
@@ -244,3 +247,24 @@ VertexAttributeT const Vertex3D_PCU::ATTRIBUTES[] =
 }; 
 
 VertexLayout Vertex3D_PCU::LAYOUT = VertexLayout( sizeof(Vertex3D_PCU), Vertex3D_PCU::ATTRIBUTES );
+
+//-----------------------------------------------------------------------------------------------
+StrawberryVertex::StrawberryVertex(const Vector3& thePosition, const Rgba& theColor, const Vector2& UVcoords, int textureIndex)
+{
+	m_position = thePosition;
+	m_color = theColor;
+	m_uvTexCoords = UVcoords;
+	m_textureID = textureIndex;
+}
+
+//-----------------------------------------------------------------------------------------------
+VertexAttributeT const StrawberryVertex::ATTRIBUTES[] =
+{
+	VertexAttributeT("POSITION",	RENDER_DATA_TYPE_FLOAT,         3, false, offsetof(StrawberryVertex, m_position)),
+	VertexAttributeT("COLOR",		RENDER_DATA_TYPE_UNSIGNED_BYTE, 4, true,  offsetof(StrawberryVertex, m_color)),
+	VertexAttributeT("UV",			RENDER_DATA_TYPE_FLOAT,         2, false, offsetof(StrawberryVertex, m_uvTexCoords)),
+	VertexAttributeT("TEXTURE_ID",	RENDER_DATA_TYPE_FLOAT,			1, false, offsetof(StrawberryVertex, m_textureID)),
+	VertexAttributeT(), // like a null terminator, how do we know the list is done;
+};
+
+VertexLayout StrawberryVertex::LAYOUT = VertexLayout(sizeof(StrawberryVertex), StrawberryVertex::ATTRIBUTES);

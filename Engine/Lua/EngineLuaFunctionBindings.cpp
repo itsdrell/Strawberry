@@ -15,6 +15,7 @@
 #include "Engine/Math/Geometry/Disc.hpp"
 #include <cstdlib>
 #include <cmath>
+#include "../Renderer/Systems/MeshBuilderStrawberry.hpp"
 
 
 //===============================================================================================
@@ -211,8 +212,8 @@ int LuaDrawCircleFilled(lua_State * theState)
 
 	Rgba color = LuaGetRgba(theState, 4, r->m_defaultDrawColor);
 
-	r->DrawCircleFilled2D(Vector2(centerX, centerY), radius, color);
-	
+	g_theMeshBuilder.AppendCircleFilled2D(Vector2(centerX, centerY), radius, color, 40);
+
 	return 0;
 }
 
@@ -228,7 +229,7 @@ int LuaDrawCircleOutline(lua_State * theState)
 
 	Rgba color = LuaGetRgba(theState, 4, r->m_defaultDrawColor);
 
-	r->DrawCircleOutline2D(Vector2(centerX, centerY), radius, color);
+	g_theMeshBuilder.AppendCircleOutline2D(Vector2(centerX, centerY), radius, color, 1.f, 40);
 
 	return 0;
 }
@@ -246,7 +247,8 @@ int LuaDrawAABB2Filled(lua_State* theState)
 
 	Rgba color = LuaGetRgba(theState, 5, r->m_defaultDrawColor);
 
-	r->DrawAABB2Filled(AABB2(minX, minY, maxX, maxY), color);
+	//r->DrawAABB2Filled(AABB2(minX, minY, maxX, maxY), color);
+	g_theMeshBuilder.AppendAABB2Filled(AABB2(minX, minY, maxX, maxY), color);
 
 	return 0;
 }
@@ -292,9 +294,10 @@ int LuaDrawSprite(lua_State* theState)
 	AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndexAndDimensions(spriteIndex, IntVector2((int) width, (int) height));
 	Sprite spriteToDraw = Sprite(g_theSpriteSheet->m_texture, dimensions, uvs, ppu);
 
-	Renderer* r = Renderer::GetInstance();
+	//Renderer* r = Renderer::GetInstance();
 	
-	r->DrawSpriteRotated2D(Vector3(x,y,0.f), spriteToDraw, rotation, flipX, flipY);
+	//r->DrawSpriteRotated2D(Vector3(x,y,0.f), spriteToDraw, rotation, flipX, flipY);
+	g_theMeshBuilder.AppendSprite(Vector3(x, y, 0.f), spriteToDraw, rotation, flipX, flipY);
 
 	return 0;
 }

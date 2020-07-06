@@ -64,6 +64,7 @@ public:
 public:
 	void AppendPoint(const Vector3& pos, const Rgba& color = Rgba::WHITE);
 	void AppendLine(const Vector3& startPos, const Vector3& endPos, const Rgba& color = Rgba::WHITE);
+	void Append2DPlane(const AABB2& bounds, Rgba color = Rgba::WHITE);
 
 public:
 	void AddPoint(const Vector3& pos, const Rgba& color = Rgba::WHITE);

@@ -98,8 +98,7 @@ void CreateNewProject(Command& command)
 	CreateAndLogStringToFile(musicPath.c_str(), musicText.c_str());
 	CreateAndLogStringToFile(sfxPath.c_str(), sfxText.c_str());
 
-	// We may not want to do this anymore now that we have a home screen
-	//SetStartupProject(name);
+	SetStartupProject(name);
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -45,7 +45,7 @@ public:
 
 private:
 	StopWatch	m_loadTimer;
-	Sprite		m_strawberrySprite;
+	Sprite*		m_strawberrySprite;
 };
 
 //====================================================================================

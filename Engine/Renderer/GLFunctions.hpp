@@ -140,7 +140,8 @@ extern PFNGLTEXSTORAGE2DPROC glTexStorage2D;
 //extern PFNGLTEXSUBIMAGE2DPROC glTexSubImage2D;
 extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
 extern PFNGLSAMPLERPARAMETERFPROC glSamplerParameterf;
-
+extern PFNGLUNIFORM1IPROC glUniform1i;
+extern PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
 
 
 #endif

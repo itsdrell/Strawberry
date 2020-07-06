@@ -21,6 +21,11 @@
 #include "TheApp.hpp"
 #include "Engine/Core/Utils/StrawberryFileUtils.hpp"
 #include "Engine/Core/Platform/File.hpp"
+#include "Engine/Renderer/Systems/MeshBuilderStrawberry.hpp"
+#include "Engine/Renderer/BuiltInShaders.hpp"
+#include "Engine/Renderer/Components/Shader.hpp"
+#include "Engine/Renderer/Images/Texture.hpp"
+#include "Engine/Renderer/Images/BitmapFont.hpp"
 
 //===============================================================================================
 Game* g_theGame = nullptr;
@@ -38,6 +43,8 @@ Game::Game()
 
 	LoadOrReloadSpriteSheet();
 	m_texturePath = path + "/Images/SpriteSheet.png";
+
+	m_gameShader = BuiltInShaders::CreateStrawberryShader();
 
 	g_theGameCamera = new Camera();
 	g_theGameCamera->SetColorTarget(r->m_defaultColorTarget);
@@ -59,6 +66,9 @@ Game::Game()
 	m_showBorder = g_theEngineBlackboard->GetValue("showShell", m_showBorder);
 
 	g_theApp->m_states[APPSTATE_GAME] = this;
+
+	g_theMeshBuilder.Clear();
+
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -78,6 +88,7 @@ Game::~Game()
 
 	g_theApp->m_states[APPSTATE_GAME] = nullptr;
 
+	g_theMeshBuilder.Clear();
 
 	// don't delete the spritesheet, the game will delete it on startup and the app on shutdown
 }
@@ -123,6 +134,8 @@ void Game::Update()
 				g_theApp->m_takeGameCoverScreenshot = true;
 		}
 	}
+
+	DebugRenderLog(std::to_string(60 / g_theGameClock->deltaTime), 0.f);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -159,20 +172,38 @@ void Game::RenderGame() const
 		Vector2(m_cameraPos.x + size + padding, m_cameraPos.y + size));
 	g_theGameCamera->m_projectionMatrix.Append(Matrix44::MakeRotationDegrees2D(m_cameraAngle));
 
-	r->SetCamera(g_theGameCamera);
-	r->SetShader(r->m_defaultShader);
+	r->SetShader(m_gameShader);
 
-	r->SetCurrentTexture();
+
+	r->SetSamplerUniform("gDefaultTexDiffuse", 0);
+	r->SetSamplerUniform("gSpriteSheet1TexDiffuse", 1);
+
+	r->SetCurrentTexture(0, r->m_defaultTexture);
+	r->SetCurrentTexture(1, g_theSpriteSheet->m_texture);
+
+	r->SetCamera(g_theGameCamera);
+
+	//r->SetCurrentTexture();
 	LuaRender(*m_mainLuaScript);
 
-	RenderGameShell(padding, size);
+	r->SetCurrentTexture(0, r->m_defaultTexture);
+	r->SetCurrentTexture(1, g_theSpriteSheet->m_texture);
+
+	Mesh* theMesh = g_theMeshBuilder.CreateMesh();
+	r->DrawMesh(theMesh, true);
+
+	//RenderGameShell(padding, size);
+
+	r->SetCurrentTexture();
+	r->SetShader();
 }
 
 //-----------------------------------------------------------------------------------------------
 void Game::RenderGameShell(float padding, float size) const
 {
 	Renderer* r = Renderer::GetInstance();
-	
+	r->SetShader(r->m_defaultShader);
+
 	// side bars to be aspect ratio and only show one cell at a time
 	AABB2 leftBounds = AABB2(Vector2(-padding + m_cameraPos.x, m_cameraPos.y), Vector2(m_cameraPos.x, m_cameraPos.y + size));
 	AABB2 rightBounds = AABB2(Vector2(m_cameraPos.x + size, m_cameraPos.y), Vector2(m_cameraPos.x + size + padding, m_cameraPos.y + size));
