@@ -134,7 +134,12 @@ precision mediump float; //important
 
 //-----------------------------------------------------------------------------------------------
 uniform sampler2D gDefaultTexDiffuse;
-uniform sampler2D gSpriteSheet1TexDiffuse;
+uniform sampler2D gDefaultFontTexDiffuse;
+
+uniform sampler2D gSpriteSheetTexDiffuse_0;
+uniform sampler2D gSpriteSheetTexDiffuse_1;
+uniform sampler2D gSpriteSheetTexDiffuse_2;
+uniform sampler2D gSpriteSheetTexDiffuse_3;
 
 //-----------------------------------------------------------------------------------------------
 // We match the name and type of the previous stages out
@@ -145,10 +150,14 @@ varying float passTextureID;
 //-----------------------------------------------------------------------------------------------
 void main( void )
 {
-	vec4 textureSamples[2];
+	vec4 textureSamples[6];
 	textureSamples[0] = texture2D( gDefaultTexDiffuse, passUV );
-	textureSamples[1] = texture2D( gSpriteSheet1TexDiffuse, passUV );
-	
+	textureSamples[1] = texture2D( gDefaultFontTexDiffuse, passUV );
+	textureSamples[2] = texture2D( gSpriteSheetTexDiffuse_0, passUV );
+	textureSamples[3] = texture2D( gSpriteSheetTexDiffuse_1, passUV );
+	textureSamples[4] = texture2D( gSpriteSheetTexDiffuse_2, passUV );
+	textureSamples[5] = texture2D( gSpriteSheetTexDiffuse_3, passUV );
+
 	int textureIDToUse = int(passTextureID);
 
 	vec4 diffuse = textureSamples[textureIDToUse];

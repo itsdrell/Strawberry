@@ -70,9 +70,30 @@ public:
 	void AppendAABB2Filled(const AABB2& bounds, Rgba color = Rgba::WHITE);
 
 	void AppendSprite(const Vector3& position, const Sprite& theSprite,
-		float rotation = 0.f, bool flipX = false, bool flipY = false);
+		float rotation = 0.f, bool flipX = false, bool flipY = false, int spriteSheetIndex = 0);
 
-	void AppendTextInBox();
+	void AppendTextInBox(const String& text, const AABB2& bounds, float cellHeight, float normalizedPercentIntoText = 1.f, DrawTextMode mode = DRAW_TEXT_MODE_OVERFLOW,
+		const Vector2& alignment = Vector2(0, 0), const Rgba& color = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK,
+		float aspect = 1.77f);
+
+	void AppendText2D(const Vector2& startPos, const String& text, float cellHeight, const Rgba& tint = Rgba::WHITE,
+		bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK, float aspectScale = 1.7f);
+
+private:
+	void AppendWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK);
+
+	void AppendShrinkToFitTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK);
+
+	void AppendOverflowTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK);
+
+	void AppendTextWithAlignment(const Strings& text, const AABB2& boxSize, float cellHeight = 1.f, const Vector2& alignment = Vector2(0, 0),
+		float aspectScale = 1.77f, const Rgba& textColor = Rgba::WHITE, bool drawOutline = false, const Rgba& outlineColor = Rgba::BLACK);
+
+	void AppendText2DVerts(const Vector2& startPos, const String& text, float cellHeight,
+		const Rgba& tint = Rgba::WHITE, float aspectScale = 1.7f);
 
 public:
 	StrawberryVertex 					m_stamp; // this is a value. We overwrite it

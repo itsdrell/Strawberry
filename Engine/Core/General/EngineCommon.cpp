@@ -14,6 +14,8 @@
 
 //===============================================================================================
 SpriteSheet*	g_theSpriteSheet = nullptr;
+SpriteSheet*	g_allSpriteSheets[MAX_AMOUNT_OF_SPRITE_SHEETS];
+
 String			g_currentProjectName = "";
 
 //===============================================================================================

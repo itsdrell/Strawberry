@@ -41,7 +41,7 @@ Game::Game()
 	if (m_mainLuaScript == nullptr)
 		PrintLog("Error creating main lua script");
 
-	LoadOrReloadSpriteSheet();
+	LoadOrReloadSpriteSheets();
 	m_texturePath = path + "/Images/SpriteSheet.png";
 
 	m_gameShader = BuiltInShaders::CreateStrawberryShader();
@@ -174,20 +174,25 @@ void Game::RenderGame() const
 
 	r->SetShader(m_gameShader);
 
-
 	r->SetSamplerUniform("gDefaultTexDiffuse", 0);
-	r->SetSamplerUniform("gSpriteSheet1TexDiffuse", 1);
-
+	r->SetSamplerUniform("gDefaultFontTexDiffuse", 1);
+	
 	r->SetCurrentTexture(0, r->m_defaultTexture);
-	r->SetCurrentTexture(1, g_theSpriteSheet->m_texture);
+	r->SetCurrentTexture(1, r->m_defaultFont->GetTexture());
+
+	// if you want more, you'll need to add them to the shader sampler
+	for (uint i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		String name = "gSpriteSheetTexDiffuse_" + std::to_string(i);
+		int slot = i + 2;
+
+		r->SetSamplerUniform(name, slot);
+		r->SetCurrentTexture(slot, g_allSpriteSheets[i]->m_texture);
+	}
 
 	r->SetCamera(g_theGameCamera);
 
-	//r->SetCurrentTexture();
 	LuaRender(*m_mainLuaScript);
-
-	r->SetCurrentTexture(0, r->m_defaultTexture);
-	r->SetCurrentTexture(1, g_theSpriteSheet->m_texture);
 
 	Mesh* theMesh = g_theMeshBuilder.CreateMesh();
 	r->DrawMesh(theMesh, true);
@@ -250,19 +255,33 @@ void Game::RenderError() const
 }
 
 //-----------------------------------------------------------------------------------------------
-void Game::LoadOrReloadSpriteSheet()
+void Game::LoadOrReloadSpriteSheets()
 {
 	String path = "Projects/" + g_currentProjectName;
 
 	Renderer* r = Renderer::GetInstance();
-	String fullPath = path + "/Images/SpriteSheet.png";
 
-	if (g_theSpriteSheet != nullptr)
+	for(uint i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
 	{
-		r->DeleteTexture(fullPath);
-		delete g_theSpriteSheet;
+		String spriteSheetName = "SpriteSheet_" + std::to_string(i);
+		String fullPath = path + "/Images/" + spriteSheetName + ".png";
+
+		if(g_allSpriteSheets[i] != nullptr)
+		{
+			r->DeleteTexture(fullPath);
+			delete g_allSpriteSheets[i];
+			g_allSpriteSheets[i] = nullptr;
+		}
+
+		if(DoesDirectoryExist(fullPath.c_str()))
+		{
+			g_allSpriteSheets[i] = new SpriteSheet(r->CreateOrGetTexture(fullPath), 16, 16);
+		}
+		else
+		{
+			g_allSpriteSheets[i] = new SpriteSheet(r->m_defaultTexture, 16, 16);
+		}
 	}
-	g_theSpriteSheet = new SpriteSheet(r->CreateOrGetTexture(fullPath), 16, 16);
 }
 
 //-----------------------------------------------------------------------------------------------

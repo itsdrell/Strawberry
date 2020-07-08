@@ -42,7 +42,7 @@ void SpriteSheetView::HandleInput()
 {
 	if (WasKeyJustPressed('r'))
 	{
-		Game::GetInstance()->LoadOrReloadSpriteSheet();
+		Game::GetInstance()->LoadOrReloadSpriteSheets();
 		CreateDisplayColors();
 	}
 

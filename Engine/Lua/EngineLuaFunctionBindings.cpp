@@ -186,16 +186,15 @@ int LuaSetDefaultDrawColor(lua_State* theState)
 // DrawLine(startX, startY, endX, endY, r, g, b, a)
 int LuaDrawLine(lua_State * theState)
 {
-	Renderer* r = Renderer::GetInstance();
-	
 	float startX = LuaGetFloat(theState, 1, 1000.f);
 	float startY = LuaGetFloat(theState, 2, 1000.f);
 	float endX = LuaGetFloat(theState, 3, 10000.f);
 	float endY = LuaGetFloat(theState, 4, 1000.f);
 
-	Rgba color = LuaGetRgba(theState, 5, r->m_defaultDrawColor);
+	Rgba color = LuaGetRgba(theState, 5, Renderer::GetInstance()->m_defaultDrawColor);
 
-	r->DrawLine2D(Vector2(startX, startY), Vector2( endX, endY), color);
+	// expose length to lua?
+	g_theMeshBuilder.AppendLine(Vector2(startX, startY), Vector2(endX, endY), color);
 	
 	return 0;
 }
@@ -204,13 +203,11 @@ int LuaDrawLine(lua_State * theState)
 // DrawCircleFill(centerX, centerY, radius, r, g, b, a)
 int LuaDrawCircleFilled(lua_State * theState)
 {
-	Renderer* r = Renderer::GetInstance();
-	
 	float centerX = LuaGetFloat(theState, 1, 0.f);
 	float centerY = LuaGetFloat(theState, 2, 0.f);
 	float radius = LuaGetFloat(theState, 3, 0.f);
 
-	Rgba color = LuaGetRgba(theState, 4, r->m_defaultDrawColor);
+	Rgba color = LuaGetRgba(theState, 4, Renderer::GetInstance()->m_defaultDrawColor);
 
 	g_theMeshBuilder.AppendCircleFilled2D(Vector2(centerX, centerY), radius, color, 40);
 
@@ -221,13 +218,11 @@ int LuaDrawCircleFilled(lua_State * theState)
 // DrawCircle(centerX, centerY, radius, r, g, b, a)
 int LuaDrawCircleOutline(lua_State * theState)
 {
-	Renderer* r = Renderer::GetInstance();
-	
 	float centerX = LuaGetFloat(theState, 1, 0.f);
 	float centerY = LuaGetFloat(theState, 2, 0.f);
 	float radius = LuaGetFloat(theState, 3, 0.f);
 
-	Rgba color = LuaGetRgba(theState, 4, r->m_defaultDrawColor);
+	Rgba color = LuaGetRgba(theState, 4, Renderer::GetInstance()->m_defaultDrawColor);
 
 	g_theMeshBuilder.AppendCircleOutline2D(Vector2(centerX, centerY), radius, color, 1.f, 40);
 
@@ -238,16 +233,13 @@ int LuaDrawCircleOutline(lua_State * theState)
 // DrawAABB2(minX, minY, maxX, maxY, r, g, b, a)
 int LuaDrawAABB2Filled(lua_State* theState)
 {
-	Renderer* r = Renderer::GetInstance();
-	
 	float minX = LuaGetFloat(theState, 1, 0.f);
 	float minY = LuaGetFloat(theState, 2, 0.f);
 	float maxX = LuaGetFloat(theState, 3, 0.f);
 	float maxY = LuaGetFloat(theState, 4, 0.f);
 
-	Rgba color = LuaGetRgba(theState, 5, r->m_defaultDrawColor);
+	Rgba color = LuaGetRgba(theState, 5, Renderer::GetInstance()->m_defaultDrawColor);
 
-	//r->DrawAABB2Filled(AABB2(minX, minY, maxX, maxY), color);
 	g_theMeshBuilder.AppendAABB2Filled(AABB2(minX, minY, maxX, maxY), color);
 
 	return 0;
@@ -257,17 +249,15 @@ int LuaDrawAABB2Filled(lua_State* theState)
 //  DrawAABB2(minX, minY, maxX, maxY, r, g, b, a)
 int LuaDrawAABB2WireFrame(lua_State* theState)
 {
-	Renderer* r = Renderer::GetInstance();
-	
 	float minX = LuaGetFloat(theState, 1, 0.f);
 	float minY = LuaGetFloat(theState, 2, 0.f);
 	float maxX = LuaGetFloat(theState, 3, 0.f);
 	float maxY = LuaGetFloat(theState, 4, 0.f);
 
-	Rgba color = LuaGetRgba(theState, 5, r->m_defaultDrawColor);
+	Rgba color = LuaGetRgba(theState, 5, Renderer::GetInstance()->m_defaultDrawColor);
 
-	Renderer::GetInstance()->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), color);
-
+	g_theMeshBuilder.AppendAABB2Outline(AABB2(minX, minY, maxX, maxY), color);
+	
 	return 0;
 }
 
@@ -291,13 +281,14 @@ int LuaDrawSprite(lua_State* theState)
 	float ppu = LuaGetFloat(theState, 9, 1.f);
 
 	Vector2 dimensions = Vector2(width * SPRITE_DIMENSION, height * SPRITE_DIMENSION );
-	AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndexAndDimensions(spriteIndex, IntVector2((int) width, (int) height));
-	Sprite spriteToDraw = Sprite(g_theSpriteSheet->m_texture, dimensions, uvs, ppu);
-
-	//Renderer* r = Renderer::GetInstance();
 	
-	//r->DrawSpriteRotated2D(Vector3(x,y,0.f), spriteToDraw, rotation, flipX, flipY);
-	g_theMeshBuilder.AppendSprite(Vector3(x, y, 0.f), spriteToDraw, rotation, flipX, flipY);
+	int spriteSheetIndex = floor(((float) spriteIndex) / 255.f);
+	SpriteSheet* spriteSheetToUse = g_allSpriteSheets[spriteSheetIndex];
+
+	AABB2 uvs = spriteSheetToUse->GetTexCoordsForSpriteIndexAndDimensions(spriteIndex, IntVector2((int) width, (int) height));
+	Sprite spriteToDraw = Sprite(spriteSheetToUse->m_texture, dimensions, uvs, ppu);
+
+	g_theMeshBuilder.AppendSprite(Vector3(x, y, 0.f), spriteToDraw, rotation, flipX, flipY, spriteSheetIndex);
 
 	return 0;
 }
@@ -317,8 +308,7 @@ int LuaDrawText(lua_State* theState)
 	bool drawOutline = LuaGetBool(theState, index, false);
 	Rgba outlineColor = LuaGetRgba(theState, index + 1, Rgba::BLACK);
 
-	Renderer* r = Renderer::GetInstance();
-	r->DrawText2D(Vector2(x, y), text, height, color, drawOutline, outlineColor);
+	g_theMeshBuilder.AppendText2D(Vector2(x, y), text, height, color, drawOutline, outlineColor);
 
 	return 0;
 }
@@ -342,8 +332,7 @@ static int DrawTextInBoxHelper(lua_State* theState, DrawTextMode drawMode)
 	bool drawOutline = LuaGetBool(theState, index, false);
 	Rgba outlineColor = LuaGetRgba(theState, index + 1, Rgba::BLACK);
 
-	Renderer* r = Renderer::GetInstance();
-	r->DrawTextInBox(text, AABB2(Vector2(minx, miny), Vector2(maxx, maxy)), height, percentIn,
+	g_theMeshBuilder.AppendTextInBox(text, AABB2(Vector2(minx, miny), Vector2(maxx, maxy)), height, percentIn,
 		drawMode, Vector2(alignmentX, alignmentY), color, drawOutline, outlineColor);
 
 	return 0;

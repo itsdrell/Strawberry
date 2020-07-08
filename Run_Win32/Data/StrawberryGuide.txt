@@ -53,6 +53,15 @@ Console Commands:
         - A pc build is a copy of strawberry exe with only one project (the game you want to export)
             inside. Auto loads the game when the exe launches
         - <Platform> is either "web" or "pc"
+
+    home
+        - Takes you from being in game/editor to the home page
+
+    startup 
+        - Sets the startup project
+
+    gifLength 
+        - Set the length of the gif recording (in seconds)
     
 
 -------------------------------------------------------------------------------------------
@@ -89,6 +98,15 @@ General:
     Screenshake(amountZeroToOne)
         - Creates an impulse based screenshake that decays over time
         * amountZeroToOne : a float 0 -> 1. 1 being a bunch of screenshake for that frame, 0 being none
+
+    Sleep(timeInSeconds)
+        - How long to pause the game update loop
+
+    TimeScale(timeInSeconds)
+        - Set how much to multiply ds by for the game loop 
+
+    Pick(condition, valueIfTrue, valueIfFalse)
+        - Ternary 
 ]
 -------------------------------------------------------------------------------------------
 Draw Functions
@@ -122,9 +140,18 @@ Draw Functions
 	    * flipx and flipy : bools that you can turn on to flip/inverse a sprite in a dir
 	    * ppu : scaling of the sprite
 
-    DrawText( x, y, height, color)
+    DrawText( x, y, height, color, drawOutline, outlineColor)
 	    - Draws text using the font.png found in Data
 	    * height : how tall to draw the font. The width will be determines based off aspect and the height you choose
+
+    DrawTextOverFlow (string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color, outline, outlineColor)
+        - Draws text based on a box and alignment but doesn't care about fitting or wrapping
+
+    DrawTextWrapped (string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color, outline, outlineColor)
+        - Draws text based on a box but DOES care about wrapping text 
+
+    DrawTextShrink (string, minx, miny, maxx, maxy, height, aligntmentX, alignmentY, percentIn, color, outline, outlineColor)
+        - Draws text based on a box and shrinks to fit inside. Use \n to wrap to the next line inside the string
 ]
 -------------------------------------------------------------------------------------------
 Input
@@ -143,6 +170,9 @@ Current Named Keys are:
     Up Arrow Key is:        "up"
     Down Key is:            "down"
 
+Mouse:
+    - For the name of the button use "left" or "right" to specify which click you want
+
 - Input currently only supports the named keys listed above as well as any letter key 
 
 [
@@ -157,6 +187,25 @@ Current Named Keys are:
     WasKeyJustReleased ( KeyCode )
         - Checks if the key was just relased during that frame
 	    * Keycode : Ex would be "a" for a key
+
+    IsMouseButtonPressed(mouseButtonName)
+        - Checks if the mouse button is being held
+    
+    WasMouseButtonJustPressed(mouseButtonName)
+        - Checks if the mouse button was just pressed
+
+    WasMouseButtonJustReleased(mouseButtonName)
+        - Checks if the mouse button was just released
+    
+    DidMouseWheelScrollDown()
+        - Checks if the mouse wheel scrolled down
+
+    DidMouseWheelScrollUp()
+        - Checks if the mouse wheel scrolled up
+
+    GetMousePosition()
+        - Gets the postion of the mouse on the screen
+        - Returns 2 values, an x,y 
 ]
 
 -------------------------------------------------------------------------------------------
@@ -216,6 +265,19 @@ Map
         < returns a bool 
 ]
 
+-------------------------------------------------------------------------------------------
+Curves
+
+    - You can create curves in the Curve Editor (4 key in editor mode)
+    - Allows you to make simple NORMALIZED (time 0->1) curves. 
+    - You can have up to 10 of them and you can reference them by their number
+
+[
+    EvaluateCurve(curveIndex, t)
+        * CurveIndex specifies which curve to use based on their index in the editor
+        * t is a number between 0,1 describing how far into the curve we are time wise
+        < returns the evaluated value for that curve based on how long into the curve t specifies 
+] 
 
 -------------------------------------------------------------------------------------------
 Math
@@ -288,4 +350,199 @@ Math
         - Takes a value with a range and translates it to another range 
         < returns the value based on the new range
 ]
+
 -------------------------------------------------------------------------------------------
+Helper classes
+    - Strawberry offers some helper classes to make life easier. 
+    - They also are used to interface with the Berry library (see below)
+    - You don't have to use them if you don't want to , all of the above functions work with out them
+
+-------------------------------------------------------------------------------------------
+Vector2
+    - A 2D vector that represents an x,y as floats/numbers
+
+    Some Operators that it offers:
+    +,-,==
+    * either dot or uniform scale based on the other variable (on the right of the vector) being a number or vector2
+    # Gets the legth of the vector
+    .. returns the vector as a string
+
+Functions the class offers. If Vector: is not in front, you do yourVector2.Function() to use them
+[
+    Vector2(x,y)
+    
+    Normalize()
+        - normalizes the vector. Ex. vectorToNormalize.Normalize() is now a normalized vector
+
+    GetNormalized()
+        - returns a normalized vector, does not change the current vector 
+        < returns a Vector2 that is a normalized vector
+
+    GetLength()
+        < returns the length of the vector
+
+    GetLengthSquared()
+        - returns the length of the vector squared (faster)
+
+    ToString()
+        - returns the vector as a string 
+
+    Dot(vectorB)
+        - Dot the current vector against the other vector 
+        < returns a float 
+
+    Vector2:GetDistance(startVec, endVec)
+        - Gets the distance between two vectors
+        < returns a float
+
+    Vector2:GetDistanceSquared(startVec, endVec)
+        - Gets the distance squared 
+        < returns a float
+
+    Vector2:Lerp(vecA, vecB, t)
+        - Interpolate two vectors based on a t
+]
+
+-------------------------------------------------------------------------------------------
+AABB2
+    - An axis aligned bouding box. Stored as a mins,maxs where both are vector2s
+
+    Some Operators that it offers:
+    == and .. 
+
+[
+    AABB2(mins, maxs)
+        - this can take 4 floats or two vectors 
+    
+    GetWidth()
+    GetHeight()
+    GetDimensions()
+    GetPositionInside(vec2Percent)
+    IsPointInside(vec2Point)
+    GrowToSquare()
+    GetBiggerBox()
+    ShrinkToSquare()
+    GetSmallerBox()
+    GetAABB2FromSelf(vec2MinPercentage, vec2MaxPercentage)
+    ToString() 
+
+    GetAABB2FromAABB2(vec2MinPercentage, vec2MaxPercentage, theBounds)
+]
+
+-------------------------------------------------------------------------------------------
+Disc 
+    - A disc that contains a center point (stored as Vector2) and a radius 
+
+    Some Operators that it offers:
+    == and .. 
+
+[
+    Disc(position, radius)
+        - position can be an x,y or a vector
+    
+    IsPointInside(x,y)
+
+    IsPointInside(vector2Point)
+
+    ToString()
+]
+
+
+-------------------------------------------------------------------------------------------
+Timer 
+    - A convienent class to do things after X amount of time
+    - No need to worry about updating them, the engine does it for you
+
+
+[
+    Timer(length)
+
+    SetLength(length)
+
+    HasElapsed()
+
+    GetElapsedTime()
+
+    GetNormalizedElapsedTime()
+
+    Reset()
+
+    CheckAndReset()
+
+    ToString()
+]
+
+-------------------------------------------------------------------------------------------
+Queue
+    - A simple queue 
+
+[
+    Queue()
+    Clear()
+    Push()
+    Pop()
+    Peek()
+    IsEmpty()
+    ToString()
+]
+
+-------------------------------------------------------------------------------------------
+Berry 
+
+    - Berry is a namespace that wraps all of the normal functions but allows you to 
+        use the utility classes as parameter 
+    
+    Ex. Instead of DrawAABB2(x,y, xx, yy, color) its just Berry.DrawAABB2(box, color)
+
+    - Also some more specific utils (like collision) that you may not want to use (but I do :)
+    - Have to #include Berry at the top of your main function to use
+
+[
+    Berry.AABB2vsDisc(aabb2, disc)
+
+    Berry.DiscvsAABB2(disc, aabb2)
+
+    Berry.AABB2vsAABB2(aabb2A, aabb2B)
+
+    Berry.DiscvsDisc(discA, discB)
+
+    Berry.DiscvsTile(disc, tilePos)
+
+    Berry.AABB2vsTile(box, tilePos)
+
+    Berry.DiscAABB2Corrective(disc, aabb2)
+        < returns the discs new center but also updates it 
+
+    Berry.DiscCorrective(discA, discB, normalizedSecondWeight)
+        < returns both discs new centers as well as updates them
+
+    Berry.DiscTileCorrective(disc, tilePos)
+
+    Berry.Reflect(incoming, surfaceNormal)
+
+    Berry.Pick(condition, valueIfTrue, valueIfFalse)
+        - Ternary 
+
+    Berry.BoolToString
+        - because you cant to string a bool for some reason???
+
+    Berry.GetMousePosition()
+        < returns a vector2
+
+    Berry.DrawLine(vec2startPos, vec2endPos, r, g, b, a)
+    Berry.DrawCircle(disc, r,g,b,a)
+    Berry.DrawCircleFill(disc, r,g,b,a)
+    Berry.DrawAABB2(box, r,g,b,a)
+    Berry.DrawAABB2Fill(box, r,g,b,a)
+    Berry.DrawSprite(index, pos, rotation, width, height, flipX, flipY, pixelsPerUnit)
+    Berry.DrawText(string, pos, height, r,g,b,a, useOutline, r2,g2,b2,a2)
+    Berry.DrawTextWrapped(string, box, height, alignmentVec2, percentInString, r1,g1,b1,a1, useOutline, r2,g2,b2,a2)
+    Berry.DrawTextOverflow(string, box, height, alignmentVec2, percentInString, r1,g1,b1,a1, useOutline, r2,g2,b2,a2)
+    Berry.DrawTextShrink(string, box, height, alignmentVec2, percentInString, r1,g1,b1,a1, useOutline, r2,g2,b2,a2)
+    
+    Berry.GetBoundsFromTilePos(tilePos)
+    Berry.GetTileSprite(tilePos)
+    Berry.DoesTileHaveSprite(tilePos, sprite)
+    Berry.DoesTileHaveCollision(tilePos, channel)
+    Berry.GetNeighborHoodCollisions(disc, currentTile)
+]

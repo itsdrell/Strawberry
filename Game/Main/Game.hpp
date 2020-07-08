@@ -53,7 +53,7 @@ public:
 	void		RenderError() const;
 
 public:
-	static void LoadOrReloadSpriteSheet();
+	static void LoadOrReloadSpriteSheets();
 	static Game* GetInstance();
 
 public:

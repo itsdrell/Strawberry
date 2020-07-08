@@ -11,6 +11,7 @@ class SpriteSheet;
 // Const expr
 //===============================================================================================
 constexpr float SPRITE_DIMENSION = 16.f;
+constexpr int MAX_AMOUNT_OF_SPRITE_SHEETS = 4; // if you change this, you have to edit the Shader 
 
 //===============================================================================================
 // Defines
@@ -96,8 +97,10 @@ void RemoveFast( uint& idx, std::vector<T>& theVector )
 //====================================================================================
 // Externs
 //====================================================================================
-extern SpriteSheet*			g_theSpriteSheet;
 extern String				g_currentProjectName;
+
+extern SpriteSheet*			g_theSpriteSheet;
+extern SpriteSheet*			g_allSpriteSheets[MAX_AMOUNT_OF_SPRITE_SHEETS];
 
 //====================================================================================
 // Written by Zachary Bracken : [1/29/2019]

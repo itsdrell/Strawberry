@@ -4,11 +4,12 @@
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Renderer/Images/Texture.hpp"
 #include "Engine/Math/MathUtils.hpp"
-#include "../Images/Sprite.hpp"
+#include "Engine/Renderer/Images/Sprite.hpp"
+#include "Engine/Core/Utils/StringUtils.hpp"
+#include "Engine/Renderer/Images/BitmapFont.hpp"
 
 //===============================================================================================
 StrawberryMeshBuilder g_theMeshBuilder;
-
 
 //===============================================================================================
 StrawberryMeshBuilder::StrawberryMeshBuilder()
@@ -208,9 +209,6 @@ void StrawberryMeshBuilder::AppendCircleOutline2D(const Vector2& center, float r
 		Vector2 tr = nextPoint + NextStep;
 		Vector2 tl = nextPoint - NextStep;
 
-		SetColor(color);
-		SetTextureID(Renderer::GetInstance()->m_defaultTexture->GetID());
-
 		SetUV(0, 0);
 		uint idx = PushVertex(Vector3(bl.x, bl.y, 0.f));
 
@@ -229,6 +227,8 @@ void StrawberryMeshBuilder::AppendCircleOutline2D(const Vector2& center, float r
 		previousPointX = nextPointX;
 		previousPointY = nextPointY;
 	}
+
+	return;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -386,14 +386,14 @@ void StrawberryMeshBuilder::AppendAABB2Filled(const AABB2& bounds, Rgba color /*
 }
 
 //-----------------------------------------------------------------------------------------------
-void StrawberryMeshBuilder::AppendSprite(const Vector3& position, const Sprite& theSprite, float rotation /*= 0.f*/, bool flipX /*= false*/, bool flipY /*= false*/)
+void StrawberryMeshBuilder::AppendSprite(const Vector3& position, const Sprite& theSprite, float rotation /*= 0.f*/, bool flipX /*= false*/, bool flipY /*= false*/, int spriteSheetIndex)
 {
 	Matrix44 theRotationMatrix = Matrix44::MakeRotationDegrees2D(rotation);
 	Vector3 right = theRotationMatrix.GetRight();
 	Vector3 up = theRotationMatrix.GetUp();
 
 	// this needs to be passed in
-	SetTextureID(1);
+	SetTextureID(spriteSheetIndex + 2);
 	SetColor(Rgba::WHITE);
 
 	// calculating offsets from the pivot point
@@ -442,5 +442,192 @@ void StrawberryMeshBuilder::AppendSprite(const Vector3& position, const Sprite& 
 
 	AddFace(idx + 0, idx + 1, idx + 2);
 	AddFace(idx + 0, idx + 2, idx + 3); // 023 ?
+}
+
+//-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::AppendTextInBox(const String& text, const AABB2& bounds, float cellHeight, float normalizedPercentIntoText /*= 1.f*/, 
+	DrawTextMode mode /*= DRAW_TEXT_MODE_OVERFLOW*/, const Vector2& alignment /*= Vector2(0, 0)*/, const Rgba& color /*= Rgba::WHITE*/, bool drawOutline /*= false*/, 
+	const Rgba& outlineColor /*= Rgba::BLACK*/, float aspect /*= 1.77f*/)
+{
+	String textToShow = GetPercentIntoString(text, normalizedPercentIntoText);
+
+	switch (mode)
+	{
+	case DRAW_TEXT_MODE_WRAPPED:
+		AppendWrappedTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, drawOutline, outlineColor);
+		break;
+	case DRAW_TEXT_MODE_SHRINKED:
+		AppendShrinkToFitTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, drawOutline, outlineColor);
+		break;
+	case DRAW_TEXT_MODE_OVERFLOW:
+		AppendOverflowTextInBox2D(textToShow, bounds, cellHeight, alignment, aspect, color, drawOutline, outlineColor);
+		break;
+	default:
+		// error?
+		break;
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::AppendWrappedTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, 
+	const Vector2& alignment /*= Vector2(0, 0)*/, float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, 
+	bool drawOutline /*= false*/, const Rgba& outlineColor /*= Rgba::BLACK*/)
+{
+	// make a new box that has a little bit of paddin
+	// so the text is never ON the box
+	float offset = C_TEXT_PADDING * cellHeight;
+	AABB2 newBox = boxSize;
+	newBox.mins += Vector2(offset, offset);
+	newBox.maxs -= Vector2(offset, offset);
+	//DrawAABB2Outline(newBox, Rgba::GetRandomColor());
+
+	Strings vectorOfWords = SplitString(text, " ");
+
+	Strings lines;
+	Renderer::GetInstance()->m_defaultFont->GetTextWrapped(vectorOfWords, boxSize, cellHeight, &lines, aspectScale);
+
+	AppendTextWithAlignment(lines, newBox, cellHeight, alignment, aspectScale, textColor, drawOutline, outlineColor);
+}
+
+//-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::AppendShrinkToFitTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, 
+	const Vector2& alignment /*= Vector2(0, 0)*/, float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, 
+	bool drawOutline /*= false*/, const Rgba& outlineColor /*= Rgba::BLACK*/)
+{
+	// this does new line if the \n is provided, no auto wrapping
+	Strings lines = SplitString(text, "\n");
+
+	for (uint i = 0; i < lines.size(); i++)
+	{
+		String* current = &lines.at(i);
+		RemoveLeadingAndEndingWhitespace(current);
+	}
+
+	float newCellHeight = Renderer::GetInstance()->m_defaultFont->GetFontSizeToFitInBox(lines, boxSize, cellHeight, aspectScale);
+
+	// make a new box that has a little bit of padding based on the cellheight 
+	// so the text is never ON the box
+	float offset = C_TEXT_PADDING * newCellHeight;
+	AABB2 newBox = boxSize;
+	newBox.mins += Vector2(offset, offset);
+	newBox.maxs -= Vector2(offset, offset);
+
+	AppendTextWithAlignment(lines, newBox, newCellHeight, alignment, aspectScale, textColor, drawOutline, outlineColor);
+}
+
+//-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::AppendOverflowTextInBox2D(const String& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, 
+	const Vector2& alignment /*= Vector2(0, 0)*/, float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, 
+	bool drawOutline /*= false*/, const Rgba& outlineColor /*= Rgba::BLACK*/)
+{
+	Strings theLines = Strings({ text });
+	AppendTextWithAlignment(theLines, boxSize, cellHeight, alignment, aspectScale, textColor, drawOutline, outlineColor);
+}
+
+//-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::AppendTextWithAlignment(const Strings& text, const AABB2& boxSize, float cellHeight /*= 1.f*/, 
+	const Vector2& alignment /*= Vector2(0, 0)*/, float aspectScale /*= 1.77f*/, const Rgba& textColor /*= Rgba::WHITE*/, 
+	bool drawOutline /*= false*/, const Rgba& outlineColor /*= Rgba::BLACK*/)
+{
+	float lineHeight = .5f; // can expose this if you want
+	float lineSpacing = (cellHeight * lineHeight);
+	float heightOfText = Renderer::GetInstance()->m_defaultFont->GetHeightOfStrings(text, cellHeight, lineHeight);
+
+	float offsetFromTop = (boxSize.GetHeight() - heightOfText) * alignment.y;
+	float startingY = boxSize.maxs.y - offsetFromTop - cellHeight; // minus cell height since we draw at the bottom of the box
+
+	float currentY = startingY;
+	for (uint i = 0; i < text.size(); i++)
+	{
+		String currentString = text.at(i);
+
+		float width = Renderer::GetInstance()->m_defaultFont->GetStringWidth(currentString, cellHeight, aspectScale);
+		float offsetFromLeft = (boxSize.GetWidth() - width) * alignment.x;
+		float xPos = boxSize.mins.x + offsetFromLeft;
+
+		AppendText2D(Vector2(xPos, currentY), currentString, cellHeight, textColor, drawOutline, outlineColor, aspectScale);
+
+		currentY -= (lineSpacing + cellHeight);
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::AppendText2D(const Vector2& startPos, const String& text, float cellHeight, const Rgba& tint /*= Rgba::WHITE*/, 
+	bool drawOutline /*= false*/, const Rgba& outlineColor /*= Rgba::BLACK*/, float aspectScale /*= 1.7f*/)
+{
+	if (drawOutline)
+	{
+		float sizeDifference = cellHeight * .06f; // maybe make this a param
+		AppendText2DVerts(Vector2(startPos.x + sizeDifference, startPos.y), text, cellHeight, outlineColor, aspectScale);
+		AppendText2DVerts(Vector2(startPos.x - sizeDifference, startPos.y), text, cellHeight, outlineColor, aspectScale);
+		AppendText2DVerts(Vector2(startPos.x, startPos.y + sizeDifference), text, cellHeight, outlineColor, aspectScale);
+		AppendText2DVerts(Vector2(startPos.x, startPos.y - sizeDifference), text, cellHeight, outlineColor, aspectScale);
+	}
+
+	AppendText2DVerts(Vector2(startPos.x, startPos.y), text, cellHeight, tint, aspectScale);
+}
+
+//-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::AppendText2DVerts(const Vector2& startPos, const String& text, float cellHeight, const Rgba& tint /*= Rgba::WHITE*/, float aspectScale /*= 1.7f*/)
+{
+	SetTextureID(BOUND_TEXTURE_FONT);
+
+	int length = (int)text.size();
+	Vector2 startPoint = startPos;
+	std::vector<Vertex3D_PCU>	vertices;
+	
+	BitmapFont* theFont = Renderer::GetInstance()->m_defaultFont;
+	float cellWidth = theFont->GetGlyphAspect() * cellHeight * aspectScale;
+
+	SetColor(tint);
+	SetTextureID(BOUND_TEXTURE_FONT);
+
+	// Draw
+	for (int i = 0; i < length; i++)
+	{
+		// Get Current Letter
+		char currentLetter = text.at(i);
+
+		AABB2 posBox = AABB2(startPoint, Vector2(startPoint.x + cellWidth, startPoint.y + cellHeight));
+		AABB2 uvBox = AABB2(theFont->GetUVsForGlyph(currentLetter));
+
+		//vertices.push_back(Vertex3D_PCU(
+		//	Vector3(posBox.mins.x, posBox.mins.y, 0.01f), tint, uvBox.mins)); // 0
+		//
+		//vertices.push_back(Vertex3D_PCU(
+		//	Vector3(posBox.maxs.x, posBox.mins.y, 0.01f), tint, Vector2(uvBox.maxs.x, uvBox.mins.y))); //1
+		//
+		//vertices.push_back(Vertex3D_PCU(
+		//	Vector3(posBox.maxs.x, posBox.maxs.y, 0.01f), tint, Vector2(uvBox.maxs.x, uvBox.maxs.y))); //2
+		//
+		//vertices.push_back(Vertex3D_PCU(
+		//	Vector3(posBox.mins.x, posBox.mins.y, 0.01f), tint, Vector2(uvBox.mins.x, uvBox.mins.y))); //0
+		//
+		//vertices.push_back(Vertex3D_PCU(
+		//	Vector3(posBox.maxs.x, posBox.maxs.y, 0.01f), tint, Vector2(uvBox.maxs.x, uvBox.maxs.y))); // 2
+		//
+		//vertices.push_back(Vertex3D_PCU(
+		//	Vector3(posBox.mins.x, posBox.maxs.y, 0.01f), tint, Vector2(uvBox.mins.x, uvBox.maxs.y))); // 3
+
+
+
+
+		SetUV(uvBox.mins);
+		uint idx = PushVertex(Vector3(posBox.mins.x, posBox.mins.y, 0.01f));
+
+		SetUV(Vector2(uvBox.maxs.x, uvBox.mins.y));
+		PushVertex(Vector3(posBox.maxs.x, posBox.mins.y, 0.01f));
+
+		SetUV(Vector2(uvBox.maxs.x, uvBox.maxs.y));
+		PushVertex(Vector3(posBox.maxs.x, posBox.maxs.y, 0.01f));
+
+		SetUV(Vector2(uvBox.mins.x, uvBox.maxs.y));
+		PushVertex(Vector3(posBox.mins.x, posBox.maxs.y, 0.01f));
+
+		AddFace(idx + 0, idx + 1, idx + 2);
+		AddFace(idx + 0, idx + 2, idx + 3);
+
+		startPoint.x += cellWidth;
+	}
 }
 
