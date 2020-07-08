@@ -63,6 +63,7 @@ private:
 	void RenderTexture() const;
 	void RenderCursor() const;
 	void RenderGrid() const;
+	void RenderSpriteSheetButtons() const;
 
 private:
 	void RenderColors() const;
@@ -79,9 +80,15 @@ private:
 	AABB2				m_spriteButtonBounds;
 	AABB2				m_colorButtonBounds;
 
+	AABB2				m_spriteSheetButtonBounds[MAX_AMOUNT_OF_SPRITE_SHEETS];
+
 private:
 	IntVector2			m_spriteCoords;
 	int					m_spriteIndex = 0;
+
+	uint				m_currentSpriteSheet = 0;
+
+	bool				m_showGrid = true;
 
 private:
 	std::vector<DisplayColor>	m_displayColors;

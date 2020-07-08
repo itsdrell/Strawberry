@@ -117,6 +117,9 @@ void Renderer::RenderPostStartUp()
 	m_defaultTexture =  m_defaultTexture->CreateFromImage(Image("defaultTexture", IntVector2(8,8), Rgba(255, 255, 255, 255)));
 	m_currentTexture = m_defaultTexture;
 
+	m_invalidTexture = new Texture();
+	m_invalidTexture = m_invalidTexture->CreateFromImage(Image("invalid", IntVector2(8, 8), Rgba(255, 0, 255, 255)));
+
 	// default font 
 	//m_defaultFont = CreateOrGetBitmapFont("SquirrelFixedFont");
 

@@ -23,6 +23,14 @@ SpriteSheetView::SpriteSheetView()
 	m_spriteButtonBounds = GetAABB2FromAABB2(Vector2(0.f, .5f), Vector2(1.f, 1.f), m_switchBoxBounds);
 	m_colorButtonBounds = GetAABB2FromAABB2(Vector2(0.f, 0.f), Vector2(1.f, .5f), m_switchBoxBounds);
 
+	float height = .9f;
+	float step = .05;
+	for(uint i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		m_spriteSheetButtonBounds[i] = GetAABB2FromAABB2(Vector2(.18f, height - step), Vector2(.23f, height), m_cameraBounds);
+		height -= step;
+	}
+
 	CreateDisplayColors();
 } 
 
@@ -30,9 +38,6 @@ SpriteSheetView::SpriteSheetView()
 void SpriteSheetView::Update()
 {
 	HandleInput();
-
-	if (g_theSpriteSheet == nullptr)
-		return;
 	
 	CalculateSpritePositions();
 }
@@ -77,16 +82,31 @@ void SpriteSheetView::HandleInput()
 		}
 	}
 
+	if(WasKeyJustPressed('g'))
+	{
+		m_showGrid = !m_showGrid;
+	}
+
 	if (WasMouseButtonJustReleased(LEFT_MOUSE_BUTTON))
 	{
-		if(m_currentMode == COLOR_VIEW_MODE && m_spriteButtonBounds.IsPointInBox(GetMousePosition(m_cameraBounds)))
+		Vector2 mousePos = GetMousePosition(m_cameraBounds);
+		
+		if(m_currentMode == COLOR_VIEW_MODE && m_spriteButtonBounds.IsPointInBox(mousePos))
 		{
 			m_currentMode = SPRITE_VIEW_MODE;
 		}
 
-		if (m_currentMode == SPRITE_VIEW_MODE && m_colorButtonBounds.IsPointInBox(GetMousePosition(m_cameraBounds)))
+		if (m_currentMode == SPRITE_VIEW_MODE && m_colorButtonBounds.IsPointInBox(mousePos))
 		{
 			m_currentMode = COLOR_VIEW_MODE;
+		}
+
+		for(uint i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+		{
+			if(m_spriteSheetButtonBounds[i].IsPointInBox(mousePos))
+			{
+				m_currentSpriteSheet = i;
+			}
 		}
 	}
 }
@@ -97,13 +117,17 @@ void SpriteSheetView::CalculateSpritePositions()
 	AABB2 cameraBounds = Renderer::GetInstance()->m_defaultUICamera->GetOrthoBounds();
 	Vector2 mousePos = GetMousePosition(cameraBounds);
 
-	m_spriteCoords.x = (int) RangeMapFloat(mousePos.x, m_textureBounds.mins.x, m_textureBounds.maxs.x, 0.f, (float) g_theSpriteSheet->m_spriteLayout.x);
-	m_spriteCoords.y = (int) RangeMapFloat(mousePos.y, m_textureBounds.mins.y, m_textureBounds.maxs.y, (float) g_theSpriteSheet->m_spriteLayout.y, 0.f);
-	m_spriteCoords.x = ClampInt(m_spriteCoords.x, 0, (g_theSpriteSheet->m_spriteLayout.x - 1));
-	m_spriteCoords.y = ClampInt(m_spriteCoords.y, 0, (g_theSpriteSheet->m_spriteLayout.y - 1));
+	SpriteSheet* current = g_allSpriteSheets[m_currentSpriteSheet];
 
-	m_spriteIndex = m_spriteCoords.x + (m_spriteCoords.y * g_theSpriteSheet->m_spriteLayout.x);
-	m_spriteIndex = ClampInt(m_spriteIndex, 0, g_theSpriteSheet->m_spriteLayout.x * g_theSpriteSheet->m_spriteLayout.y);
+	m_spriteCoords.x = (int) RangeMapFloat(mousePos.x, m_textureBounds.mins.x, m_textureBounds.maxs.x, 0.f, (float)current->m_spriteLayout.x);
+	m_spriteCoords.y = (int) RangeMapFloat(mousePos.y, m_textureBounds.mins.y, m_textureBounds.maxs.y, (float)current->m_spriteLayout.y, 0.f);
+	m_spriteCoords.x = ClampInt(m_spriteCoords.x, 0, (current->m_spriteLayout.x - 1));
+	m_spriteCoords.y = ClampInt(m_spriteCoords.y, 0, (current->m_spriteLayout.y - 1));
+
+	m_spriteIndex = m_spriteCoords.x + (m_spriteCoords.y * current->m_spriteLayout.x);
+	m_spriteIndex = ClampInt(m_spriteIndex, 0, current->m_spriteLayout.x * current->m_spriteLayout.y);
+
+	m_spriteIndex += (m_currentSpriteSheet * 256);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -123,21 +147,19 @@ void SpriteSheetView::Render() const
 {
 	Renderer* r = Renderer::GetInstance();
 
-	if (g_theSpriteSheet == nullptr)
-		return;
-
 	r->m_clearScreen = true;
 	r->SetCamera(r->m_defaultUICamera);
 	r->SetShader(r->m_defaultShader);
 	r->SetCurrentTexture();
 
-	r->DrawAABB2Filled(m_cameraBounds, Rgba(255, 20, 147, 255));
+	r->DrawAABB2Filled(m_cameraBounds, Rgba::STRAWBERRY_RED);
 
 	if(m_currentMode == SPRITE_VIEW_MODE)
 	{
-		RenderGrid();
 		RenderTexture();
+		RenderGrid();
 		RenderIndex();
+		RenderSpriteSheetButtons();
 	}
 	else
 	{
@@ -159,8 +181,10 @@ void SpriteSheetView::RenderTexture() const
 {
 	Renderer* r = Renderer::GetInstance();
 
+	Texture* theTexture = g_allSpriteSheets[m_currentSpriteSheet]->m_texture;
+
 	r->DrawAABB2Outline(m_textureBounds, Rgba(255, 255, 255, 255));
-	r->DrawTexturedAABB2(m_textureBounds, *g_theSpriteSheet->m_texture, Vector2(0.f, 0.f), Vector2(1.f, 1.f), Rgba(255, 255, 255, 255));
+	r->DrawTexturedAABB2(m_textureBounds, *theTexture, Vector2(0.f, 0.f), Vector2(1.f, 1.f), Rgba(255, 255, 255, 255));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -168,12 +192,14 @@ void SpriteSheetView::RenderCursor() const
 {
 	Renderer* r = Renderer::GetInstance();
 
+	SpriteSheet* current = g_allSpriteSheets[m_currentSpriteSheet];
+
 	if(m_currentMode == SPRITE_VIEW_MODE)
 	{
-		float minX = RangeMapFloat((float)m_spriteCoords.x, 0.f, (float)g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
-		float maxX = RangeMapFloat((float)(m_spriteCoords.x + 1), 0.f, (float)g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
-		float minY = RangeMapFloat((float)m_spriteCoords.y, 0.f, (float)g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
-		float maxY = RangeMapFloat((float)(m_spriteCoords.y + 1.f), 0.f, (float)g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
+		float minX = RangeMapFloat((float)m_spriteCoords.x, 0.f, (float)current->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
+		float maxX = RangeMapFloat((float)(m_spriteCoords.x + 1), 0.f, (float)current->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
+		float minY = RangeMapFloat((float)m_spriteCoords.y, 0.f, (float)current->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
+		float maxY = RangeMapFloat((float)(m_spriteCoords.y + 1.f), 0.f, (float)current->m_spriteLayout.y, m_textureBounds.maxs.y, m_textureBounds.mins.y);
 
 		r->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), Rgba(0, 0, 0, 255));
 	}
@@ -185,16 +211,21 @@ void SpriteSheetView::RenderCursor() const
 //-----------------------------------------------------------------------------------------------
 void SpriteSheetView::RenderGrid() const
 {
+	if (m_showGrid == false)
+		return;
+	
 	Renderer* r = Renderer::GetInstance();
 
 	// magenta so it wont have the same color as a sprite backgroud
 	r->DrawAABB2Filled(m_textureBounds, Rgba(255, 0, 255, 0));
 
+	SpriteSheet* current = g_allSpriteSheets[m_currentSpriteSheet];
+
 	Rgba gridColor = Rgba(171, 183, 183, 150);
-	for (uint i = 1; i < (uint) g_theSpriteSheet->m_spriteLayout.x; i++)
+	for (uint i = 1; i < (uint)current->m_spriteLayout.x; i++)
 	{
-		float xpos = RangeMapFloat((float) i, 0.f, (float) g_theSpriteSheet->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
-		float ypos = RangeMapFloat((float) i, 0.f, (float) g_theSpriteSheet->m_spriteLayout.y, m_textureBounds.mins.y, m_textureBounds.maxs.y);
+		float xpos = RangeMapFloat((float) i, 0.f, (float) current->m_spriteLayout.x, m_textureBounds.mins.x, m_textureBounds.maxs.x);
+		float ypos = RangeMapFloat((float) i, 0.f, (float) current->m_spriteLayout.y, m_textureBounds.mins.y, m_textureBounds.maxs.y);
 
 		Vector2 verticalStart = Vector2(xpos, m_textureBounds.maxs.y);
 		Vector2 verticalEnd = Vector2(xpos, m_textureBounds.mins.y);
@@ -204,6 +235,22 @@ void SpriteSheetView::RenderGrid() const
 
 		r->DrawLine2D(verticalStart, verticalEnd, gridColor);
 		r->DrawLine2D(horizontalStart, horizontalEnd, gridColor);
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void SpriteSheetView::RenderSpriteSheetButtons() const
+{
+	Renderer* r = Renderer::GetInstance();
+	
+	for(uint i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		AABB2 currentBounds = m_spriteSheetButtonBounds[i];
+		Rgba backgroundColor = (i == m_currentSpriteSheet) ? Rgba(100, 100, 100, 155) : Rgba::STRAWBERRY_RED;
+		
+		r->DrawAABB2Filled(currentBounds, backgroundColor);
+		r->DrawAABB2Outline(currentBounds, Rgba::WHITE);
+		r->DrawTextInBox(std::to_string(i), currentBounds, 8.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
 	}
 }
 

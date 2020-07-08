@@ -181,6 +181,7 @@ public:
 	Texture*			m_defaultTexture = nullptr;
 	Texture*			m_defaultColorTarget = nullptr;
 	Texture*			m_defaultDepthTarget = nullptr;
+	Texture*			m_invalidTexture = nullptr;
 	unsigned int		m_defaultVAO; 
 
 	BitmapFont*			m_defaultFont = nullptr;

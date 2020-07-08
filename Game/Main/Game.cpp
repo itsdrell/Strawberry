@@ -279,7 +279,7 @@ void Game::LoadOrReloadSpriteSheets()
 		}
 		else
 		{
-			g_allSpriteSheets[i] = new SpriteSheet(r->m_defaultTexture, 16, 16);
+			g_allSpriteSheets[i] = new SpriteSheet(r->m_invalidTexture, 16, 16);
 		}
 	}
 }
