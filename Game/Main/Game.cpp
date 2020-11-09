@@ -134,8 +134,6 @@ void Game::Update()
 				g_theApp->m_takeGameCoverScreenshot = true;
 		}
 	}
-
-	DebugRenderLog(std::to_string(60 / g_theGameClock->deltaTime), 0.f);
 }
 
 //-----------------------------------------------------------------------------------------------

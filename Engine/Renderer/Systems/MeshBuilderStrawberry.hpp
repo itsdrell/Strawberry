@@ -44,6 +44,7 @@ public:
 	void End();
 	void Clear();
 	void ReserveSpace(int size);
+	void ChangeAttributesForVertexIndex(int vertexIndex, const Vector2& uvs, int spriteSheetIndex = 0, Rgba color = Rgba::WHITE);
 
 private:
 	void SetColor(const Rgba& color);
@@ -68,6 +69,8 @@ public:
 
 	void AppendAABB2Outline(const AABB2& bounds, Rgba color = Rgba::WHITE, float lineWidth = 1.f);
 	void AppendAABB2Filled(const AABB2& bounds, Rgba color = Rgba::WHITE);
+
+	void AppendTexturedAABB2(const AABB2& bounds, const AABB2& uvs, int spriteSheetIndex = 0, Rgba color = Rgba::WHITE);
 
 	void AppendSprite(const Vector3& position, const Sprite& theSprite,
 		float rotation = 0.f, bool flipX = false, bool flipY = false, int spriteSheetIndex = 0);

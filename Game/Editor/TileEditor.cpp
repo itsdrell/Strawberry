@@ -109,11 +109,12 @@ void TileEditor::RightClick()
 //-----------------------------------------------------------------------------------------------
 void TileEditor::SelectSpriteSheetTile(const Vector2& mousePos)
 {
-	int index = g_theSpriteSheet->GetSpriteIndexFromPositionInBounds(mousePos, m_tileSelectBounds);
+	SpriteSheet* selectedSpriteSheet = g_allSpriteSheets[m_selectedSpriteSheet];
+	int index = selectedSpriteSheet->GetSpriteIndexFromPositionInBounds(mousePos, m_tileSelectBounds);
 
 	TileSpriteInfo newInfo;
 	newInfo.SetSpriteIndex(index);
-	newInfo.SetSpriteSheet(0);
+	newInfo.SetSpriteSheet(m_selectedSpriteSheet);
 	m_selectedSpriteInfo = newInfo;
 }
 
@@ -151,6 +152,8 @@ void TileEditor::CreateTilePlacementPreview()
 	float xStep = ((float) distance.x) / (float) amoutOfSteps;
 	float yStep = (float) distance.y / (float) amoutOfSteps;
 
+	SpriteSheet* selectedSpriteSheet = g_allSpriteSheets[m_selectedSpriteSheet];
+
 	for (int i = 0; i < amoutOfSteps; i++)
 	{
 		currentPos.x += xStep;
@@ -162,7 +165,7 @@ void TileEditor::CreateTilePlacementPreview()
 		IntVector2 tilePos = IntVector2((int) currentPos.x, (int) currentPos.y);
 		AABB2 bounds = AABB2((float)(tilePos.x * TILE_SIZE), (float)(tilePos.y * TILE_SIZE),
 			(float)((tilePos.x  * TILE_SIZE) + TILE_SIZE), (float)((tilePos.y * TILE_SIZE) + TILE_SIZE));
-		AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(m_selectedSpriteInfo.GetSpriteIndex());
+		AABB2 uvs = selectedSpriteSheet->GetTexCoordsForSpriteIndex(m_selectedSpriteInfo.GetSpriteIndex());
 
 		m_tileSelectPreviewMB->Add2DPlane(
 			bounds,
@@ -178,9 +181,11 @@ void TileEditor::RenderUI() const
 {
 	Renderer* r = Renderer::GetInstance();
 
+	SpriteSheet* selectedSpriteSheet = g_allSpriteSheets[m_selectedSpriteSheet];
+
 	// tile select
 	r->DrawAABB2Filled(m_tileSelectBounds, Rgba(0, 0, 0, 100));
-	r->DrawTexturedAABB2(m_tileSelectBounds, *g_theSpriteSheet->m_texture, Vector2(0, 0), Vector2(1, 1), Rgba(255, 255, 255, 255));
+	r->DrawTexturedAABB2(m_tileSelectBounds, *selectedSpriteSheet->m_texture, Vector2(0, 0), Vector2(1, 1), Rgba(255, 255, 255, 255));
 	r->DrawAABB2Outline(m_tileSelectBounds, Rgba(255, 255, 255, 255));
 	r->DrawAABB2Outline(GetBiggerAABB2FromAABB2(m_tileSelectBounds, 1.f, 1.f), Rgba(0, 0, 0, 255));
 
@@ -189,8 +194,8 @@ void TileEditor::RenderUI() const
 	r->DrawAABB2Outline(GetBiggerAABB2FromAABB2(m_mapEditor->m_optionsBounds, 1.f, 1.f), Rgba(0, 0, 0, 255));
 
 	// sprite preview (little box)
-	AABB2 spritePreviewUVs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(m_selectedSpriteInfo.GetSpriteIndex());
-	r->DrawTexturedAABB2(m_selectedTilePreviewBounds, *g_theSpriteSheet->m_texture, spritePreviewUVs.mins, spritePreviewUVs.maxs, Rgba(255, 255, 255, 255));
+	AABB2 spritePreviewUVs = selectedSpriteSheet->GetTexCoordsForSpriteIndex(m_selectedSpriteInfo.GetSpriteIndex());
+	r->DrawTexturedAABB2(m_selectedTilePreviewBounds, *selectedSpriteSheet->m_texture, spritePreviewUVs.mins, spritePreviewUVs.maxs, Rgba(255, 255, 255, 255));
 	r->DrawAABB2Outline(m_selectedTilePreviewBounds, Rgba(255, 255, 255, 255));
 	r->DrawAABB2Outline(GetBiggerAABB2FromAABB2(m_selectedTilePreviewBounds, 1.f, 1.f), Rgba(0, 0, 0, 255));
 
@@ -198,9 +203,9 @@ void TileEditor::RenderUI() const
 	Vector2 mousePos = GetMousePosition(m_mapEditor->m_cameraBounds);
 	if (m_tileSelectBounds.IsPointInBox(mousePos))
 	{
-		int index = g_theSpriteSheet->GetSpriteIndexFromPositionInBounds(mousePos, m_tileSelectBounds);
-		AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(index);
-		r->DrawTexturedAABB2(m_tilePreviewBounds, *g_theSpriteSheet->m_texture, uvs.mins, uvs.maxs, Rgba(255, 255, 255, 255));
+		int index = selectedSpriteSheet->GetSpriteIndexFromPositionInBounds(mousePos, m_tileSelectBounds);
+		AABB2 uvs = selectedSpriteSheet->GetTexCoordsForSpriteIndex(index);
+		r->DrawTexturedAABB2(m_tilePreviewBounds, *selectedSpriteSheet->m_texture, uvs.mins, uvs.maxs, Rgba(255, 255, 255, 255));
 		r->DrawAABB2Outline(m_tilePreviewBounds);
 		r->DrawAABB2Outline(GetBiggerAABB2FromAABB2(m_tilePreviewBounds, 1.f, 1.f), Rgba(0, 0, 0, 255));
 
@@ -237,18 +242,20 @@ void TileEditor::RenderTileSelectHoverOutline() const
 {
 	Vector2 mousePos = GetMousePosition(m_mapEditor->m_cameraBounds);
 	Renderer* r = Renderer::GetInstance();
+
+	SpriteSheet* selectedSpriteSheet = g_allSpriteSheets[m_selectedSpriteSheet];
 	
 	// Draw little black box on the tile select bounds
 	IntVector2 spriteCoords;
-	spriteCoords.x = (int)RangeMapFloat(mousePos.x, m_tileSelectBounds.mins.x, m_tileSelectBounds.maxs.x, 0.f, (float)g_theSpriteSheet->m_spriteLayout.x);
-	spriteCoords.y = (int)RangeMapFloat(mousePos.y, m_tileSelectBounds.mins.y, m_tileSelectBounds.maxs.y, (float)g_theSpriteSheet->m_spriteLayout.y, 0.f);
-	spriteCoords.x = ClampInt(spriteCoords.x, 0, (g_theSpriteSheet->m_spriteLayout.x - 1));
-	spriteCoords.y = ClampInt(spriteCoords.y, 0, (g_theSpriteSheet->m_spriteLayout.y - 1));
+	spriteCoords.x = (int)RangeMapFloat(mousePos.x, m_tileSelectBounds.mins.x, m_tileSelectBounds.maxs.x, 0.f, (float)selectedSpriteSheet->m_spriteLayout.x);
+	spriteCoords.y = (int)RangeMapFloat(mousePos.y, m_tileSelectBounds.mins.y, m_tileSelectBounds.maxs.y, (float)selectedSpriteSheet->m_spriteLayout.y, 0.f);
+	spriteCoords.x = ClampInt(spriteCoords.x, 0, (selectedSpriteSheet->m_spriteLayout.x - 1));
+	spriteCoords.y = ClampInt(spriteCoords.y, 0, (selectedSpriteSheet->m_spriteLayout.y - 1));
 
-	float minX = RangeMapFloat((float)spriteCoords.x, 0.f, (float)g_theSpriteSheet->m_spriteLayout.x, m_tileSelectBounds.mins.x, m_tileSelectBounds.maxs.x);
-	float maxX = RangeMapFloat((float)(spriteCoords.x + 1), 0.f, (float)g_theSpriteSheet->m_spriteLayout.x, m_tileSelectBounds.mins.x, m_tileSelectBounds.maxs.x);
-	float minY = RangeMapFloat((float)spriteCoords.y, 0.f, (float)g_theSpriteSheet->m_spriteLayout.y, m_tileSelectBounds.maxs.y, m_tileSelectBounds.mins.y);
-	float maxY = RangeMapFloat((float)(spriteCoords.y + 1.f), 0.f, (float)g_theSpriteSheet->m_spriteLayout.y, m_tileSelectBounds.maxs.y, m_tileSelectBounds.mins.y);
+	float minX = RangeMapFloat((float)spriteCoords.x, 0.f, (float)selectedSpriteSheet->m_spriteLayout.x, m_tileSelectBounds.mins.x, m_tileSelectBounds.maxs.x);
+	float maxX = RangeMapFloat((float)(spriteCoords.x + 1), 0.f, (float)selectedSpriteSheet->m_spriteLayout.x, m_tileSelectBounds.mins.x, m_tileSelectBounds.maxs.x);
+	float minY = RangeMapFloat((float)spriteCoords.y, 0.f, (float)selectedSpriteSheet->m_spriteLayout.y, m_tileSelectBounds.maxs.y, m_tileSelectBounds.mins.y);
+	float maxY = RangeMapFloat((float)(spriteCoords.y + 1.f), 0.f, (float)selectedSpriteSheet->m_spriteLayout.y, m_tileSelectBounds.maxs.y, m_tileSelectBounds.mins.y);
 
 	r->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), Rgba(0, 0, 0, 255));
 }

@@ -84,7 +84,7 @@ void CreateNewProject(Command& command)
 	// spritesheet
 	String imagePath = "Projects/" + name + "/Images";
 	CreateADirectory(imagePath.c_str());
-	imagePath += "/SpriteSheet.png";
+	imagePath += "/SpriteSheet_0.png";
 	Image theSpriteSheet = Image("spriteSheet", IntVector2(256, 256), Rgba(0, 0, 0, 0));
 	SaveImageAsPng(theSpriteSheet, imagePath);
 

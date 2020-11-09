@@ -70,6 +70,7 @@ private:
 	AABB2		m_tileSelectBounds;
 	AABB2		m_selectedTilePreviewBounds;
 	AABB2		m_tilePreviewBounds;
+	int			m_selectedSpriteSheet = 0;
 };
 
 //====================================================================================

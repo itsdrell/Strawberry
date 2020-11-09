@@ -6,20 +6,27 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/Vectors/Vector2.hpp"
 #include "Engine/Renderer/Systems/MeshBuilder.hpp"
+#include "Engine/Renderer/Systems/MeshBuilderStrawberry.hpp"
+#include "Engine/Renderer/BuiltInShaders.hpp"
+#include "Engine/Renderer/Components/Shader.hpp"
+#include "Engine/Renderer/Images/Texture.hpp"
+#include "Engine/Input/InputSystem.hpp"
+#include "Engine/Renderer/RenderTypes.hpp"
+#include "Engine/Core/Tools/ErrorWarningAssert.hpp"
+#include "Engine/Core/Platform/File.hpp"
 
 #include <iostream>
 #include <stdio.h>
 #include <fstream>
-#include "Engine/Input/InputSystem.hpp"
-#include "Engine/Renderer/RenderTypes.hpp"
-#include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 
 //===============================================================================================
 Map::Map(const IntVector2& dimensions)
 {
 	m_dimensions = dimensions;
 	m_totalAmountOfTiles = m_dimensions.x * m_dimensions.y;
-	m_tileBuilder = new MeshBuilder();
+	m_tileBuilder = new StrawberryMeshBuilder();
+	m_tileMapShader = BuiltInShaders::CreateStrawberryShader();
+
 	InitializeMap();
 }
 
@@ -27,7 +34,9 @@ Map::Map(const IntVector2& dimensions)
 Map::Map()
 {
 	m_totalAmountOfTiles = m_dimensions.x * m_dimensions.y;
-	m_tileBuilder = new MeshBuilder();
+	m_tileBuilder = new StrawberryMeshBuilder();
+	m_tileMapShader = BuiltInShaders::CreateStrawberryShader();
+
 	InitializeMap();
 }
 
@@ -39,6 +48,9 @@ Map::~Map()
 
 	delete m_tileBuilder;
 	m_tileBuilder = nullptr;
+
+	delete m_tileMapShader;
+	m_tileMapShader = nullptr;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -61,10 +73,14 @@ void Map::WriteFileHeader()
 void Map::SaveMap()
 {
 #ifndef EMSCRIPTEN_PORT
-	String path = "Projects/" + g_currentProjectName + "/Data/" + g_currentProjectName + ".mapdata";
+	String dataPath = "Projects/" + g_currentProjectName + "/Data/";
+	String mapPath = dataPath + g_currentProjectName + ".mapdata";
+
+	// make sure the directory exists
+	CreateADirectory(dataPath.c_str());
 
 	FILE* theFile;
-	fopen_s(&theFile, path.c_str(), "w");
+	fopen_s(&theFile, mapPath.c_str(), "w");
 
 	if (theFile == NULL)
 		return;
@@ -146,7 +162,7 @@ void Map::CreateTilesFromData()
 		uint16 result = leftBits << 8;
 		result |= rightBits;
 
-		TileSpriteInfo theInfo = TileSpriteInfo(result);
+		TileSpriteInfo theInfo = TileSpriteInfo(rightBits);
 		m_tiles.push_back(theInfo);
 	}
 	
@@ -156,18 +172,27 @@ void Map::CreateTilesFromData()
 //-----------------------------------------------------------------------------------------------
 void Map::UpdateTileMesh(int tileIndex, const Tile& changedTile)
 {
-	AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(changedTile.m_spriteInfo.GetSpriteIndex());
+	TileSpriteInfo info = changedTile.m_spriteInfo;
+	int spriteSheet = info.GetSpriteSheet();
+	AABB2 uvs = g_allSpriteSheets[spriteSheet]->GetTexCoordsForSpriteIndex(changedTile.m_spriteInfo.GetSpriteIndex());
 
 	// just editing the UVs of the meshbuilder for performance reasons!
-	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex, uvs.mins);
-	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 1, Vector2(uvs.maxs.x, uvs.mins.y));
-	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 2, Vector2(uvs.mins.x, uvs.maxs.y));
-	m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 3, uvs.maxs);
+	//m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex, uvs.mins);
+	//m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 1, Vector2(uvs.maxs.x, uvs.mins.y));
+	//m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 2, Vector2(uvs.mins.x, uvs.maxs.y));
+	//m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 3, uvs.maxs);
+	//
+	//m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex, Rgba::WHITE);
+	//m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 1, Rgba::WHITE);
+	//m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 2, Rgba::WHITE);
+	//m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 3, Rgba::WHITE);
 
-	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex, Rgba::WHITE);
-	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 1, Rgba::WHITE);
-	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 2, Rgba::WHITE);
-	m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 3, Rgba::WHITE);
+	int textureID = spriteSheet + 2;
+
+	m_tileBuilder->ChangeAttributesForVertexIndex(tileIndex,		uvs.mins, textureID, Rgba::WHITE);
+	m_tileBuilder->ChangeAttributesForVertexIndex(tileIndex + 1,	Vector2(uvs.maxs.x, uvs.mins.y), textureID, Rgba::WHITE);
+	m_tileBuilder->ChangeAttributesForVertexIndex(tileIndex + 2,	Vector2(uvs.mins.x, uvs.maxs.y), textureID, Rgba::WHITE);
+	m_tileBuilder->ChangeAttributesForVertexIndex(tileIndex + 3,	uvs.maxs, textureID, Rgba::WHITE);
 
 	m_mapMeshIsDirty = true;
 }
@@ -194,15 +219,17 @@ void Map::GenerateTileMesh()
 			AABB2 currentBounds = AABB2(currentPos.x, currentPos.y, currentPos.x + TILE_SIZE, currentPos.y + TILE_SIZE);
 			if (!currentTile.m_spriteInfo.IsDefault())
 			{
-				AABB2 uvs = g_theSpriteSheet->GetTexCoordsForSpriteIndex(currentTile.m_spriteInfo.GetSpriteIndex());
-				m_tileBuilder->Add2DPlane(currentBounds, uvs, Rgba::WHITE);
+				int spriteSheet = currentTile.m_spriteInfo.GetSpriteSheet();
+				int spriteIndex = currentTile.m_spriteInfo.GetSpriteIndex();
+				AABB2 uvs = g_allSpriteSheets[spriteSheet]->GetTexCoordsForSpriteIndex(spriteIndex);
+				m_tileBuilder->AppendTexturedAABB2(currentBounds, uvs, spriteSheet + 2, Rgba::WHITE);
 			}
 			else
 			{
 				// We need to make a placeholder vertex that we will later change
 				// so we use one has UVs of 0 to skip the expensive check, and set the color to black
 				// so the map looks empty #hack
-				m_tileBuilder->Add2DPlane(currentBounds, AABB2(0.f,0.f,0.f,0.f), Rgba(0,255,0,50));
+				m_tileBuilder->AppendTexturedAABB2(currentBounds, AABB2(0.f, 0.f, 0.f, 0.f), 0, Rgba(0, 255, 0, 50));
 			}
 
 			currentPos.x += TILE_SIZE;
@@ -219,7 +246,7 @@ void Map::GenerateTileMesh()
 		delete m_tileMesh;
 	}
 	PrintLog("creating mesh");
-	m_tileMesh = m_tileBuilder->CreateMesh<Vertex3D_PCU>(false);
+	m_tileMesh = m_tileBuilder->CreateMesh(false);
 
 	PrintLog("finished");
 }
@@ -238,7 +265,7 @@ void Map::Update()
 		if (m_tileMesh)
 			delete m_tileMesh;
 
-		m_tileMesh = m_tileBuilder->CreateMesh<Vertex3D_PCU>(false);
+		m_tileMesh = m_tileBuilder->CreateMesh(false);
 	}
 }
 
@@ -261,8 +288,32 @@ void Map::RenderTiles() const
 	r->SetLineWidth(2.f);
 	r->DrawAABB2Outline(GetBounds(), Rgba::WHITE);
 
-	r->SetCurrentTexture(0, g_theSpriteSheet->m_texture);
+	//-----------------------------------------------------------------------------------------------
+	r->SetShader(m_tileMapShader);
+
+	r->SetSamplerUniform("gDefaultTexDiffuse", 0);
+	r->SetSamplerUniform("gDefaultFontTexDiffuse", 1);
+
+	r->SetCurrentTexture(0, r->m_defaultTexture);
+	r->SetCurrentTexture(1, r->m_defaultTexture); // just sticking something in the font slot
+
+	// if you want more, you'll need to add them to the shader sampler
+	for (uint i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		String name = "gSpriteSheetTexDiffuse_" + std::to_string(i);
+		int slot = i + 2;
+
+		r->SetSamplerUniform(name, slot);
+		r->SetCurrentTexture(slot, g_allSpriteSheets[i]->m_texture);
+	}
+
+	r->BindCameraToShader(*r->m_currentCamera);
+
 	r->DrawMesh(m_tileMesh, false);
+
+	r->SetCurrentTexture();
+	r->SetShader();
+	r->BindCameraToShader(*r->m_currentCamera);
 }
 
 //-----------------------------------------------------------------------------------------------

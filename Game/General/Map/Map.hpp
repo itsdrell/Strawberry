@@ -2,7 +2,6 @@
 #include "Game/General/Map/Tile.hpp"
 #include <vector>
 
-
 //====================================================================================
 // Forward Declare
 //====================================================================================
@@ -12,6 +11,8 @@ class Mesh;
 class Tile;
 class MeshBuilder;
 class IntVector2;
+class StrawberryMeshBuilder;
+class Shader;
 
 //====================================================================================
 // Type Defs + Defines
@@ -70,8 +71,11 @@ public:
 public:
 	unsigned int			m_totalAmountOfTiles;
 	IntVector2				m_dimensions = IntVector2(128, 128);
+	
+	Shader*					m_tileMapShader = nullptr;
+	
 	Mesh*					m_tileMesh = nullptr;
-	MeshBuilder*			m_tileBuilder;
+	StrawberryMeshBuilder*	m_tileBuilder;
 	bool					m_mapMeshIsDirty = false;
 
 private:

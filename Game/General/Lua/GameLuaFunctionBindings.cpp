@@ -35,8 +35,6 @@ int LuaDrawMap(lua_State* theState)
 	g_theGame->m_drawMap = true;
 
 	Renderer* r = Renderer::GetInstance();
-
-	r->SetCurrentTexture(0, g_theSpriteSheet->m_texture);
 	r->DrawMesh(g_theGame->m_map->m_tileMesh);
 
 	return 0;

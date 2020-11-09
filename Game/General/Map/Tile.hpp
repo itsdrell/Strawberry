@@ -13,10 +13,10 @@ struct TileSpriteInfo;
 
 constexpr int TILE_SIZE = 16;
 constexpr float TILE_SIZE_FLOAT = 16.f;
-constexpr uint16 DEFAULT_TILE_SPRITE_INFO_FLAG = 0b0000'0111'1111'1111;
+constexpr uint16 DEFAULT_TILE_SPRITE_INFO_FLAG = 0b0000'0000'1111'1111; // 4th sprite sheet is default?
 
 constexpr uint16 SPRITE_INDEX_MASK	= 0b0000'0000'1111'1111;
-constexpr uint16 SPRITE_SHEET_MASK	= 0b0000'0111'0000'0000;
+constexpr uint16 SPRITE_SHEET_MASK	= 0b0000'0011'0000'0000;
 constexpr uint16 CHANNELS_MASK		= 0b1111'1000'0000'0000;
 
 #define DEFAULT_TILE_SPRITE_INFO TileSpriteInfo(DEFAULT_TILE_SPRITE_INFO_FLAG)

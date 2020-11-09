@@ -50,6 +50,14 @@ void StrawberryMeshBuilder::ReserveSpace(int size)
 }
 
 //-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::ChangeAttributesForVertexIndex(int vertexIndex, const Vector2& uvs, int spriteSheetIndex /*= 0*/, Rgba color /*= Rgba::WHITE*/)
+{
+	m_vertices.at(vertexIndex).m_uvTexCoords = uvs;
+	m_vertices.at(vertexIndex).m_color = color;
+	m_vertices.at(vertexIndex).m_textureID = spriteSheetIndex;
+}
+
+//-----------------------------------------------------------------------------------------------
 void StrawberryMeshBuilder::SetColor(const Rgba& color)
 {
 	m_stamp.m_color = color;
@@ -379,6 +387,28 @@ void StrawberryMeshBuilder::AppendAABB2Filled(const AABB2& bounds, Rgba color /*
 	PushVertex(Vector3(bounds.mins.x, bounds.maxs.y, .01f));
 
 	SetUV(1, 1);
+	PushVertex(Vector3(bounds.maxs.x, bounds.maxs.y, .01f));
+
+	AddFace(idx + 0, idx + 1, idx + 2);
+	AddFace(idx + 2, idx + 1, idx + 3);
+}
+
+//-----------------------------------------------------------------------------------------------
+void StrawberryMeshBuilder::AppendTexturedAABB2(const AABB2& bounds, const AABB2& uvs, int spriteSheetIndex /*= 0*/, Rgba color /*= Rgba::WHITE*/)
+{
+	SetColor(color);
+	SetTextureID(spriteSheetIndex);
+
+	SetUV(uvs.mins);
+	uint idx = PushVertex(Vector3(bounds.mins.x, bounds.mins.y, .01f));
+
+	SetUV(uvs.maxs.x, uvs.mins.y);
+	PushVertex(Vector3(bounds.maxs.x, bounds.mins.y, .01f));
+
+	SetUV(uvs.mins.x, uvs.maxs.y);
+	PushVertex(Vector3(bounds.mins.x, bounds.maxs.y, .01f));
+
+	SetUV(uvs.maxs);
 	PushVertex(Vector3(bounds.maxs.x, bounds.maxs.y, .01f));
 
 	AddFace(idx + 0, idx + 1, idx + 2);

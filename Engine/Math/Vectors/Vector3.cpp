@@ -54,8 +54,9 @@ const Vector3 Vector3::operator-(const Vector3& vecToSubtract) const
 {
 	float xx = x - vecToSubtract.x;
 	float yy = y - vecToSubtract.y;
+	float zz = z - vecToSubtract.z;
 
-	return Vector3(xx, yy, 0);
+	return Vector3(xx, yy, zz);
 }
 
 //-----------------------------------------------------------------------------------------------

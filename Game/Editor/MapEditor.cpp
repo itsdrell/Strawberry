@@ -13,6 +13,7 @@
 #include "Game/Editor/CollisionEditor.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
 
+
 //===============================================================================================
 MapEditor::MapEditor()
 {
@@ -177,10 +178,10 @@ void MapEditor::Render() const
 	r->DrawAABB2Filled(m_cameraBounds, Rgba(255, 20, 147, 255));
 
 	m_map->Render(m_showGrid);
+	
 	RenderUI();
 	m_mapEditorModes[m_currentMode]->Render();
 
-	
 	r->SetCamera();
 }
 
