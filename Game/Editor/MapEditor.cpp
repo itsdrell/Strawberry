@@ -179,8 +179,8 @@ void MapEditor::Render() const
 
 	m_map->Render(m_showGrid);
 	
-	RenderUI();
 	m_mapEditorModes[m_currentMode]->Render();
+	RenderUI();
 
 	r->SetCamera();
 }

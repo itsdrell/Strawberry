@@ -55,6 +55,7 @@ private:
 	void RenderUI() const;
 	void RenderTilePlacementPreview() const;
 	void RenderTileSelectHoverOutline() const;
+	void RenderSpriteSheetButtons() const;
 
 public:
 	MapEditor*			m_mapEditor;
@@ -70,6 +71,11 @@ private:
 	AABB2		m_tileSelectBounds;
 	AABB2		m_selectedTilePreviewBounds;
 	AABB2		m_tilePreviewBounds;
+
+private:
+	AABB2		m_spriteSheetIndexBounds;
+	AABB2		m_spriteSheetButtonBounds[4];
+	
 	int			m_selectedSpriteSheet = 0;
 };
 

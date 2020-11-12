@@ -90,6 +90,16 @@ void TileEditor::LeftClick()
 
 		return;
 	}
+
+	for(int i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		AABB2 currentBounds = m_spriteSheetButtonBounds[i];
+
+		if(currentBounds.IsPointInBox(mousePos))
+		{
+			m_selectedSpriteSheet = i;
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -129,6 +139,19 @@ void TileEditor::GenerateAllBounds()
 
 	m_tilePreviewBounds = GetAABB2FromAABB2(Vector2(.1f, .6f), Vector2(.2f, .75f), m_mapEditor->m_cameraBounds);
 	m_tilePreviewBounds.ShrinkToSquare();
+
+	AABB2 unitBox = GetAABB2FromAABB2(Vector2(0.f, 0.f), Vector2(.1f, .5f), m_tileSelectBounds);
+	Vector2 minPos = Vector2(m_tileSelectBounds.maxs.x, m_tileSelectBounds.maxs.y - unitBox.GetHeight());
+
+	m_spriteSheetIndexBounds = AABB2(minPos.x, minPos.y, minPos.x + unitBox.GetWidth(), minPos.y + unitBox.GetHeight());
+
+	float amount = 1.f;
+	float step = .25f;
+	for (uint i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		m_spriteSheetButtonBounds[i] = GetAABB2FromAABB2(Vector2(.0f, amount - step), Vector2(1.f, amount), m_spriteSheetIndexBounds);
+		amount -= step;
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -182,6 +205,8 @@ void TileEditor::RenderUI() const
 	Renderer* r = Renderer::GetInstance();
 
 	SpriteSheet* selectedSpriteSheet = g_allSpriteSheets[m_selectedSpriteSheet];
+
+	RenderSpriteSheetButtons();
 
 	// tile select
 	r->DrawAABB2Filled(m_tileSelectBounds, Rgba(0, 0, 0, 100));
@@ -258,4 +283,26 @@ void TileEditor::RenderTileSelectHoverOutline() const
 	float maxY = RangeMapFloat((float)(spriteCoords.y + 1.f), 0.f, (float)selectedSpriteSheet->m_spriteLayout.y, m_tileSelectBounds.maxs.y, m_tileSelectBounds.mins.y);
 
 	r->DrawAABB2Outline(AABB2(minX, minY, maxX, maxY), Rgba(0, 0, 0, 255));
+}
+
+//-----------------------------------------------------------------------------------------------
+void TileEditor::RenderSpriteSheetButtons() const
+{
+	Renderer* r = Renderer::GetInstance();
+	
+	// spritesheet buttons
+	r->DrawAABB2Outline(m_spriteSheetIndexBounds, Rgba::WHITE);
+
+	for (int i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		AABB2 currentBounds = m_spriteSheetButtonBounds[i];
+		Rgba backgroundColor = (m_selectedSpriteSheet == i) ? Rgba(100, 100, 100, 155) : Rgba::STRAWBERRY_RED;
+
+		r->DrawAABB2Filled(currentBounds, backgroundColor);
+		r->DrawAABB2Outline(currentBounds, Rgba::WHITE);
+		r->DrawTextInBox(std::to_string(i), currentBounds, 6.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
+	}
+
+	AABB2 selectedBounds = m_spriteSheetButtonBounds[m_selectedSpriteSheet];
+	r->DrawAABB2Outline(selectedBounds, Rgba::GREEN);
 }
