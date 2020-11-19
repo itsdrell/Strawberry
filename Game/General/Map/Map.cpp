@@ -162,7 +162,7 @@ void Map::CreateTilesFromData()
 		uint16 result = leftBits << 8;
 		result |= rightBits;
 
-		TileSpriteInfo theInfo = TileSpriteInfo(rightBits);
+		TileSpriteInfo theInfo = TileSpriteInfo(result);
 		m_tiles.push_back(theInfo);
 	}
 	
@@ -175,17 +175,6 @@ void Map::UpdateTileMesh(int tileIndex, const Tile& changedTile)
 	TileSpriteInfo info = changedTile.m_spriteInfo;
 	int spriteSheet = info.GetSpriteSheet();
 	AABB2 uvs = g_allSpriteSheets[spriteSheet]->GetTexCoordsForSpriteIndex(changedTile.m_spriteInfo.GetSpriteIndex());
-
-	// just editing the UVs of the meshbuilder for performance reasons!
-	//m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex, uvs.mins);
-	//m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 1, Vector2(uvs.maxs.x, uvs.mins.y));
-	//m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 2, Vector2(uvs.mins.x, uvs.maxs.y));
-	//m_tileBuilder->ChangeUVOfVertexAtPosition(tileIndex + 3, uvs.maxs);
-	//
-	//m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex, Rgba::WHITE);
-	//m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 1, Rgba::WHITE);
-	//m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 2, Rgba::WHITE);
-	//m_tileBuilder->ChangeColorOfVertexAtPosition(tileIndex + 3, Rgba::WHITE);
 
 	int textureID = spriteSheet + 2;
 
@@ -200,7 +189,7 @@ void Map::UpdateTileMesh(int tileIndex, const Tile& changedTile)
 //-----------------------------------------------------------------------------------------------
 void Map::GenerateTileMesh()
 {
-	PrintLog("started Generate Tile Mesh");
+	PrintLog("Started Generate Tile Mesh");
 	Vector2 currentPos = Vector2(0.f, 0.f);
 	
 	PrintLog("reserving");
