@@ -86,9 +86,10 @@ public:
 public:
 	void					OnKeyPressed(KeyCode keyCode);
 	void					OnKeyReleased(KeyCode keyCode);
-	bool					IsKeyPressed(KeyCode keyCode) const;
-	bool					WasKeyJustPressed(KeyCode keyCode) const;
-	bool					WasKeyJustReleased(KeyCode keyCode) const;
+
+	bool					IsKeyPressed(KeyCode keyCode, bool consume = false);
+	bool					WasKeyJustPressed(KeyCode keyCode, bool consume = false);
+	bool					WasKeyJustReleased(KeyCode keyCode, bool consume = false);
 
 private:
 	void					OnMouseButtonPressed(MouseButtons theButton);
@@ -104,8 +105,8 @@ public:
 	void					HideMouseCursor(bool isHidden);
 
 public:
-	void	ClearKeyState(KeyCode keycode);
-	void	ClearKeyboardState();
+	void					ClearKeyState(KeyCode keycode);
+	void					ClearKeyboardState();
 
 public:
 	String					GetTextInputedThisFrame();
@@ -148,9 +149,9 @@ protected:
 //====================================================================================
 // Standalone C Functions
 //====================================================================================
-bool					IsKeyPressed(KeyCode keyCode);
-bool					WasKeyJustPressed(KeyCode keyCode);
-bool					WasKeyJustReleased(KeyCode keyCode);
+bool					IsKeyPressed(KeyCode keyCode, bool consume = false);
+bool					WasKeyJustPressed(KeyCode keyCode, bool consume = false);
+bool					WasKeyJustReleased(KeyCode keyCode, bool consume = false);
 
 bool					IsMouseButtonPressed(MouseButtons theButton);
 bool					WasMouseButtonJustPressed(MouseButtons theButton);

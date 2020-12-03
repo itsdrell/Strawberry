@@ -361,7 +361,7 @@ int LuaDrawTextShrinkToFit(lua_State* theState)
 
 //-----------------------------------------------------------------------------------------------
 // IsKeyPressed( stringCode )
-int LuaIsKeyPressed(lua_State * theState)
+int LuaIsKeyPressed(lua_State* theState)
 {
 	if (Console::GetInstance()->m_isOpen == true)
 	{
@@ -371,15 +371,16 @@ int LuaIsKeyPressed(lua_State * theState)
 	
 	InputSystem* is = InputSystem::GetInstance();
 	KeyCode keyToCheck = LuaGetKeyCode(theState, 1, 'z');
+	bool consume = LuaGetBool(theState, 2, false);
 
-	lua_pushboolean(theState, is->IsKeyPressed(keyToCheck));
+	lua_pushboolean(theState, is->IsKeyPressed(keyToCheck, consume));
 	
 	return 1; // we are returning one variable
 }
 
 //-----------------------------------------------------------------------------------------------
 // WasKeyJustPressed( stringCode )
-int LuaWasKeyJustPressed(lua_State * theState)
+int LuaWasKeyJustPressed(lua_State* theState)
 {
 	if (Console::GetInstance()->m_isOpen == true)
 	{
@@ -389,15 +390,16 @@ int LuaWasKeyJustPressed(lua_State * theState)
 	
 	InputSystem* is = InputSystem::GetInstance();
 	KeyCode keyToCheck = LuaGetKeyCode(theState, 1, 'z');
+	bool consume = LuaGetBool(theState, 2, false);
 
-	lua_pushboolean(theState, is->WasKeyJustPressed(keyToCheck));
+	lua_pushboolean(theState, is->WasKeyJustPressed(keyToCheck, consume));
 
 	return 1; // we are returning one variable
 }
 
 //-----------------------------------------------------------------------------------------------
 // WasKeyJustReleased( stringCode )
-int LuaWasKeyJustReleased(lua_State * theState)
+int LuaWasKeyJustReleased(lua_State* theState)
 {
 	if (Console::GetInstance()->m_isOpen == true)
 	{
@@ -407,8 +409,9 @@ int LuaWasKeyJustReleased(lua_State * theState)
 	
 	InputSystem* is = InputSystem::GetInstance();
 	KeyCode keyToCheck = LuaGetKeyCode(theState, 1, 'z');
+	bool consume = LuaGetBool(theState, 2, false);
 
-	lua_pushboolean(theState, is->WasKeyJustReleased(keyToCheck));
+	lua_pushboolean(theState, is->WasKeyJustReleased(keyToCheck, consume));
 
 	return 1; // we are returning one variable
 }

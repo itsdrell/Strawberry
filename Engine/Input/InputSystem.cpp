@@ -112,21 +112,36 @@ void InputSystem::OnKeyReleased(KeyCode keyCode)
 }
 
 //-----------------------------------------------------------------------------------------------
-bool InputSystem::IsKeyPressed(KeyCode keyCode) const
+bool InputSystem::IsKeyPressed(KeyCode keyCode, bool consume)
 {
-	return m_keyStates[keyCode].m_isDown;
+	bool result = m_keyStates[keyCode].m_isDown;
+	
+	if (consume)
+		m_keyStates[keyCode].m_isDown = false;
+
+	return result;
 }
 
 //-----------------------------------------------------------------------------------------------
-bool InputSystem::WasKeyJustPressed(KeyCode keyCode) const
+bool InputSystem::WasKeyJustPressed(KeyCode keyCode, bool consume)
 {
-	return m_keyStates[keyCode].m_wasJustPressed;
+	bool result = m_keyStates[keyCode].m_wasJustPressed;
+
+	if (consume)
+		m_keyStates[keyCode].m_wasJustPressed = false;
+
+	return result;
 }
 
 //-----------------------------------------------------------------------------------------------
-bool InputSystem::WasKeyJustReleased(KeyCode keyCode) const
+bool InputSystem::WasKeyJustReleased(KeyCode keyCode, bool consume)
 {
-	return m_keyStates[keyCode].m_wasJustReleased;
+	bool result = m_keyStates[keyCode].m_wasJustReleased;
+
+	if (consume)
+		m_keyStates[keyCode].m_wasJustReleased = false;
+
+	return result;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -404,21 +419,21 @@ KeyCode InputSystem::LookUpKeyCodeFromSDLKeySym(KeyCode code)
 }
 
 //===============================================================================================
-bool IsKeyPressed(KeyCode keyCode)
+bool IsKeyPressed(KeyCode keyCode, bool consume)
 {
-	return InputSystem::GetInstance()->IsKeyPressed(keyCode);
+	return InputSystem::GetInstance()->IsKeyPressed(keyCode, consume);
 }
 
 //-----------------------------------------------------------------------------------------------
-bool WasKeyJustPressed(KeyCode keyCode)
+bool WasKeyJustPressed(KeyCode keyCode, bool consume)
 {
-	return InputSystem::GetInstance()->WasKeyJustPressed(keyCode);
+	return InputSystem::GetInstance()->WasKeyJustPressed(keyCode, consume);
 }
 
 //-----------------------------------------------------------------------------------------------
-bool WasKeyJustReleased(KeyCode keyCode)
+bool WasKeyJustReleased(KeyCode keyCode, bool consume)
 {
-	return InputSystem::GetInstance()->WasKeyJustReleased(keyCode);
+	return InputSystem::GetInstance()->WasKeyJustReleased(keyCode, consume);
 }
 
 //-----------------------------------------------------------------------------------------------
