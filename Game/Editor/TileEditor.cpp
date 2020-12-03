@@ -9,6 +9,7 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Renderer/Systems/MeshBuilder.hpp"
 #include "Engine/Renderer/RenderTypes.hpp"
+#include <deque>
 
 //===============================================================================================
 TileEditor::TileEditor( MapEditor * theMapEditor)
@@ -41,6 +42,11 @@ void TileEditor::Render() const
 //-----------------------------------------------------------------------------------------------
 void TileEditor::HandleInput()
 {
+	if(WasKeyJustPressed('f'))
+	{
+		m_drawMode = TILE_DRAW_MODE_FILL;
+	}
+	
 	if (IsKeyPressed(KEYBOARD_LSHIFT))
 	{
 		CreateTilePlacementPreview();
@@ -78,16 +84,16 @@ void TileEditor::LeftClick()
 	if (mapBounds.IsPointInBox(mousePos) && !m_selectedSpriteInfo.IsDefault())
 	{
 		m_lastSelectedTilePosition = mousePos;
-		m_mapEditor->m_map->ChangeTileAtMousePos(mousePos, m_selectedSpriteInfo);
-
-		if (IsKeyPressed(KEYBOARD_LSHIFT))
+		
+		if(m_drawMode == TILE_DRAW_MODE_FILL)
 		{
-			for (uint i = 0; i < m_tilesToChange.size(); i++)
-			{
-				m_mapEditor->m_map->ChangeTileAtTilePos(m_tilesToChange.at(i), m_selectedSpriteInfo);
-			}
+			DrawModeFill();
 		}
-
+		else
+		{
+			DrawModeNormal();
+		}
+		
 		return;
 	}
 
@@ -197,6 +203,121 @@ void TileEditor::CreateTilePlacementPreview()
 
 		m_tilesToChange.push_back(tilePos);
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void TileEditor::DrawModeNormal()
+{
+	m_mapEditor->m_map->ChangeTileAtMousePos(m_lastSelectedTilePosition, m_selectedSpriteInfo);
+
+	if (IsKeyPressed(KEYBOARD_LSHIFT))
+	{
+		for (uint i = 0; i < m_tilesToChange.size(); i++)
+		{
+			m_mapEditor->m_map->ChangeTileAtTilePos(m_tilesToChange.at(i), m_selectedSpriteInfo);
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void TileEditor::DrawModeFill()
+{
+	Map& theMap = *m_mapEditor->m_map;
+	m_tilesToChange.clear();
+
+	IntVector2 currentMousePos = IntVector2((int)(m_lastSelectedTilePosition.x / TILE_SIZE), (int)(m_lastSelectedTilePosition.y / TILE_SIZE));
+	Tile& theSelectedTile = theMap.GetTileByTilePos(currentMousePos);
+
+	if(theSelectedTile.m_spriteInfo.GetData() == m_selectedSpriteInfo.GetData())
+	{
+		return; // already the same
+	}
+
+	// need to find the bounds of our 16x16 box so we only change those tiles
+	Vector2 pos = currentMousePos.ToVector2();
+	float scale = 16.f; // could change this to make it cover more than 1 square (32,64,etc)
+	IntVector2 min = IntVector2((int) std::floor(pos.x / scale) * (int) scale, (int) std::floorf(pos.y / scale) * (int) scale);
+	IntVector2 max = IntVector2((int) std::ceil(pos.x / scale) * (int) scale, (int)std::ceil(pos.y / scale) * (int) scale);
+	max = max - IntVector2(1, 1); // accounting for zero indexing
+
+	std::deque<IntVector2> heatmap;
+	heatmap.push_back(currentMousePos);
+
+	while(heatmap.empty() == false)
+	{
+		IntVector2 currentTile = heatmap[0];
+		
+		IntVector2 north = currentTile + IntVector2(0,1);
+		IntVector2 south = currentTile + IntVector2(0, -1);
+		IntVector2 east = currentTile + IntVector2(1, 0);
+		IntVector2 west = currentTile + IntVector2(-1, 0);
+
+		TileSpriteInfo northTileInfo = theMap.GetTileByTilePos(north).m_spriteInfo;
+		TileSpriteInfo southTileInfo = theMap.GetTileByTilePos(south).m_spriteInfo;
+		TileSpriteInfo eastTileInfo = theMap.GetTileByTilePos(east).m_spriteInfo;
+		TileSpriteInfo westTileInfo = theMap.GetTileByTilePos(west).m_spriteInfo;
+
+		// needs out of bounds checking as well as in tile grid (should be same)
+		if((TileSpriteInfo::AreSpritesSame(northTileInfo, theSelectedTile.m_spriteInfo)) 
+			&& (TileSpriteInfo::AreSpritesSame(northTileInfo, m_selectedSpriteInfo) == false)
+			&& (IsTileInsideSector(min, max, north)))
+		{
+			if(std::find(m_tilesToChange.begin(), m_tilesToChange.end(), north) == m_tilesToChange.end())
+			{
+				heatmap.push_back(north);
+				m_tilesToChange.push_back(north);
+			}
+		}
+
+		if ((TileSpriteInfo::AreSpritesSame(southTileInfo, theSelectedTile.m_spriteInfo))
+			&& (TileSpriteInfo::AreSpritesSame(southTileInfo, m_selectedSpriteInfo) == false)
+			&& (IsTileInsideSector(min, max, south)))
+		{
+			if (std::find(m_tilesToChange.begin(), m_tilesToChange.end(), south) == m_tilesToChange.end())
+			{
+				heatmap.push_back(south);
+				m_tilesToChange.push_back(south);
+			}
+		}
+
+		if ((TileSpriteInfo::AreSpritesSame(eastTileInfo, theSelectedTile.m_spriteInfo))
+			&& (TileSpriteInfo::AreSpritesSame(eastTileInfo, m_selectedSpriteInfo) == false)
+			&& (IsTileInsideSector(min, max, east)))
+		{
+			if (std::find(m_tilesToChange.begin(), m_tilesToChange.end(), east) == m_tilesToChange.end())
+			{
+				heatmap.push_back(east);
+				m_tilesToChange.push_back(east);
+			}
+		}
+
+		if ((TileSpriteInfo::AreSpritesSame(westTileInfo, theSelectedTile.m_spriteInfo))
+			&& (TileSpriteInfo::AreSpritesSame(westTileInfo, m_selectedSpriteInfo) == false)
+			&& (IsTileInsideSector(min, max, west)))
+		{
+			if (std::find(m_tilesToChange.begin(), m_tilesToChange.end(), west) == m_tilesToChange.end())
+			{
+				heatmap.push_back(west);
+				m_tilesToChange.push_back(west);
+			}
+		}
+
+		heatmap.pop_front();
+	}
+
+	for (uint i = 0; i < m_tilesToChange.size(); i++)
+	{
+		m_mapEditor->m_map->ChangeTileAtTilePos(m_tilesToChange.at(i), m_selectedSpriteInfo);
+	}
+
+	m_tilesToChange.clear();
+}
+
+//-----------------------------------------------------------------------------------------------
+bool TileEditor::IsTileInsideSector(const IntVector2& min, const IntVector2& max, const IntVector2& pointToCheck)
+{
+	return (pointToCheck.x >= min.x) && (pointToCheck.x <= max.x)
+		&& (pointToCheck.y >= min.y) && (pointToCheck.y <= max.y);
 }
 
 //-----------------------------------------------------------------------------------------------

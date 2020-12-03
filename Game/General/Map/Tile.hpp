@@ -46,6 +46,9 @@ public:
 	inline void SetChannelBits(Byte channelFlags);
 	inline int GetCollisionChannelValue();
 
+public:
+	inline static bool AreSpritesSame(TileSpriteInfo& a, const TileSpriteInfo& b);
+
 private:
 	// bits are right to left, dummy
 	// 8 bits are for the index,			0b0000'0000'1111'1111;
@@ -107,6 +110,13 @@ void TileSpriteInfo::SetChannelBits(Byte channelFlags)
 int TileSpriteInfo::GetCollisionChannelValue()
 {
 	return (m_data >> 11);
+}
+
+//-----------------------------------------------------------------------------------------------
+bool TileSpriteInfo::AreSpritesSame(TileSpriteInfo& a, const TileSpriteInfo& b)
+{
+	return (a.GetSpriteIndex() == b.GetSpriteIndex()) && 
+		(a.GetSpriteSheet() == b.GetSpriteSheet());
 }
 
 //====================================================================================

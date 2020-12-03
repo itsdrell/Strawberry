@@ -18,7 +18,11 @@ class MeshBuilder;
 //====================================================================================
 // ENUMS
 //====================================================================================
-
+enum TileDrawModes
+{
+	TILE_DRAW_MODE_NORMAL,
+	TILE_DRAW_MODE_FILL
+};
 
 //====================================================================================
 // Structs
@@ -52,6 +56,11 @@ private:
 	void CreateTilePlacementPreview();
 
 private:
+	void DrawModeNormal();
+	void DrawModeFill();
+	bool IsTileInsideSector(const IntVector2& min, const IntVector2& max, const IntVector2& pointToCheck);
+
+private:
 	void RenderUI() const;
 	void RenderTilePlacementPreview() const;
 	void RenderTileSelectHoverOutline() const;
@@ -66,6 +75,8 @@ private:
 	Vector2					m_lastSelectedTilePosition;
 	MeshBuilder*			m_tileSelectPreviewMB;
 	std::vector<IntVector2>	m_tilesToChange;
+
+	TileDrawModes			m_drawMode = TILE_DRAW_MODE_NORMAL;
 
 private:
 	AABB2		m_tileSelectBounds;

@@ -243,7 +243,9 @@ void Map::GenerateTileMesh()
 //-----------------------------------------------------------------------------------------------
 Tile& Map::GetTileByTilePos(const IntVector2& pos)
 {
-	return GetTileByIndex(GetTileIndexFromWorldPos(pos.ToVector2()));
+	Vector2 worldPos = Vector2(pos.x * TILE_SIZE, pos.y * TILE_SIZE);
+	
+	return GetTileByIndex(GetTileIndexFromWorldPos(worldPos));
 }
 
 //-----------------------------------------------------------------------------------------------
