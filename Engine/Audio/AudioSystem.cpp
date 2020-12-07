@@ -1,10 +1,18 @@
 #include "AudioSystem.hpp"
 #include "Engine\Core\Tools\ErrorWarningAssert.hpp"
+#include "..\Core\Tools\Command.hpp"
 
 //===============================================================================================
 AudioSystem* AudioSystem::s_theAudioSystem = nullptr;
 
 //-----------------------------------------------------------------------------------------------
+static void ToggleAudio(Command & command)
+{
+	UNUSED(command);
+	AudioSystem::GetInstance()->ToggleMasterMute();
+}
+
+//===============================================================================================
 AudioSystem::AudioSystem()
 {
 	FMOD_RESULT result;
@@ -16,7 +24,10 @@ AudioSystem::AudioSystem()
 
 	if(s_theAudioSystem == nullptr)
 		s_theAudioSystem = this;
+
+	CommandRegister("mute", "mute", "Toggles audio either on or off", ToggleAudio);
 }
+
 
 //-----------------------------------------------------------------------------------------------
 AudioSystem::~AudioSystem()
