@@ -12,6 +12,23 @@
 #include <deque>
 
 //===============================================================================================
+String GetTileDrawModeAsString(TileDrawModes mode)
+{
+	switch (mode)
+	{
+	case TILE_DRAW_MODE_NORMAL:
+		return "Normal";
+		break;
+	case TILE_DRAW_MODE_FILL:
+		return "Fill";
+		break;
+	default:
+		return "idk";
+		break;
+	}
+}
+
+//===============================================================================================
 TileEditor::TileEditor( MapEditor * theMapEditor)
 {
 	m_mapEditor = theMapEditor;
@@ -57,6 +74,11 @@ void TileEditor::HandleInput()
 		LeftClick();
 	}
 
+	if(WasMouseButtonJustReleased(LEFT_MOUSE_BUTTON))
+	{
+		LeftClickRelease();
+	}
+
 	if (IsMouseButtonPressed(RIGHT_MOUSE_BUTTON))
 	{
 		RightClick();
@@ -80,6 +102,20 @@ void TileEditor::LeftClick()
 		return;
 	}
 
+	for (int i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		AABB2 currentBounds = m_spriteSheetButtonBounds[i];
+
+		if (currentBounds.IsPointInBox(mousePos))
+		{
+			m_selectedSpriteSheet = i;
+			return;
+		}
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	// should happen after UI stuff since UI gets priority (since its on top)
+	//-----------------------------------------------------------------------------------------------
 	AABB2 mapBounds = m_mapEditor->m_map->GetBounds();
 	if (mapBounds.IsPointInBox(mousePos) && !m_selectedSpriteInfo.IsDefault())
 	{
@@ -96,15 +132,25 @@ void TileEditor::LeftClick()
 		
 		return;
 	}
+}
 
-	for(int i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+//-----------------------------------------------------------------------------------------------
+void TileEditor::LeftClickRelease()
+{
+	Vector2 mousePos = GetMousePosition(m_mapEditor->m_cameraBounds);
+	
+	if (m_mapEditor->m_optionsBounds.IsPointInBox(mousePos))
 	{
-		AABB2 currentBounds = m_spriteSheetButtonBounds[i];
-
-		if(currentBounds.IsPointInBox(mousePos))
+		if (m_drawMode == TILE_DRAW_MODE_FILL)
 		{
-			m_selectedSpriteSheet = i;
+			m_drawMode = TILE_DRAW_MODE_NORMAL;
 		}
+		else
+		{
+			m_drawMode = TILE_DRAW_MODE_FILL;
+		}
+
+		return;
 	}
 }
 
@@ -360,7 +406,7 @@ void TileEditor::RenderUI() const
 
 		RenderTileSelectHoverOutline();
 	}
-	else
+	else if(m_spriteSheetIndexBounds.IsPointInBox(mousePos) == false)
 	{
 		// Draw the box outline on the current hovered tile
 		if (m_mapEditor->m_map->GetBounds().IsPointInBox(mousePos))
@@ -371,6 +417,8 @@ void TileEditor::RenderUI() const
 			r->DrawAABB2Outline(highlightBounds, Rgba(0, 0, 0, 255));
 		}
 	}
+
+	RenderOptionsBar();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -426,4 +474,15 @@ void TileEditor::RenderSpriteSheetButtons() const
 
 	AABB2 selectedBounds = m_spriteSheetButtonBounds[m_selectedSpriteSheet];
 	r->DrawAABB2Outline(selectedBounds, Rgba::GREEN);
+}
+
+//-----------------------------------------------------------------------------------------------
+void TileEditor::RenderOptionsBar() const
+{
+	Renderer* r = Renderer::GetInstance();
+	
+	AABB2 optionBounds = m_mapEditor->m_optionsBounds;
+
+	r->DrawAABB2Filled(optionBounds, Rgba::STRAWBERRY_RED);
+	r->DrawTextInBox(GetTileDrawModeAsString(m_drawMode), optionBounds, 8.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
 }

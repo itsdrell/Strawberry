@@ -2,6 +2,7 @@
 #include "Game/Editor/EditorMode.hpp"
 #include "Game/General/Map/Tile.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
+#include "Engine/Core/General/Rgba.hpp"
 
 //====================================================================================
 // Forward Declare
@@ -23,6 +24,7 @@ enum TileDrawModes
 	TILE_DRAW_MODE_NORMAL,
 	TILE_DRAW_MODE_FILL
 };
+String GetTileDrawModeAsString(TileDrawModes mode);
 
 //====================================================================================
 // Structs
@@ -50,6 +52,7 @@ public:
 
 private:
 	void LeftClick();
+	void LeftClickRelease();
 	void RightClick();
 	void SelectSpriteSheetTile(const Vector2& mousePos);
 	void GenerateAllBounds();
@@ -65,6 +68,7 @@ private:
 	void RenderTilePlacementPreview() const;
 	void RenderTileSelectHoverOutline() const;
 	void RenderSpriteSheetButtons() const;
+	void RenderOptionsBar() const;
 
 public:
 	MapEditor*			m_mapEditor;
@@ -86,6 +90,8 @@ private:
 private:
 	AABB2		m_spriteSheetIndexBounds;
 	AABB2		m_spriteSheetButtonBounds[4];
+
+	Rgba		m_selectedColor = Rgba(100, 100, 100, 155);
 	
 	int			m_selectedSpriteSheet = 0;
 };
