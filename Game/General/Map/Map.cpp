@@ -257,6 +257,8 @@ void Map::Update()
 			delete m_tileMesh;
 
 		m_tileMesh = m_tileBuilder->CreateMesh(false);
+
+		m_mapMeshIsDirty = false;
 	}
 }
 
@@ -356,6 +358,24 @@ int Map::GetTileIndexFromWorldPos(const Vector2& pos)
 	int tileY = (int)(pos.y / TILE_SIZE_FLOAT);
 
 	return (tileY * m_dimensions.x) + tileX;
+}
+
+//-----------------------------------------------------------------------------------------------
+IntVector2 Map::GetTilePosFromWorldPos(const Vector2& pos)
+{
+	int tileX = (int)(pos.x / TILE_SIZE_FLOAT);
+	int tileY = (int)(pos.y / TILE_SIZE_FLOAT);
+
+	return IntVector2(tileX, tileY);
+}
+
+//-----------------------------------------------------------------------------------------------
+TileSpriteInfo Map::GetTileInfoFromWorldPos(const Vector2& pos)
+{
+	int index = GetTileIndexFromWorldPos(pos);
+	Tile& tile = GetTileByIndex(index);
+
+	return tile.m_spriteInfo;
 }
 
 //-----------------------------------------------------------------------------------------------

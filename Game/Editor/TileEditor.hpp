@@ -3,6 +3,7 @@
 #include "Game/General/Map/Tile.hpp"
 #include "Engine/Math/Geometry/AABB2.hpp"
 #include "Engine/Core/General/Rgba.hpp"
+#include <deque>
 
 //====================================================================================
 // Forward Declare
@@ -10,6 +11,7 @@
 class MapEditor;
 class Vector2;
 class MeshBuilder;
+class IEditorAction;
 
 //====================================================================================
 // Type Defs + Defines
@@ -59,8 +61,8 @@ private:
 	void CreateTilePlacementPreview();
 
 private:
-	void DrawModeNormal();
-	void DrawModeFill();
+	void DrawModeNormal(const Vector2& drawPosition);
+	void DrawModeFill(const Vector2& drawPosition);
 	bool IsTileInsideSector(const IntVector2& min, const IntVector2& max, const IntVector2& pointToCheck);
 
 private:
@@ -71,16 +73,18 @@ private:
 	void RenderOptionsBar() const;
 
 public:
-	MapEditor*			m_mapEditor;
+	MapEditor*				m_mapEditor;
 
-	TileSpriteInfo		m_selectedSpriteInfo;
+	TileSpriteInfo			m_selectedSpriteInfo;
+	Vector2					m_lastSelectedTilePosition;
 
 private:
-	Vector2					m_lastSelectedTilePosition;
 	MeshBuilder*			m_tileSelectPreviewMB;
 	std::vector<IntVector2>	m_tilesToChange;
 
 	TileDrawModes			m_drawMode = TILE_DRAW_MODE_NORMAL;
+
+	std::deque<IEditorAction*>	m_history;
 
 private:
 	AABB2		m_tileSelectBounds;

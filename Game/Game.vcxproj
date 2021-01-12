@@ -297,6 +297,7 @@
     <ClCompile Include="Editor\CollisionEditor.cpp" />
     <ClCompile Include="Editor\CurveEditor.cpp" />
     <ClCompile Include="Editor\Editor.cpp" />
+    <ClCompile Include="Editor\EditorHistory.cpp" />
     <ClCompile Include="Editor\MapEditor.cpp" />
     <ClCompile Include="Editor\SpriteSheetViewer.cpp" />
     <ClCompile Include="Editor\TileEditor.cpp" />
@@ -315,6 +316,7 @@
     <ClInclude Include="Editor\CollisionEditor.hpp" />
     <ClInclude Include="Editor\CurveEditor.hpp" />
     <ClInclude Include="Editor\Editor.hpp" />
+    <ClInclude Include="Editor\EditorHistory.hpp" />
     <ClInclude Include="Editor\EditorMode.hpp" />
     <ClInclude Include="Editor\MapEditor.hpp" />
     <ClInclude Include="Editor\SpriteSheetViewer.hpp" />

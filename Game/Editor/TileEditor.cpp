@@ -9,6 +9,8 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Renderer/Systems/MeshBuilder.hpp"
 #include "Engine/Renderer/RenderTypes.hpp"
+#include "Game/Editor/EditorHistory.hpp"
+#include "Engine/Core/Tools/DebugRendering.hpp"
 #include <deque>
 
 //===============================================================================================
@@ -47,6 +49,8 @@ void TileEditor::Update()
 {
 	HandleInput();
 	GenerateAllBounds();
+
+	//DebugRenderLog("size: " + std::to_string(m_history.size()), 0.f);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -82,6 +86,20 @@ void TileEditor::HandleInput()
 	if (IsMouseButtonPressed(RIGHT_MOUSE_BUTTON))
 	{
 		RightClick();
+	}
+
+	if(WasKeyJustReleased(KEYBOARD_BACKSPACE))
+	{
+		if(m_history.empty() == false)
+		{
+			IEditorAction* lastAction = m_history.front();
+			lastAction->Undo();
+
+			delete lastAction;
+			m_history.pop_front();
+
+			DebugRenderLog("Undo!");
+		}
 	}
 }
 
@@ -119,17 +137,16 @@ void TileEditor::LeftClick()
 	AABB2 mapBounds = m_mapEditor->m_map->GetBounds();
 	if (mapBounds.IsPointInBox(mousePos) && !m_selectedSpriteInfo.IsDefault())
 	{
-		m_lastSelectedTilePosition = mousePos;
-		
 		if(m_drawMode == TILE_DRAW_MODE_FILL)
 		{
-			DrawModeFill();
+			DrawModeFill(mousePos);
 		}
 		else
 		{
-			DrawModeNormal();
+			DrawModeNormal(mousePos);
 		}
 		
+		m_lastSelectedTilePosition = mousePos;
 		return;
 	}
 }
@@ -227,6 +244,9 @@ void TileEditor::CreateTilePlacementPreview()
 	float xStep = ((float) distance.x) / (float) amoutOfSteps;
 	float yStep = (float) distance.y / (float) amoutOfSteps;
 
+	// add the first tile to the list
+	m_tilesToChange.push_back(IntVector2((int)currentPos.x, (int)currentPos.y));
+
 	SpriteSheet* selectedSpriteSheet = g_allSpriteSheets[m_selectedSpriteSheet];
 
 	for (int i = 0; i < amoutOfSteps; i++)
@@ -252,27 +272,58 @@ void TileEditor::CreateTilePlacementPreview()
 }
 
 //-----------------------------------------------------------------------------------------------
-void TileEditor::DrawModeNormal()
+void TileEditor::DrawModeNormal(const Vector2& drawPosition)
 {
-	m_mapEditor->m_map->ChangeTileAtMousePos(m_lastSelectedTilePosition, m_selectedSpriteInfo);
+	TileSpriteInfo previousInfo = m_mapEditor->m_map->GetTileInfoFromWorldPos(drawPosition);
 
+	if(previousInfo.GetData() == m_selectedSpriteInfo.GetData())
+	{
+		return;
+	}
+	
 	if (IsKeyPressed(KEYBOARD_LSHIFT))
 	{
+		std::vector<TileChangeAction*> tilesToChange;
+
 		for (uint i = 0; i < m_tilesToChange.size(); i++)
 		{
+			IntVector2 currentPos = m_tilesToChange.at(i);
+
+			// need to get the original tile definition
+			TileSpriteInfo currentPreviousTileInfo = m_mapEditor->m_map->GetTileByTilePos(currentPos).m_spriteInfo;
+			
 			m_mapEditor->m_map->ChangeTileAtTilePos(m_tilesToChange.at(i), m_selectedSpriteInfo);
+
+			TileChangeAction* action = new TileChangeAction(currentPreviousTileInfo,
+															currentPos,
+															m_mapEditor->m_map);
+
+			tilesToChange.push_back(action);
 		}
+
+		MultiTileChangeAction* action = new MultiTileChangeAction(tilesToChange, m_lastSelectedTilePosition, this);
+		m_history.push_front(action);
+	}
+	else // single change
+	{
+		m_mapEditor->m_map->ChangeTileAtMousePos(drawPosition, m_selectedSpriteInfo);
+
+		TileChangeAction* action = new TileChangeAction(previousInfo,
+														m_mapEditor->m_map->GetTilePosFromWorldPos(drawPosition),
+														m_mapEditor->m_map);
+		m_history.push_front(action);
 	}
 }
 
 //-----------------------------------------------------------------------------------------------
-void TileEditor::DrawModeFill()
+void TileEditor::DrawModeFill(const Vector2& drawPosition)
 {
 	Map& theMap = *m_mapEditor->m_map;
 	m_tilesToChange.clear();
 
-	IntVector2 currentMousePos = IntVector2((int)(m_lastSelectedTilePosition.x / TILE_SIZE), (int)(m_lastSelectedTilePosition.y / TILE_SIZE));
+	IntVector2 currentMousePos = IntVector2((int)(drawPosition.x / TILE_SIZE), (int)(drawPosition.y / TILE_SIZE));
 	Tile& theSelectedTile = theMap.GetTileByTilePos(currentMousePos);
+	TileSpriteInfo selectedInfo = theSelectedTile.m_spriteInfo;
 
 	if(theSelectedTile.m_spriteInfo.GetData() == m_selectedSpriteInfo.GetData())
 	{
@@ -351,10 +402,23 @@ void TileEditor::DrawModeFill()
 		heatmap.pop_front();
 	}
 
+	// Do change and store off history so we can undo
+	std::vector<TileChangeAction*> actions;
 	for (uint i = 0; i < m_tilesToChange.size(); i++)
 	{
-		m_mapEditor->m_map->ChangeTileAtTilePos(m_tilesToChange.at(i), m_selectedSpriteInfo);
+		IntVector2 currentPos = m_tilesToChange.at(i);
+		
+		m_mapEditor->m_map->ChangeTileAtTilePos(currentPos, m_selectedSpriteInfo);
+
+		TileChangeAction* action = new TileChangeAction(selectedInfo,
+														currentPos,
+														m_mapEditor->m_map);
+
+		actions.push_back(action);
 	}
+
+	MultiTileChangeAction* action = new MultiTileChangeAction(actions);
+	m_history.push_front(action);
 
 	m_tilesToChange.clear();
 }

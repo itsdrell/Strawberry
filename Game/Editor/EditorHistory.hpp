@@ -1,23 +1,19 @@
 #pragma once
+#include "Engine/Math/Vectors/IntVector2.hpp"
 #include "Game/General/Map/Tile.hpp"
+#include "Game/General/Map/Map.hpp"
+#include "Engine/Math/Vectors/Vector2.hpp"
 #include <vector>
 
 //====================================================================================
 // Forward Declare
 //====================================================================================
-class AABB2;
-class Vector2;
-class Mesh;
-class Tile;
-class MeshBuilder;
-class IntVector2;
-class StrawberryMeshBuilder;
-class Shader;
+class EditorMode;
 
 //====================================================================================
 // Type Defs + Defines
 //====================================================================================
-typedef std::vector<Tile> Tiles;
+
 
 //====================================================================================
 // ENUMS
@@ -32,60 +28,47 @@ typedef std::vector<Tile> Tiles;
 //====================================================================================
 // Classes
 //====================================================================================
-class Map
+class IEditorAction
 {
 public:
-	Map(const IntVector2& dimensions);
-	Map();
-	~Map();
+	IEditorAction() {}
+	~IEditorAction() {}
 
-private:
-	void InitializeMap();
-	void WriteFileHeader();
-	void CreateNewMap();
-	void CreateTilesFromData();
-	void UpdateTileMesh(int tileIndex, const Tile& changedTile);
-	void GenerateTileMesh();
+	virtual void Undo() = 0;
 
 public:
-	void SaveMap();
-	bool LoadMap();
-	Tile& GetTileByIndex(int index);
-	Tile& GetTileByTilePos(const IntVector2& pos);
-
-public:
-	void Update();
-	void Render(bool showGrid = true) const;
-
-private:
-	void RenderTiles() const;
-	void RenderGrid() const;
-
-public:
-	AABB2 GetBounds() const;
-	int GetTileIndexFromWorldPos(const Vector2& pos);
-	IntVector2 GetTilePosFromWorldPos(const Vector2& pos);
-	TileSpriteInfo GetTileInfoFromWorldPos(const Vector2& pos);
-
-	void ChangeTileAtMousePos(const Vector2& mousePos, TileSpriteInfo& spriteInfo);
-	void ChangeTileAtTilePos(const IntVector2& tilePos, TileSpriteInfo& spriteInfo);
-	void ChangeTilesCollisionChannel(const Vector2& mousePos, Byte flagsToChange);
-
-public:
-	unsigned int			m_totalAmountOfTiles;
-	IntVector2				m_dimensions = IntVector2(128, 128);
-	
-	Shader*					m_tileMapShader = nullptr;
-	
-	Mesh*					m_tileMesh = nullptr;
-	StrawberryMeshBuilder*	m_tileBuilder;
-	bool					m_mapMeshIsDirty = false;
-
-private:
-	Tiles					m_tiles;
-	Tiles					m_viewableTiles;
-	std::vector<uint16>		m_fileData;
+	Map*			m_map = nullptr;
+	IntVector2		m_tilePos;
 };
+
+//-----------------------------------------------------------------------------------------------
+class TileChangeAction : public IEditorAction
+{
+public:
+	TileChangeAction(const TileSpriteInfo& previousInfo, const IntVector2& tilePos, Map* theMap);
+	virtual void Undo() override;
+
+public:
+	TileSpriteInfo		m_previousInfo;
+};
+
+//-----------------------------------------------------------------------------------------------
+class MultiTileChangeAction : public IEditorAction
+{
+public:
+	MultiTileChangeAction(const std::vector<TileChangeAction*>& tilesToChange);
+	MultiTileChangeAction(const std::vector<TileChangeAction*>& tilesToChange, const Vector2& lastPosition, EditorMode* editor);
+	virtual void Undo() override;
+
+public:
+	std::vector<TileChangeAction*>	m_tilesToChange;
+
+	// This is used for the line drawing so it will go back to drawing from 
+	// the previous pos instead of the old pos
+	EditorMode*						m_editor = nullptr;
+	Vector2							m_lastDrawnPosition = Vector2();
+};
+
 
 //====================================================================================
 // Standalone C Functions
@@ -98,5 +81,5 @@ private:
 
 
 //====================================================================================
-// Written by Zachary Bracken : [9/21/2019]
+// Written by Zachary Bracken : [12/9/2020]
 //====================================================================================

@@ -24,7 +24,7 @@ SpriteSheetView::SpriteSheetView()
 	m_colorButtonBounds = GetAABB2FromAABB2(Vector2(0.f, 0.f), Vector2(1.f, .5f), m_switchBoxBounds);
 
 	float height = .9f;
-	float step = .05;
+	float step = .05f;
 	for(uint i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
 	{
 		m_spriteSheetButtonBounds[i] = GetAABB2FromAABB2(Vector2(.18f, height - step), Vector2(.23f, height), m_cameraBounds);
