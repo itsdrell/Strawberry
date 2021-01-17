@@ -8,12 +8,13 @@
 #include "Engine/Core/Tools/ErrorWarningAssert.hpp"
 #include "Engine/Math/Splines/CubicSpline.hpp"
 #include "Engine/Input/InputSystem.hpp"
-
+#include "Engine/Core/General/EngineCommon.hpp"
+#include "Engine/Renderer/Images/SpriteSheet.hpp"
 
 //===============================================================================================
 StartupScreen::StartupScreen()
 {
-	m_strawberrySprite = new Sprite("Data/LoadingStrawberry.png", Vector2(.4f, .4f));
+	m_strawberrySprite = new Sprite(g_editorIconSpriteSheet->m_texture, Vector2(.4f, .4f), g_editorIconSpriteSheet->GetTexCoordsForSpriteIndex(12));
 }
 
 //-----------------------------------------------------------------------------------------------

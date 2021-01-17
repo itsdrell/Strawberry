@@ -21,6 +21,7 @@
 #include "Game/States/Startup/StartupScreen.hpp"
 #include "Game/States/Home/Home.hpp"
 #include "Game/General/GameConsoleCommands.hpp"
+#include "Game/General/EditorMouse.hpp"
 
 #ifdef EMSCRIPTEN_PORT
 	#include "Engine/Internal/EmscriptenCommon.hpp"
@@ -56,6 +57,8 @@ App::App()
 	new BlackBoard("Data/AppConfig.lua", ENGINE_BLACKBOARD);
 
 	new Window("Strawberry Engine <3 ");
+
+	m_mouse = new EditorMouse();
 	
 	EngineStartUp();
 	BindAllGameSideCommands();
@@ -84,6 +87,9 @@ App::~App()
 
 	delete m_recorder;
 	m_recorder = nullptr;
+
+	delete m_mouse;
+	m_mouse = nullptr;
 
 	for (uint i = 0; i < NUM_OF_APP_STATES; ++i)
 		delete m_states[i];
@@ -119,6 +125,7 @@ void App::RunFrame()
 	
 	ClockSystemBeginFrame();
 	g_theInputSystem->BeginFrame();
+	m_mouse->BeginFrame();
 	Renderer::GetInstance()->BeginFrame();
 	//g_theRenderer->UpdateTime(g_theGameClock->deltaTime, g_theMasterClock->deltaTime);
 	theAudio->BeginFrame();
@@ -148,6 +155,7 @@ void App::Update()
 	Playground::RunTestOnUpdate();
 	 
 	HandleInput();
+	m_mouse->Update();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -234,6 +242,11 @@ void App::HandleInput()
 void App::Render() const
 {
 	m_states[m_currentState]->Render();
+
+	if(m_currentState == APPSTATE_EDITOR || m_currentState == APPSTATE_HOME)
+	{
+		m_mouse->Render();
+	}
 
 	// Doing it before debug and console render not sure if that help or hurts?
 	HandleCaptures();

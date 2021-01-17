@@ -13,6 +13,8 @@
 #include "CreateProjectPage.hpp"
 #include "Engine/Core/Tools/Clock.hpp"
 #include "Engine/Math/MathUtils.hpp"
+#include "Engine/Renderer/Images/SpriteSheet.hpp"
+#include "Game/General/EditorMouse.hpp"
 
 
 //===============================================================================================
@@ -65,10 +67,6 @@ void Home::Render() const
 		m_createPagePopup->Render();
 	}
 
-	// mouse
-	Vector2 mousePos = GetMousePosition(r->m_defaultUICamera->GetOrthoBounds());
-	r->DrawCircleOutline2D(mousePos, .01f, Rgba(0, 255, 0, 255));
-
 	// transition
 	float t = m_fadeAwayTimer.GetNormalizedElapsedTime();
 	float radius = Interpolate(1.5f, 0.0f, t);
@@ -100,7 +98,13 @@ void Home::RenderUI() const
 	}
 	else if (m_currentIndex == 0) // new project
 	{
-		Rgba color = m_coverImageBounds.IsPointInBox(mousePos) ? Rgba::GREEN : Rgba::WHITE;
+		Rgba color = Rgba::WHITE;
+		if (m_coverImageBounds.IsPointInBox(mousePos))
+		{
+			color = Rgba::GREEN;
+			EditorMouse::GetInstance()->m_onClickable = true;
+		}
+
 		r->DrawAABB2Outline(m_coverImageBounds, color);
 		r->DrawTextInBox("+", m_coverImageBounds, 100.f, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
 	}
@@ -121,7 +125,13 @@ void Home::RenderUI() const
 	// load
 	if(m_currentIndex != 0)
 	{
-		Rgba color = m_loadGameBounds.IsPointInBox(mousePos) ? Rgba::GREEN : Rgba::WHITE;
+		Rgba color = Rgba::WHITE;
+		if (m_loadGameBounds.IsPointInBox(mousePos))
+		{
+			color = Rgba::GREEN;
+			EditorMouse::GetInstance()->m_onClickable = true;
+		}
+
 		r->DrawAABB2Outline(m_loadGameBounds, color);
 		r->DrawTextInBox("Load", m_loadGameBounds, 8, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
 	}
@@ -129,7 +139,12 @@ void Home::RenderUI() const
 	// arrows
 	if (m_currentIndex != (m_allProjectsData.size() - 1))
 	{
-		Rgba color = m_rightArrowBounds.IsPointInBox(mousePos) ? Rgba::GREEN : Rgba::WHITE;
+		Rgba color = Rgba::WHITE;
+		if(m_rightArrowBounds.IsPointInBox(mousePos))
+		{
+			color = Rgba::GREEN;
+			EditorMouse::GetInstance()->m_onClickable = true;
+		}
 		
 		r->DrawAABB2Outline(m_rightArrowBounds, color);
 		r->DrawTextInBox(">", m_rightArrowBounds, 8, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));
@@ -137,7 +152,12 @@ void Home::RenderUI() const
 
 	if (m_currentIndex != 0)
 	{
-		Rgba color = m_leftArrowBounds.IsPointInBox(mousePos) ? Rgba::GREEN : Rgba::WHITE;
+		Rgba color = Rgba::WHITE;
+		if (m_leftArrowBounds.IsPointInBox(mousePos))
+		{
+			color = Rgba::GREEN;
+			EditorMouse::GetInstance()->m_onClickable = true;
+		}
 		
 		r->DrawAABB2Outline(m_leftArrowBounds, color);
 		r->DrawTextInBox("<", m_leftArrowBounds, 8, 1.f, DRAW_TEXT_MODE_SHRINKED, Vector2(.5f, .5f));

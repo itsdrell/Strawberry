@@ -6,6 +6,7 @@
 #include "Engine/Core/Tools/Command.hpp"
 #include "Engine/Core/Tools/Console.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
+#include "Engine/Renderer/Images/SpriteSheet.hpp"
 
 #ifdef EMSCRIPTEN_PORT
 #else
@@ -15,6 +16,7 @@
 //===============================================================================================
 SpriteSheet*	g_theSpriteSheet = nullptr;
 SpriteSheet*	g_allSpriteSheets[MAX_AMOUNT_OF_SPRITE_SHEETS];
+SpriteSheet*	g_editorIconSpriteSheet = nullptr;
 
 String			g_currentProjectName = "";
 
@@ -25,9 +27,11 @@ void EngineStartUp()
 	
 	new AudioSystem();
 	new InputSystem();
-	new Renderer();
+	Renderer* temp = new Renderer();
 	new Console();
 
+
+	g_editorIconSpriteSheet = new SpriteSheet(temp->CreateOrGetTexture("Data/StrawberryIconSpritesheet.png"), 4,4);
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -43,6 +47,9 @@ void EngineShutdown()
 
 	delete g_theInputSystem;
 	g_theInputSystem = nullptr;
+
+	delete g_editorIconSpriteSheet;
+	g_editorIconSpriteSheet = nullptr;
 
 	delete Renderer::GetInstance();
 	//g_theRenderer = nullptr;

@@ -304,6 +304,7 @@
     <ClCompile Include="General\GameConsoleCommands.cpp" />
     <ClCompile Include="General\Lua\GameLuaFunctionBindings.cpp" />
     <ClCompile Include="General\Map\Map.cpp" />
+    <ClCompile Include="General\EditorMouse.cpp" />
     <ClCompile Include="Main\Game.cpp" />
     <ClCompile Include="Main\Main_Win32.cpp" />
     <ClCompile Include="Main\Playground.cpp" />
@@ -325,6 +326,7 @@
     <ClInclude Include="General\Lua\GameLuaFunctionBindings.hpp" />
     <ClInclude Include="General\Map\Map.hpp" />
     <ClInclude Include="General\Map\Tile.hpp" />
+    <ClInclude Include="General\EditorMouse.hpp" />
     <ClInclude Include="States\AppState.hpp" />
     <ClInclude Include="Main\Game.hpp" />
     <ClInclude Include="Main\Playground.hpp" />

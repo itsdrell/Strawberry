@@ -102,6 +102,8 @@ extern String				g_currentProjectName;
 extern SpriteSheet*			g_theSpriteSheet;
 extern SpriteSheet*			g_allSpriteSheets[MAX_AMOUNT_OF_SPRITE_SHEETS];
 
+extern SpriteSheet*			g_editorIconSpriteSheet;
+
 //====================================================================================
 // Written by Zachary Bracken : [1/29/2019]
 //====================================================================================
