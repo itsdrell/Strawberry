@@ -11,6 +11,7 @@
 #include "Engine/Renderer/RenderTypes.hpp"
 #include "Game/Editor/EditorHistory.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
+#include "Game/General/EditorMouse.hpp"
 #include <deque>
 
 //===============================================================================================
@@ -48,6 +49,7 @@ TileEditor::~TileEditor()
 void TileEditor::Update()
 {
 	HandleInput();
+	UpdateHover();
 	GenerateAllBounds();
 
 	//DebugRenderLog("size: " + std::to_string(m_history.size()), 0.f);
@@ -99,6 +101,33 @@ void TileEditor::HandleInput()
 			m_history.pop_front();
 
 			DebugRenderLog("Undo!");
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void TileEditor::UpdateHover()
+{
+	Vector2 mousePos = GetMousePosition(m_mapEditor->m_cameraBounds);
+
+	// do tile select first since thats above the map
+	if (m_tileSelectBounds.IsPointInBox(mousePos))
+	{
+		EditorMouse::GetInstance()->SetOnHoverable();
+	}
+
+	if (m_mapEditor->m_optionsBounds.IsPointInBox(mousePos))
+	{
+		EditorMouse::GetInstance()->SetOnHoverable();
+	}
+
+	for (int i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		AABB2 currentBounds = m_spriteSheetButtonBounds[i];
+
+		if (currentBounds.IsPointInBox(mousePos))
+		{
+			EditorMouse::GetInstance()->SetOnHoverable();
 		}
 	}
 }

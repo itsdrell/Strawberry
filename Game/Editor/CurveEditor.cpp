@@ -10,6 +10,7 @@
 #include "Engine/Core/Platform/File.hpp"
 #include "Engine/Core/Utils/StrawberryFileUtils.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
+#include "Game/General/EditorMouse.hpp"
 
 
 //===============================================================================================
@@ -39,6 +40,7 @@ CurveEditor::CurveEditor()
 void CurveEditor::Update()
 {
 	HandleInput();
+	UpdateHover();
 
 	m_camera->SetProjectionOrthoByAspect(m_zoomedInAmount);
 	m_camera->GoToPosition2D(Vector2(.5f, .5f));
@@ -75,8 +77,8 @@ void CurveEditor::Render() const
 	RenderCurveSelector();
 
 	// mouse
-	Vector2 mousePos = GetMousePosition(m_cameraBounds);
-	r->DrawCircleOutline2D(mousePos, .02f, Rgba(0, 255, 0, 255));
+	//Vector2 mousePos = GetMousePosition(m_cameraBounds);
+	//r->DrawCircleOutline2D(mousePos, .02f, Rgba(0, 255, 0, 255));
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -147,6 +149,30 @@ void CurveEditor::HandleInput()
 	if(IsKeyPressed(KEYBOARD_CTRL) && WasKeyJustPressed('s'))
 	{
 		Save();
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void CurveEditor::UpdateHover()
+{
+	Vector2 mousePos = GetMousePosition(m_camera->GetOrthoBounds());
+
+	for (uint i = 0; i < MAX_AMOUNT_OF_CURVES; i++)
+	{
+		if (m_splineButtonsBounds[i].IsPointInBox(mousePos))
+		{
+			EditorMouse::GetInstance()->SetOnHoverable();
+		}
+	}
+
+	if (Disc2(m_controlPointANode.m_position, m_controlPointANode.m_radius * m_zoomedInAmount).IsPointInside(mousePos))
+	{
+		EditorMouse::GetInstance()->SetOnHoverable();
+	}
+
+	if (Disc2(m_controlPointBNode.m_position, m_controlPointBNode.m_radius * m_zoomedInAmount).IsPointInside(mousePos))
+	{
+		EditorMouse::GetInstance()->SetOnHoverable();
 	}
 }
 

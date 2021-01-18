@@ -11,6 +11,7 @@
 #include "Game/Main/Game.hpp"
 #include "Engine/Core/Tools/DebugRendering.hpp"
 #include "Engine/Core/General/Rgba.hpp"
+#include "Game/General/EditorMouse.hpp"
 
 //===============================================================================================
 SpriteSheetView::SpriteSheetView()
@@ -38,6 +39,7 @@ SpriteSheetView::SpriteSheetView()
 void SpriteSheetView::Update()
 {
 	HandleInput();
+	UpdateHover();
 	
 	CalculateSpritePositions();
 }
@@ -107,6 +109,25 @@ void SpriteSheetView::HandleInput()
 			{
 				m_currentSpriteSheet = i;
 			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void SpriteSheetView::UpdateHover()
+{
+	Vector2 mousePos = GetMousePosition(m_cameraBounds);
+
+	if(m_switchBoxBounds.IsPointInBox(mousePos))
+	{
+		EditorMouse::GetInstance()->SetOnHoverable();
+	}
+
+	for (uint i = 0; i < MAX_AMOUNT_OF_SPRITE_SHEETS; i++)
+	{
+		if (m_spriteSheetButtonBounds[i].IsPointInBox(mousePos))
+		{
+			EditorMouse::GetInstance()->SetOnHoverable();
 		}
 	}
 }
@@ -205,7 +226,7 @@ void SpriteSheetView::RenderCursor() const
 	}
 
 	// mouse cursor
-	r->DrawCircleFilled2D(GetMousePosition(m_cameraBounds), .01f, Rgba(0, 255, 0, 255));
+	//r->DrawCircleFilled2D(GetMousePosition(m_cameraBounds), .01f, Rgba(0, 255, 0, 255));
 }
 
 //-----------------------------------------------------------------------------------------------

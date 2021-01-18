@@ -32,17 +32,18 @@ public:
 
 public:
 	static EditorMouse* GetInstance() { return s_theMouse; }
+	static void SetOnHoverable(bool value = true) { GetInstance()->m_onClickable = value; }
 
 public:
 	void BeginFrame();
 	void Update();
 	void Render() const;
 
-public:
+private:
 	Vector2 m_postion;
 	bool m_onClickable = false;
 
-public:
+private:
 	static EditorMouse* s_theMouse;
 };
 

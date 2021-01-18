@@ -6,6 +6,7 @@
 #include "Game/General/Map/Map.hpp"
 #include "Engine/Renderer/Components/Mesh.hpp"
 #include "Engine/Renderer/Systems/MeshBuilder.hpp"
+#include "Game/General/EditorMouse.hpp"
 
 //===============================================================================================
 bool CollisionChannelButton::IsMousePositionOnButton(const Vector2& mousePos)
@@ -116,6 +117,15 @@ void CollisionEditor::HandleInput()
 	if (WasKeyJustPressed(KEYBOARD_F5))
 	{
 		UpdateNames();
+	}
+
+	// change mouse icon
+	for (uint i = 0; i < MAX_AMOUNT_OF_COLLISION_CHANNELS; i++)
+	{
+		if(m_channelButtons[i].IsMousePositionOnButton(mousePos))
+		{
+			EditorMouse::GetInstance()->SetOnHoverable();
+		}
 	}
 }
 

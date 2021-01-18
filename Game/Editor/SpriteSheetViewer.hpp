@@ -56,6 +56,7 @@ public:
 
 private:
 	virtual void HandleInput() override;
+	void UpdateHover();
 	void CalculateSpritePositions();
 	void CreateDisplayColors();
 

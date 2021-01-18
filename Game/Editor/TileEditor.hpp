@@ -53,6 +53,7 @@ public:
 	virtual void Exit() override {}
 
 private:
+	void UpdateHover();
 	void LeftClick();
 	void LeftClickRelease();
 	void RightClick();

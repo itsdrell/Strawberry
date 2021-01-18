@@ -99,7 +99,7 @@ void MapEditor::RenderUI() const
 
 	// mouse
 	Vector2 mousePos = GetMousePosition(m_cameraBounds);
-	r->DrawCircleOutline2D(mousePos, 1.f, Rgba(0, 255, 0, 255));
+	//r->DrawCircleOutline2D(mousePos, 1.f, Rgba(0, 255, 0, 255));
 
 	// print mousePos
 	if (m_map->GetBounds().IsPointInBox(mousePos))

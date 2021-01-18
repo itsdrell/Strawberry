@@ -102,7 +102,7 @@ void Home::RenderUI() const
 		if (m_coverImageBounds.IsPointInBox(mousePos))
 		{
 			color = Rgba::GREEN;
-			EditorMouse::GetInstance()->m_onClickable = true;
+			EditorMouse::GetInstance()->SetOnHoverable();
 		}
 
 		r->DrawAABB2Outline(m_coverImageBounds, color);
@@ -129,7 +129,7 @@ void Home::RenderUI() const
 		if (m_loadGameBounds.IsPointInBox(mousePos))
 		{
 			color = Rgba::GREEN;
-			EditorMouse::GetInstance()->m_onClickable = true;
+			EditorMouse::GetInstance()->SetOnHoverable();
 		}
 
 		r->DrawAABB2Outline(m_loadGameBounds, color);
@@ -143,7 +143,7 @@ void Home::RenderUI() const
 		if(m_rightArrowBounds.IsPointInBox(mousePos))
 		{
 			color = Rgba::GREEN;
-			EditorMouse::GetInstance()->m_onClickable = true;
+			EditorMouse::GetInstance()->SetOnHoverable();
 		}
 		
 		r->DrawAABB2Outline(m_rightArrowBounds, color);
@@ -156,7 +156,7 @@ void Home::RenderUI() const
 		if (m_leftArrowBounds.IsPointInBox(mousePos))
 		{
 			color = Rgba::GREEN;
-			EditorMouse::GetInstance()->m_onClickable = true;
+			EditorMouse::GetInstance()->SetOnHoverable();
 		}
 		
 		r->DrawAABB2Outline(m_leftArrowBounds, color);

@@ -64,6 +64,9 @@ public:
 	virtual void Update() override;
 	virtual void Render() const override;
 	virtual void HandleInput() override;
+	
+private:
+	void UpdateHover();
 
 private:
 	void RenderLinePreview() const;
