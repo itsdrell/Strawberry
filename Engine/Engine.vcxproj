@@ -408,6 +408,8 @@
     <ClInclude Include="ThirdParty\SDL2\SDL_version.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_video.h" />
     <ClInclude Include="ThirdParty\SDL2\SDL_vulkan.h" />
+    <ClInclude Include="ThirdParty\SquirrelNoise\RawNoise.hpp" />
+    <ClInclude Include="ThirdParty\SquirrelNoise\SmoothNoise.hpp" />
     <ClInclude Include="ThirdParty\stbi\stb_image.h" />
     <ClInclude Include="ThirdParty\stbi\stb_image_write.h" />
   </ItemGroup>
@@ -497,6 +499,8 @@
     <ClCompile Include="ThirdParty\Lua\lutf8lib.c" />
     <ClCompile Include="ThirdParty\Lua\lvm.c" />
     <ClCompile Include="ThirdParty\Lua\lzio.c" />
+    <ClCompile Include="ThirdParty\SquirrelNoise\RawNoise.cpp" />
+    <ClCompile Include="ThirdParty\SquirrelNoise\SmoothNoise.cpp" />
     <ClCompile Include="ThirdParty\stbi\stb_image.c" />
     <ClCompile Include="ThirdParty\stbi\stb_image_write.c" />
   </ItemGroup>

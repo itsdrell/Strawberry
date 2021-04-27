@@ -106,6 +106,12 @@ static int LuaAABB2ShrinkToSquare(lua_State* theState);
 static int LuaGetAABB2FromAABB2(lua_State* theState);
 static int LuaGetPositionInsideBox(lua_State* theState);
 
+// Noise
+static int Lua1DRawNoise(lua_State* theState);
+static int Lua2DRawNoise(lua_State* theState);
+static int Lua1DPerlin(lua_State* theState);
+static int Lua2DPerlin(lua_State* theState);
+
 //====================================================================================
 // Externs
 //====================================================================================

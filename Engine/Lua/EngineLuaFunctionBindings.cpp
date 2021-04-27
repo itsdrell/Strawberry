@@ -16,6 +16,8 @@
 #include <cstdlib>
 #include <cmath>
 #include "../Renderer/Systems/MeshBuilderStrawberry.hpp"
+#include "Engine/ThirdParty/SquirrelNoise/RawNoise.hpp"
+#include "Engine/ThirdParty/SquirrelNoise/SmoothNoise.hpp"
 
 
 //===============================================================================================
@@ -93,6 +95,11 @@ void BindLuaFunctionsToScript(lua_State * theState)
 	BindFunctionToScript(theState, LuaGetAABB2FromAABB2, "AABB2GetAABB2FromAABB2");
 	BindFunctionToScript(theState, LuaGetPositionInsideBox, "AABB2GetPositionInside");
 
+// noise
+	BindFunctionToScript(theState, Lua1DRawNoise, "Noise1D");
+	BindFunctionToScript(theState, Lua2DRawNoise, "Noise2D");
+	BindFunctionToScript(theState, Lua1DPerlin, "Perlin1D");
+	BindFunctionToScript(theState, Lua2DPerlin, "Perlin2D");
 
 // goes at the end
 	lua_pcall(theState, 0, 0, 0);
@@ -837,6 +844,78 @@ int LuaGetPositionInsideBox(lua_State * theState)
 }
 
 //-----------------------------------------------------------------------------------------------
+// Noise1D(index, seed)
+// Range [-1,1]
+int Lua1DRawNoise(lua_State* theState)
+{
+	int index = LuaGetInt(theState, 1, 1);
+	int seed = LuaGetInt(theState, 2, 0);
+
+	float result = Get1dNoiseNegOneToOne(index, seed);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Noise2D(x,y,seed)
+// Range [-1,1]
+int Lua2DRawNoise(lua_State* theState)
+{
+	int x = LuaGetInt(theState, 1, 0);
+	int y = LuaGetInt(theState, 2, 0);
+	int seed = LuaGetInt(theState, 3, 0);
+
+	float result = Get2dNoiseNegOneToOne(x,y, seed);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Perlin1D(position, seed, scale, numOctaves, octavePersistence, octaveScale, renormalize)
+int Lua1DPerlin(lua_State* theState)
+{
+	float position = LuaGetFloat(theState, 1, 0.f);
+	int seed = LuaGetInt(theState, 2, 0);
+	float scale = LuaGetFloat(theState, 3, 1.f);
+	
+	int numOctaves = LuaGetInt(theState, 4, 1);
+	float octavePersistence = LuaGetFloat(theState, 5, 0.5f);
+	float octaveScale = LuaGetFloat(theState, 6, 2.f);
+	bool renormalize = LuaGetBool(theState, 7, true);
+
+	float result = Compute1dPerlinNoise(position, scale, numOctaves, octavePersistence, octaveScale, renormalize, seed);
+	
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
+// Perlin2D(x,y, seed, scale, numOctaves, octavePersistence, octaveScale, renormalize)
+int Lua2DPerlin(lua_State* theState)
+{
+	float x = LuaGetFloat(theState, 1, 0.f);
+	float y = LuaGetFloat(theState, 2, 0.f);
+	int seed = LuaGetInt(theState, 3, 0);
+	float scale = LuaGetFloat(theState, 4, 1.f);
+
+	int numOctaves = LuaGetInt(theState, 5, 1);
+	float octavePersistence = LuaGetFloat(theState, 6, 0.5f);
+	float octaveScale = LuaGetFloat(theState, 7, 2.f);
+	bool renormalize = LuaGetBool(theState, 8, true);
+
+	float result = Compute2dPerlinNoise(x,y, scale, numOctaves, octavePersistence, octaveScale, renormalize, seed);
+
+	lua_pushnumber(theState, result);
+
+	return 1;
+}
+
+//-----------------------------------------------------------------------------------------------
 // Lerp ( start, end, t )
 int LuaInterpolate(lua_State * theState)
 {
@@ -927,9 +1006,9 @@ int LuaRangeMap(lua_State* theState)
 	
 	float currentValue = LuaGetFloat(theState, 1, 0.f);
 	float currentRangMin = LuaGetFloat(theState, 2, 0.f);
-	float currentRangMax = LuaGetFloat(theState, 2, 0.f);
-	float newRangeMin = LuaGetFloat(theState, 2, 0.f);
-	float newRangeMax = LuaGetFloat(theState, 2, 0.f);
+	float currentRangMax = LuaGetFloat(theState, 3, 0.f);
+	float newRangeMin = LuaGetFloat(theState, 4, 0.f);
+	float newRangeMax = LuaGetFloat(theState, 5, 0.f);
 
 	float result = RangeMapFloat(currentValue, currentRangMin, currentRangMax, newRangeMin, newRangeMax);
 

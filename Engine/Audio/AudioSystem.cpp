@@ -349,7 +349,14 @@ void StopSound(std::string path)
 	AudioSystem* as = AudioSystem::GetInstance();
 
 	AudioClip* theClip = as->GetAudioClip(path);
-	as->StopSound(theClip->m_playbackID);
+
+	// stopping a sound not playing should be safe
+	if(theClip != nullptr)
+	{
+		// could give a warning???
+
+		as->StopSound(theClip->m_playbackID);
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

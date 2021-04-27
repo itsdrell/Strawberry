@@ -218,7 +218,7 @@ void Map::GenerateTileMesh()
 				// We need to make a placeholder vertex that we will later change
 				// so we use one has UVs of 0 to skip the expensive check, and set the color to black
 				// so the map looks empty #hack
-				m_tileBuilder->AppendTexturedAABB2(currentBounds, AABB2(0.f, 0.f, 0.f, 0.f), 0, Rgba(0, 255, 0, 50));
+				m_tileBuilder->AppendTexturedAABB2(currentBounds, AABB2(0.f, 0.f, 0.f, 0.f), 0, Rgba(0, 0, 0, 50));
 			}
 
 			currentPos.x += TILE_SIZE;

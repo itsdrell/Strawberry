@@ -185,6 +185,8 @@
     <ClInclude Include="Core\Utils\StrawberryFileUtils.hpp" />
     <ClInclude Include="Math\Splines\CubicSpline.hpp" />
     <ClInclude Include="Renderer\Systems\MeshBuilderStrawberry.hpp" />
+    <ClInclude Include="ThirdParty\SquirrelNoise\RawNoise.hpp" />
+    <ClInclude Include="ThirdParty\SquirrelNoise\SmoothNoise.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Platform\Window.cpp">
@@ -446,6 +448,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Systems\MeshBuilderStrawberry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\SquirrelNoise\RawNoise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\SquirrelNoise\SmoothNoise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
