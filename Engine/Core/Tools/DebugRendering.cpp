@@ -72,6 +72,9 @@ void DebugRenderingSystem::UpdateAndRender()
 
 		if (current->m_isReadyForDeletion)
 		{
+			delete current;
+			current = nullptr;
+			
 			RemoveFast(i, m_tasks);
 		}
 		else
