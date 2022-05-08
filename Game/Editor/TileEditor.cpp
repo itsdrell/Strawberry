@@ -13,6 +13,7 @@
 #include "Engine/Core/Tools/DebugRendering.hpp"
 #include "Game/General/EditorMouse.hpp"
 #include <deque>
+#include <cmath>
 
 //===============================================================================================
 String GetTileDrawModeAsString(TileDrawModes mode)
