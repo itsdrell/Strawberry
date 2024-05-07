@@ -123,7 +123,10 @@ bool Map::LoadMap()
 	char aChar;
 	while (infile.get(aChar))
 	{
-		m_fileData.push_back((uint16)aChar);
+		// We have to cast this to unsigned or the cast to uint16 will break
+		unsigned char castChar = (unsigned char)aChar;
+		
+		m_fileData.push_back((uint16)castChar);
 	}
 
 	infile.close();
@@ -191,7 +194,7 @@ void Map::GenerateTileMesh()
 {
 	PrintLog("Started Generate Tile Mesh");
 	Vector2 currentPos = Vector2(0.f, 0.f);
-	
+
 	PrintLog("reserving");
 	// 65536 verts, ind 98304 (trying to save memory)
 	m_tileBuilder->m_vertices.reserve(65536);
